@@ -35,7 +35,7 @@ If you think that you've found a bug, open an [**issue here on GitHub**](https:/
 ## Installation
 
 Add the repository URL below at the bottom of *LMS* > *Settings* > *Plugins* and click *Apply*:<br><br>
-[**https://raw.githubusercontent.com/AF-1/beta-dplc/main/repo.xml**](https://raw.githubusercontent.com/AF-1/beta-dplc/main/repo.xml)
+[**https://raw.githubusercontent.com/AF-1/lms-dynamicplaylistcreator/main/repo.xml**](https://raw.githubusercontent.com/AF-1/lms-dynamicplaylistcreator/main/repo.xml)
 <br><br><br>
 
 
