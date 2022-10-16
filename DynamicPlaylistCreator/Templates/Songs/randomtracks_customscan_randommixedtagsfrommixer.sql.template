@@ -1,0 +1,83 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:[% playlistgroups %]
+-- PlaylistCategory:songs
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+[%- IF sqlscope %]
+-- Scope:[% sqlscope %]
+[%- END %]
+[%- IF nooftracks %]
+-- PlaylistLimitOption:[% nooftracks %]
+[%- END %]
+[%- IF virtuallibrary %]
+-- PlaylistVirtualLibraryID1:[% virtuallibrary %]
+[%- END %]
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+[%- IF customskipfilter %]
+-- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
+-- PlaylistStopAction1:cli:customskip clearsecondaryfilter
+[%- END %]
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+select distinct tracks.url from tracks
+	[%- IF notrepeat %]
+	left join dynamicplaylist_history on
+		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+	[%- END %]
+	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+	join library_track on
+		library_track.track = tracks.id
+		and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
+	[%- END %]
+	[%- IF mixedtag1name and mixedtag1value %]
+	join customscan_track_attributes mixedtag1 on
+		tracks.id = mixedtag1.track and mixedtag1.module = 'mixedtag' and mixedtag1.attr = '[% mixedtag1name %]' and mixedtag1.value [% IF mixedtag1type == 'lt' %] < '[% mixedtag1value %]'[% ELSIF mixedtag1type == 'le' %] <= '[% mixedtag1value %]'[% ELSIF mixedtag1type == 'ge' %] >= '[% mixedtag1value %]'[% ELSIF mixedtag1type == 'gt' %] > '[% mixedtag1value %]'[% ELSIF mixedtag1type == 'contains' %]like '%[% mixedtag1value %]%'[% ELSE %] = '[% mixedtag1value %]'[% END %]
+	[%- END %]
+	[%- IF mixedtag2name and mixedtag2value %]
+	join customscan_track_attributes mixedtag2 on
+		tracks.id = mixedtag2.track and mixedtag2.module = 'mixedtag' and mixedtag2.attr = '[% mixedtag2name %]' and mixedtag2.value [% IF mixedtag2type == 'lt' %] < '[% mixedtag2value %]'[% ELSIF mixedtag2type == 'le' %] <= '[% mixedtag2value %]'[% ELSIF mixedtag2type == 'ge' %] >= '[% mixedtag2value %]'[% ELSIF mixedtag2type == 'gt' %] > '[% mixedtag2value %]'[% ELSIF mixedtag2type == 'contains' %]like '%[% mixedtag2value %]%'[% ELSE %] = '[% mixedtag2value %]'[% END %]
+	[%- END %]
+	[%- IF mixedtag3name and mixedtag3value %]
+	join customscan_track_attributes mixedtag3 on
+		tracks.id = mixedtag3.track and mixedtag3.module = 'mixedtag' and mixedtag3.attr = '[% mixedtag3name %]' and mixedtag3.value [% IF mixedtag3type == 'lt' %] < '[% mixedtag3value %]'[% ELSIF mixedtag3type == 'le' %] <= '[% mixedtag3value %]'[% ELSIF mixedtag3type == 'ge' %] >= '[% mixedtag3value %]'[% ELSIF mixedtag3type == 'gt' %] > '[% mixedtag3value %]'[% ELSIF mixedtag3type == 'contains' %]like '%[% mixedtag3value %]%'[% ELSE %] = '[% mixedtag3value %]'[% END %]
+	[%- END %]
+	[%- IF mixedtag4name and mixedtag4value %]
+	join customscan_track_attributes mixedtag4 on
+		tracks.id = mixedtag4.track and mixedtag4.module = 'mixedtag' and mixedtag4.attr = '[% mixedtag4name %]' and mixedtag4.value [% IF mixedtag4type == 'lt' %] < '[% mixedtag4value %]'[% ELSIF mixedtag4type == 'le' %] <= '[% mixedtag4value %]'[% ELSIF mixedtag4type == 'ge' %] >= '[% mixedtag4value %]'[% ELSIF mixedtag4type == 'gt' %] > '[% mixedtag4value %]'[% ELSIF mixedtag4type == 'contains' %]like '%[% mixedtag4value %]%'[% ELSE %] = '[% mixedtag4value %]'[% END %]
+	[%- END %]
+	[%- IF mixedtag5name and mixedtag5value %]
+	join customscan_track_attributes mixedtag5 on
+		tracks.id = mixedtag5.track and mixedtag5.module = 'mixedtag' and mixedtag5.attr = '[% mixedtag5name %]' and mixedtag5.value [% IF mixedtag5type == 'lt' %] < '[% mixedtag5value %]'[% ELSIF mixedtag5type == 'le' %] <= '[% mixedtag5value %]'[% ELSIF mixedtag5type == 'ge' %] >= '[% mixedtag5value %]'[% ELSIF mixedtag5type == 'gt' %] > '[% mixedtag5value %]'[% ELSIF mixedtag5type == 'contains' %]like '%[% mixedtag5value %]%'[% ELSE %] = '[% mixedtag5value %]'[% END %]
+	[%- END %]
+	[%- IF mixedtag6name and mixedtag6value %]
+	join customscan_track_attributes mixedtag6 on
+		tracks.id = mixedtag6.track and mixedtag6.module = 'mixedtag' and mixedtag6.attr = '[% mixedtag6name %]' and mixedtag6.value [% IF mixedtag6type == 'lt' %] < '[% mixedtag6value %]'[% ELSIF mixedtag6type == 'le' %] <= '[% mixedtag6value %]'[% ELSIF mixedtag6type == 'ge' %] >= '[% mixedtag6value %]'[% ELSIF mixedtag6type == 'gt' %] > '[% mixedtag6value %]'[% ELSIF mixedtag6type == 'contains' %]like '%[% mixedtag6value %]%'[% ELSE %] = '[% mixedtag6value %]'[% END %]
+	[%- END %]
+	[%- IF mixedtag7name and mixedtag7value %]
+	join customscan_track_attributes mixedtag7 on
+		tracks.id = mixedtag7.track and mixedtag7.module = 'mixedtag' and mixedtag7.attr = '[% mixedtag7name %]' and mixedtag7.value [% IF mixedtag7type == 'lt' %] < '[% mixedtag7value %]'[% ELSIF mixedtag7type == 'le' %] <= '[% mixedtag7value %]'[% ELSIF mixedtag7type == 'ge' %] >= '[% mixedtag7value %]'[% ELSIF mixedtag7type == 'gt' %] > '[% mixedtag7value %]'[% ELSIF mixedtag7type == 'contains' %]like '%[% mixedtag7value %]%'[% ELSE %] = '[% mixedtag7value %]'[% END %]
+	[%- END %]
+	[%- IF mixedtag8name and mixedtag8value %]
+	join customscan_track_attributes mixedtag8 on
+		tracks.id = mixedtag8.track and mixedtag8.module = 'mixedtag' and mixedtag8.attr = '[% mixedtag8name %]' and mixedtag8.value [% IF mixedtag8type == 'lt' %] < '[% mixedtag8value %]'[% ELSIF mixedtag8type == 'le' %] <= '[% mixedtag8value %]'[% ELSIF mixedtag8type == 'ge' %] >= '[% mixedtag8value %]'[% ELSIF mixedtag8type == 'gt' %] > '[% mixedtag8value %]'[% ELSIF mixedtag8type == 'contains' %]like '%[% mixedtag8value %]%'[% ELSE %] = '[% mixedtag8value %]'[% END %]
+	[%- END %]
+	[%- IF recentlyplayed %]
+		[%- IF useapcvalues %]
+	join alternativeplaycount on
+		alternativeplaycount.urlmd5 = tracks.urlmd5
+		[%- ELSE %]
+	left join tracks_persistent on
+		tracks.url = tracks_persistent.url
+		[%- END %]
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+		[%- IF notrepeat %]
+		and dynamicplaylist_history.id is null
+		[%- END %]
+	[%- IF recentlyplayed %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	group by tracks.id
+	order by random()
+	[% IF nooftracks %]limit [% nooftracks %][% END %];

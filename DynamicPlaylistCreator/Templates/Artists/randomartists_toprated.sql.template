@@ -1,0 +1,124 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:[% playlistgroups %]
+-- PlaylistCategory:artists
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+[%- IF sqlscope %]
+-- Scope:[% sqlscope %]
+[%- END %]
+[%- IF nooftracks %]
+-- PlaylistLimitOption:[% nooftracks %]
+[%- END %]
+[%- IF virtuallibrary %]
+-- PlaylistVirtualLibraryID1:[% virtuallibrary %]
+[%- END %]
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+[%- IF customskipfilter %]
+-- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
+-- PlaylistStopAction1:cli:customskip clearsecondaryfilter
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+drop table if exists toprated_random_contributors;
+create temporary table toprated_random_contributors as
+	select subselection.contributor as contributor from
+		(select contributor_track.contributor, avg(ifnull(tracks_persistent.rating,0)) as avgrating from tracks
+		join contributor_track
+			on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
+		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+		join library_track on
+			library_track.track = tracks.id
+			and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
+		[%- END %]
+		[%- IF includedgenres %]
+		join genre_track on
+			tracks.id = genre_track.track
+		join genres on
+			genre_track.genre = genres.id
+		[%- END %]
+		[%- IF notrepeat %]
+		left join dynamicplaylist_history on
+			tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		[%- END %]
+		left join tracks_persistent on
+			tracks.url = tracks_persistent.url
+		[%- IF useapcvalues %]
+		join alternativeplaycount on
+			alternativeplaycount.urlmd5 = tracks.urlmd5
+		[%- END %]
+		WHERE
+			audio = 1
+		[%- IF notrepeat %]
+			and dynamicplaylist_history.id is null
+		[%- END %]
+		[%- IF includedgenres %]
+			and genres.name in ([% includedgenres %])
+		[%- END %]
+		[%- IF excludedgenres %]
+			and not exists (select * from tracks t2,genre_track,genres
+							where
+								t2.id = tracks.id and
+								tracks.id = genre_track.track and
+								genre_track.genre = genres.id and
+								genres.name in ([% excludedgenres %]))
+		[%- END %]
+		group by contributor_track.contributor
+		[%- IF recentlyplayed %]
+		having [% IF useapcvalues %]max(ifnull(alternativeplaycount.lastPlayed,0))[% ELSE %]max(ifnull(tracks_persistent.lastPlayed,0))[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minartisttracks %] and count(tracks.id) >= [% minartisttracks %][% END %]
+		[%- ELSIF minartisttracks %]
+		having count(tracks.id) >= [% minartisttracks %]
+		[%- END %]
+		order by avgrating desc, random()
+		limit 30) as subselection
+	order by random()
+	limit [% IF noofartists %][% noofartists %][% ELSE %]1[% END %];
+[% # --------------------------------------------------------------------------------------------------------------- %]
+select distinct tracks.url from tracks
+	join contributor_track
+		on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
+	join toprated_random_contributors
+		on contributor_track.contributor = toprated_random_contributors.contributor
+	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+	join library_track on
+		library_track.track = tracks.id
+		and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
+	[%- END %]
+	[%- IF includedgenres %]
+	join genre_track on
+		tracks.id = genre_track.track
+	join genres on
+		genre_track.genre = genres.id
+	[%- END %]
+	[%- IF useapcvalues %]
+	join alternativeplaycount on
+		alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
+	[%- IF notrepeat %]
+	left join dynamicplaylist_history on
+		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+	[%- IF notrepeat %]
+		and dynamicplaylist_history.id is null
+	[%- END %]
+	[%- IF recentlyplayed %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF includedgenres %]
+		and genres.name in ([% includedgenres %])
+	[%- END %]
+	[%- IF excludedgenres %]
+		and not exists (select * from tracks t2,genre_track,genres
+						where
+							t2.id = tracks.id and
+							tracks.id = genre_track.track and
+							genre_track.genre = genres.id and
+							genres.name in ([% excludedgenres %]))
+	[%- END %]
+	[%- IF includedgenres %]
+	group by tracks.id
+	[%- END %]
+	order by toprated_random_contributors.contributor, random()
+	[% IF nooftracks %]limit [% nooftracks %][% END %];
+drop table toprated_random_contributors;

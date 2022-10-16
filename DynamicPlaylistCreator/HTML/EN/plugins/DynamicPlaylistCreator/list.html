@@ -1,0 +1,58 @@
+<style>.inputbtn{padding:2px;}</style>
+[%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
+
+[%- pwd_list = BLOCK -%]/
+	<a href="[% webroot %]plugins/DynamicPlaylistCreator/list.html">
+		[% "PLUGIN_DYNAMICPLAYLISTCREATOR" | string %]
+	</a>
+[% END -%]
+[% PROCESS pageheader.html %]
+<br>
+[% WRAPPER contentcontainer %]
+	<p>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER" | string %]</p>
+		<tr>
+			<td colspan="4"><hr></td>
+		</tr>
+		[% odd = 1 %]
+		[% IF nocustomdynamicplaylists %]
+			<br>
+			<tr><td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_NODPLSFOUND" | string %]</td></tr>
+			<br><br>
+		[% ELSE %]
+			[% FOREACH playlist IN pluginDynamicPlaylistCreatorPlayLists %]
+				[% BLOCK controls %]
+					[% WRAPPER removelink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id |uri %]" onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %]
+					[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id |uri %]"
+					[%- END %]
+				[% END %]
+				[%- WRAPPER contentitem controls='controls' %]
+					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id |uri %]">[% playlist.name %]</a>
+				[% END %]
+			[% odd = (not odd) %]
+			[% END %]
+		[% END %]
+		[% IF systemSkin != "material" %]
+		<tr>
+			<td colspan="4"><hr></td>
+		</tr>
+		[% END %]
+		<tr class="filler">
+			<td colspan="4">&nbsp;</td>
+		</tr>
+		<p>
+			<input class="inputbtn" type="button" onclick="window.location.href = '[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_newitemtypes.html';" value="[% "PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM" | string %]"/>
+		</p>
+		[% IF pluginDynamicPlaylistCreatorError %]
+			<p><br><br><strong>[% pluginDynamicPlaylistCreatorError %]</strong></p>
+		[% END %]
+		[% IF pluginDynamicPlaylistCreatorMessage %]
+			<p><br><br>[% pluginDynamicPlaylistCreatorMessage %]</p>
+		[% END %]
+		[% IF pluginWebPageMethodsError %]
+			<p><br><br><strong>[% pluginWebPageMethodsError %]</strong><br></p>
+		[% END %]
+		[% IF pluginWebPageMethodsMessage %]
+			<p><br><br>[% pluginWebPageMethodsMessage %]</p>
+		[% END %]
+[% END %]
+[% PROCESS pagefooter.html %]

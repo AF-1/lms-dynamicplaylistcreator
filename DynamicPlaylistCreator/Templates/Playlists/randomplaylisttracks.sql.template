@@ -1,0 +1,95 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:[% playlistgroups %]
+-- PlaylistCategory:playlists
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+[%- IF sqlscope %]
+-- Scope:[% sqlscope %]
+[%- END %]
+[%- IF nooftracks %]
+-- PlaylistLimitOption:[% nooftracks %]
+[%- END %]
+-- PlaylistTrackOrder:ordered
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+[%- IF request1fromuser == 'genre' %]
+-- PlaylistParameter1:genre:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTGENRE:
+[%- ELSIF request1fromuser == 'artist' %]
+-- PlaylistParameter1:artist:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTARTIST:
+[%- ELSIF request1fromuser == 'album' %]
+-- PlaylistParameter1:album:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTALBUM:
+[%- ELSIF request1fromuser == 'year' %]
+-- PlaylistParameter1:year:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTYEAR:
+[%- ELSIF request1fromuser == 'decade' %]
+-- PlaylistParameter1:customdecade:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTDECADE:select cast(((tracks.year/10)*10) as int) as decade,case when tracks.year > 0 then cast(((tracks.year/10)*10) as int)||'s' else 'Unknown' end from tracks where tracks.audio = 1 group by decade order by decade desc
+[%- END %]
+[%- # ----------- %]
+[%- IF customskipfilter %]
+-- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
+-- PlaylistStopAction1:cli:customskip clearsecondaryfilter
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+select distinct tracks.url from tracks
+	join playlist_track on
+		tracks.url = playlist_track.track and
+		playlist_track.playlist = (select max(playlist) from playlist_track, tracks where
+						playlist_track.playlist = tracks.id and
+						tracks.titlesearch = '[% playlist %]'
+					group by playlist_track.playlist)
+	[%- IF request1fromuser == 'artist' %]
+	join contributor_track on
+		tracks.id = contributor_track.track and
+		contributor_track.contributor = 'PlaylistParameter1'
+	[%- END %]
+	[%- IF request1fromuser == 'genre' %]
+	join genre_track on
+		tracks.id = genre_track.track
+	join genres on
+		genre_track.genre = genres.id
+	[%- END %]
+	[%- IF notrepeat %]
+	left join dynamicplaylist_history on
+		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+	[%- END %]
+	[%- IF (useapcvalues and (recentlyplayed or orderbyplaycount or playedbefore)) or maxskipcount or recentlyskipped %]
+	join alternativeplaycount on
+		alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
+	[%- IF !useapcvalues and (recentlyplayed or orderbyplaycount or playedbefore) %]
+	left join tracks_persistent on
+		tracks.url = tracks_persistent.url
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+	[%- IF request1fromuser == 'album' %]
+		and tracks.album = 'PlaylistParameter1'
+	[%- ELSIF request1fromuser == 'year' %]
+		and ifnull(tracks.year, 0) = 'PlaylistParameter1'
+	[%- ELSIF request1fromuser == 'decade' %]
+		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
+	[%- ELSIF request1fromuser == 'genre' %]
+		and genre_track.genre = 'PlaylistParameter1'
+	[%- END %]
+	[%- IF notrepeat %]
+		and dynamicplaylist_history.id is null
+	[%- END %]
+	[%- IF maxskipcount %]
+		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
+	[%- END %]
+	[%- IF recentlyskipped %]
+		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
+	[%- END %]
+	[%- IF playedbefore == 1 and !recentlyplayed %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
+	[%- END %]
+	[%- IF playedbefore == 2 %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
+	[%- END %]
+	[%- IF recentlyplayed and playedbefore != 1 %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF playlist or request1fromuser == 'genre' or request1fromuser == 'artist' %]
+	group by tracks.id
+	[%- END %]
+	order by [% IF orderbyplaycount %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF orderbyplaycount == 1 %]desc[% ELSE %]asc[% END %], [% END %][% IF randomordered %]random()[% ELSE %]playlist_track.position asc[% END %]
+	[% IF nooftracks %]limit [% nooftracks %][% END %];

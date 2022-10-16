@@ -1,0 +1,56 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:[% playlistgroups %]
+-- PlaylistCategory:songs
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+[%- IF sqlscope %]
+-- Scope:[% sqlscope %]
+[%- END %]
+[%- IF nooftracks %]
+-- PlaylistLimitOption:[% nooftracks %]
+[%- END %]
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+-- PlaylistParameter1:customtrack:Select song:select tracks.id,albums.title || ' ' || tracks.tracknum || '. ' || tracks.title,substr(tracks.titlesort,1,1) from tracks, albums where tracks.album = albums.id and tracks.audio = 1 group by tracks.id order by albums.titlesort,albums.disc,tracks.tracknum
+[%- IF customskipfilter %]
+-- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
+-- PlaylistStopAction1:cli:customskip clearsecondaryfilter
+[%- END %]
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+select distinct tracks.url from tracks
+	[%- IF notrepeat %]
+	left join dynamicplaylist_history on
+		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+	[%- END %]
+	[%- IF includetag1 %]
+	join customscan_track_attributes includedtag1tracks on
+		tracks.id = includedtag1tracks.track and includedtag1tracks.module = 'mixedtag' and includedtag1tracks.attr = '[% includetag1 %]'
+	join customscan_track_attributes seedtracktag1attributes on
+		seedtracktag1attributes.track = 'PlaylistParameter1' and seedtracktag1attributes.module = 'mixedtag' and seedtracktag1attributes.attr = '[% includetag1 %]' and seedtracktag1attributes.extravalue = includedtag1tracks.extravalue
+	[%- END %]
+	[%- IF includetag2 %]
+	join customscan_track_attributes includedtag2tracks on
+		tracks.id = includedtag2tracks.track and includedtag2tracks.module = 'mixedtag' and includedtag2tracks.attr = '[% includetag2 %]'
+	join customscan_track_attributes seedtracktag2attributes on
+		seedtracktag2attributes.track = 'PlaylistParameter1' and seedtracktag2attributes.module = 'mixedtag' and seedtracktag2attributes.attr = '[% includetag2 %]' and seedtracktag2attributes.extravalue = includedtag2tracks.extravalue
+	[%- END %]
+	[%- IF includetag3 %]
+	join customscan_track_attributes includedtag3tracks on
+		tracks.id = includedtag3tracks.track and includedtag3tracks.module = 'mixedtag' and includedtag3tracks.attr = '[% includetag3 %]'
+	join customscan_track_attributes seedtracktag3attributes on
+		seedtracktag3attributes.track = 'PlaylistParameter1' and seedtracktag3attributes.module = 'mixedtag' and seedtracktag3attributes.attr = '[% includetag3 %]' and seedtracktag3attributes.extravalue = includedtag3tracks.extravalue
+	[%- END %]
+	[%- IF includetag4 %]
+	join customscan_track_attributes includedtag4tracks on
+		tracks.id = includedtag4tracks.track and includedtag4tracks.module = 'mixedtag' and includedtag4tracks.attr = '[% includetag4 %]'
+	join customscan_track_attributes seedtracktag4attributes on
+		seedtracktag4attributes.track = 'PlaylistParameter1' and seedtracktag4attributes.module = 'mixedtag' and seedtracktag4attributes.attr = '[% includetag4 %]' and seedtracktag4attributes.extravalue = includedtag4tracks.extravalue
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+		[%- IF notrepeat %]
+		and dynamicplaylist_history.id is null
+		[%- END %]
+	group by tracks.id
+	order by random()
+	[% IF nooftracks %]limit [% nooftracks %][% END %];

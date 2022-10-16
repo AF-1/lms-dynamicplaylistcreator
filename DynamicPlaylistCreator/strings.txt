@@ -1,0 +1,112 @@
+PLUGIN_DYNAMICPLAYLISTCREATOR
+	EN	Dynamic Playlist Creator
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_DESC
+	EN	Dynamic Playlist Creator is a companion app for the Dynamic Playlists 3 plugin. It helps you create dynamic playlists based on templates.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_SETTINGS
+	EN	Various Settings
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT
+	EN	Click here to read the FAQ.
+	FR	Cliquez ici pour lire la FAQ.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK
+	EN	https://github.com/AF-1/lms-dynamicplaylistcreator#faq
+	FR	https://github.com/AF-1/lms-dynamicplaylistcreator#faq
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH
+	EN	<u>Parent</u> folder path for folder <wbr>with&nbsp;your&nbsp;dynamic&nbsp;playlist&nbsp;definition&nbsp;files
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH_DESC
+	EN	Choose a location for the folder where to put the dynamic playlist definition files you've created.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK
+	EN	Disable parameter conflict check
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK_DESC
+	EN	Disable the display of warning icons that alert you to potential conflicts in your parameter selection.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
+	EN	<b>Custom dynamic playlists created with this plugin:</b>
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NODPLSFOUND
+	EN	No dynamic playlist found
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM
+	EN	Edit
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM
+	EN	Create new dynamic playlist
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_CLEARCACHE
+	EN	Clear cache
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_TYPES_TITLE
+	EN	Select a template on which to base your new dynamic playlist:
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_DATA
+	EN	SQLite Query
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_NAME
+	EN	Dynamic Playlist Name
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME
+	EN	File name (without extension)
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM
+	EN	Delete
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION
+	EN	Are you sure you want to delete this dynamic playlist?
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_SAVE
+	EN	Save
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NEXT
+	EN	Next
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE
+	EN	Save as
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_SIMPLE
+	EN	Default format
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED
+	EN	Customized SQLite
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED_INFO
+	EN	<b>Please note:</b> Once you have saved the file as <i>customized SQLite</i>, you can no longer convert it back to the default format.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_PARAMETERS_TITLE
+	EN	Please enter dynamic playlist parameters
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE
+	EN	Edit dynamic playlist parameters
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_OVERWRITE
+	EN	Overwrite existing&nbsp;&nbsp;&nbsp;
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE
+	EN	Based on template
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_ITEM_EXISTS
+	EN	Invalid file name - a file with this name already exists
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_CUSTOMIZEDITEM_EXISTS
+	EN	Invalid file name - a customized item with this file name already exists
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME
+	EN	Please enter a file name
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLNAME
+	EN	Please enter a name for your dynamic playlist
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_SQLITESTATEMENT
+	EN	Empty SQLite statement!
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR
+	EN	No custom dir configured
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_PARAM_CONFLICT
+	EN	Possible conflict(s) detected: Does not prevent saving, but check your parameter selection as a precaution

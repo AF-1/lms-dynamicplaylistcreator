@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dynamicplaylistcreator>
+	<template>
+		<name>Random Artists</name>
+		<description>Artist template with options</description>
+		<playlistcategory>artists</playlistcategory>
+		<listweight>1</listweight>
+		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="Random Artists"/>
+		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
+		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter 1&lt;/b&gt; from user" value="" data="genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,virtuallibrary=Virtual Library,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists,addedtime=Last added time,lastplayed=Last played time"/>
+		<parameter type="optionalsinglelist" id="request2fromuser" name="&lt;b&gt;Request parameter 2&lt;/b&gt; from user" value="" data="genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists,addedtime=Last added time,lastplayed=Last played time"/>
+		<parameter type="checkbox" id="notrepeat" name="Do &lt;b&gt;not repeat&lt;/b&gt; tracks within same playlist" value="1"/>
+		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
+		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;date last played&lt;/b&gt;" value="0"/>
+		<parameter type="text" requireplugins="AlternativePlayCount::Plugin" id="maxskipcount" name="Only include tracks with a &lt;b&gt;skip count&lt;/b&gt; less than" value=""/>
+		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="recentlyskipped" name="Ignore &lt;b&gt;recently skipped&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
+		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
+		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
+		<parameter type="text" id="minartisttracks" name="Ignore albums with less tracks than" value="3"/>
+		<parameter type="text" id="noofartists" name="Number of artists from which to get new tracks &lt;b&gt;per batch&lt;/b&gt;" value=""/>
+		<parameter type="text" id="nooftracks" name="Number of tracks added per batch" value="20"/>
+		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
+		<parameter type="optionalsinglelist" id="orderbyplaycount" name="Play &lt;b&gt;most/least played&lt;/b&gt; artists first" value="" data="1=Most played,2=Least played"/>
+		<parameter type="sqlcheckboxes" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude genres" value="0" data="select id,name,name from genres order by namesort asc" quotevalue="1"/>
+		<parameter type="sqlcheckboxes" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude genres" value="0" data="select id,name,name from genres order by namesort asc" quotevalue="1"/>
+		<parameter type="checkbox" id="activevirtuallibrary" name="Limit to &lt;b&gt;currently selected&lt;/b&gt; virtual library on &lt;b&gt;player&lt;/b&gt;" value=""/>
+		<parameter type="functionoptionalsinglelist" id="virtuallibrary" name="&lt;b&gt;Always&lt;/b&gt; limit to &lt;b&gt;this&lt;/b&gt; virtual library" value="" data="Plugins::DynamicPlaylistCreator::Plugin,getVirtualLibraries"/>
+		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>
+	</template>
+</dynamicplaylistcreator>

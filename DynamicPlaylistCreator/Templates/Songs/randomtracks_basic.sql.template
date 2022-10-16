@@ -1,0 +1,130 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:[% playlistgroups %]
+-- PlaylistCategory:songs
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+[%- IF sqlscope %]
+-- Scope:[% sqlscope %]
+[%- END %]
+[%- IF nooftracks %]
+-- PlaylistLimitOption:[% nooftracks %]
+[%- END %]
+[%- IF virtuallibrary %]
+-- PlaylistVirtualLibraryID1:[% virtuallibrary %]
+[%- END %]
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+[%- IF request1fromuser == 'genre' %]
+[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+-- PlaylistParameter1:customgenre:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTGENRE:select id,name,substr(namesort,1,1) from genres join library_genre on genres.id = library_genre.genre and library_genre.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] order by genres.namesort
+[%- ELSE %]
+-- PlaylistParameter1:genre:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTGENRE:
+[%- END %]
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'artist' %]
+[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+-- PlaylistParameter1:customartist:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTARTIST:select id,name,substr(namesort,1,1) from contributors join library_contributor on library_contributor.contributor = contributors.id and library_contributor.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] order by contributors.namesort
+[%- ELSE %]
+-- PlaylistParameter1:artist:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTARTIST:
+[%- END %]
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'album' %]
+[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+-- PlaylistParameter1:customalbum:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTALBUM:select id,title,substr(titlesort,1,1) from albums join library_album on library_album.album = albums.id and library_album.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] order by albums.titlesort
+[%- ELSE %]
+-- PlaylistParameter1:album:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTALBUM:
+[%- END %]
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'year' %]
+[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+-- PlaylistParameter1:customyear:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTYEAR:select year,case when year > 0 then year else 'Unknown' end from tracks join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] group by year order by tracks.year
+[%- ELSE %]
+-- PlaylistParameter1:year:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTYEAR:
+[%- END %]
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'playlist' %]
+[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+-- PlaylistParameter1:customplaylist:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist.id order by playlist.titlesort
+[%- ELSE %]
+-- PlaylistParameter1:playlist:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTPLAYLIST:
+[%- END %]
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'decade' %]
+[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+-- PlaylistParameter1:customdecade:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTDECADE:select cast(((tracks.year/10)*10) as int) as decade,case when tracks.year > 0 then cast(((tracks.year/10)*10) as int)||'s' else 'Unknown' end from tracks,library_track where library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] and tracks.audio = 1 group by decade order by decade desc
+[%- ELSE %]
+-- PlaylistParameter1:customdecade:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTDECADE:select cast(((tracks.year/10)*10) as int) as decade,case when tracks.year > 0 then cast(((tracks.year/10)*10) as int)||'s' else 'Unknown' end from tracks where tracks.audio = 1 group by decade order by decade desc
+[%- END %]
+[%- END %]
+[%- IF customskipfilter %]
+-- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
+-- PlaylistStopAction1:cli:customskip clearsecondaryfilter
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+select distinct tracks.url from tracks
+	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+	join library_track on
+		library_track.track = tracks.id
+		and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
+	[%- END %]
+	[%- IF request1fromuser == 'playlist' %]
+	join playlist_track on
+		tracks.url = playlist_track.track and
+		playlist_track.playlist = 'PlaylistParameter1'
+	[%- ELSIF request1fromuser == 'artist' %]
+	join contributor_track on
+		tracks.id = contributor_track.track and
+		contributor_track.contributor = 'PlaylistParameter1'
+	[%- END %]
+	[%- IF includedgenres or request1fromuser == 'genre' %]
+	join genre_track on
+		tracks.id = genre_track.track
+	join genres on
+		genre_track.genre = genres.id
+	[%- END %]
+	[%- IF notrepeat %]
+	left join dynamicplaylist_history on
+		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+	[%- END %]
+	[%- IF recentlyplayed %]
+		[%- IF useapcvalues %]
+	join alternativeplaycount on
+		alternativeplaycount.urlmd5 = tracks.urlmd5
+		[%- ELSE %]
+	left join tracks_persistent on
+		tracks.url = tracks_persistent.url
+		[%- END %]
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+	[%- IF request1fromuser == 'album' %]
+		and tracks.album = 'PlaylistParameter1'
+	[%- ELSIF request1fromuser == 'year' %]
+		and ifnull(tracks.year, 0) = 'PlaylistParameter1'
+	[%- ELSIF request1fromuser == 'decade' %]
+		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
+	[%- ELSIF request1fromuser == 'genre' %]
+		and genre_track.genre = 'PlaylistParameter1'
+	[%- END %]
+	[%- IF notrepeat %]
+		and dynamicplaylist_history.id is null
+	[%- END %]
+	[%- IF includedgenres %]
+		and genres.name in ([% includedgenres %])
+	[%- END %]
+	[%- IF excludedgenres %]
+		and not exists (select * from tracks t2,genre_track,genres
+						where
+							t2.id = tracks.id and
+							tracks.id = genre_track.track and
+							genre_track.genre = genres.id and
+							genres.name in ([% excludedgenres %]))
+	[%- END %]
+	[%- IF recentlyplayed %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF includedgenres or request1fromuser == 'genre' or request1fromuser == 'artist' or request1fromuser == 'playlist' %]
+	group by tracks.id
+	[%- END %]
+	order by random()
+	[% IF nooftracks %]limit [% nooftracks %][% END %];

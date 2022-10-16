@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dynamicplaylistcreator>
+	<requireplugins>CustomScan::Plugin</requireplugins>
+	<template>
+		<name>Random for Similar Mixed Tags</name>
+		<description>Random tracks for tracks with similar tags as the user selectable track. Uses tags from the Mixed Tag scanning module in Custom Scan.</description>
+		<playlistcategory>tracks</playlistcategory>
+		<listweight>4</listweight>
+		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="Random for Similar Mixed Tags"/>
+		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
+		<parameter type="checkbox" id="notrepeat" name="Do &lt;b&gt;not repeat&lt;/b&gt; tracks within same playlist" value="1"/>
+		<parameter type="sqloptionalsinglelist" id="includetag1" name="Tag &lt;b&gt;1&lt;/b&gt; to include in similarity check" value="" data="select distinct attr,attr,attr from customscan_track_attributes where module='mixedtag'"/>
+		<parameter type="sqloptionalsinglelist" id="includetag2" name="Tag &lt;b&gt;2&lt;/b&gt; to include in similarity check" value="" data="select distinct attr,attr,attr from customscan_track_attributes where module='mixedtag'"/>
+		<parameter type="sqloptionalsinglelist" id="includetag3" name="Tag &lt;b&gt;3&lt;/b&gt; to include in similarity check" value="" data="select distinct attr,attr,attr from customscan_track_attributes where module='mixedtag'"/>
+		<parameter type="sqloptionalsinglelist" id="includetag4" name="Tag &lt;b&gt;4&lt;/b&gt; to include in similarity check" value="" data="select distinct attr,attr,attr from customscan_track_attributes where module='mixedtag'"/>
+		<parameter type="text" id="nooftracks" name="Number of tracks added per batch" value="15"/>
+		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>
+	</template>
+</dynamicplaylistcreator>

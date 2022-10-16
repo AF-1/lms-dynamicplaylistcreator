@@ -1,0 +1,98 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:[% playlistgroups %]
+-- PlaylistCategory:artists
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+[%- IF sqlscope %]
+-- Scope:[% sqlscope %]
+[%- END %]
+[%- IF nooftracks %]
+-- PlaylistLimitOption:[% nooftracks %]
+[%- END %]
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+[%- IF request1fromuser == 'year' %]
+-- PlaylistParameter1:year:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTYEAR:
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'multipleyears' %]
+-- PlaylistParameter1:multipleyears:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTYEARS:
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'decade' %]
+-- PlaylistParameter1:customdecade:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTDECADE:select cast(((tracks.year/10)*10) as int) as decade,case when tracks.year > 0 then cast(((tracks.year/10)*10) as int)||'s' else 'Unknown' end from tracks where tracks.audio = 1 group by decade order by decade desc
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'multipledecades' %]
+-- PlaylistParameter1:multipledecades:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTDECADES:
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'lastplayed' %]
+-- PlaylistParameter1:list:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SONGS_LASTPLAYED:604800:PLUGIN_DYNAMICPLAYLISTS3_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_1WEEK,1209600:PLUGIN_DYNAMICPLAYLISTS3_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_2WEEKS,2592000:PLUGIN_DYNAMICPLAYLISTS3_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_4WEEKS,7948800:PLUGIN_DYNAMICPLAYLISTS3_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_3MONTHS,15811200:PLUGIN_DYNAMICPLAYLISTS3_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_6MONTHS,31536000:PLUGIN_DYNAMICPLAYLISTS3_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_12MONTHS
+[%- END %]
+[%- # ----------- %]
+[%- IF customskipfilter %]
+-- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
+-- PlaylistStopAction1:cli:customskip clearsecondaryfilter
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+[%- IF source == 2 %]
+drop table if exists tmp_preselection_contributors;
+create temporary table tmp_preselection_contributors as
+	select contributor_track.contributor as contributor from contributor_track
+	where contributor_track.contributor in ('PlaylistPreselectedArtists')
+	order by random()
+limit 1;
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+select distinct tracks.url from tracks
+	join contributor_track
+		on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)[% IF source == 1 %] and contributor_track.contributor in ('PlaylistPreselectedArtists')[% END %]
+	[%- IF source == 2 %]
+	join tmp_preselection_contributors
+		on contributor_track.contributor = tmp_preselection_contributors.contributor
+	[%- END %]
+	[%- IF request1fromuser == 'lastplayed' or orderbyplaycount or playedbefore or recentlyplayed %]
+	left join tracks_persistent on
+		tracks.url = tracks_persistent.url
+	[%- END %]
+	[%- IF useapcvalues %]
+	join alternativeplaycount on
+		alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
+	[%- IF notrepeat %]
+	left join dynamicplaylist_history on
+		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+	[%- IF notrepeat %]
+		and dynamicplaylist_history.id is null
+	[%- END %]
+	[%- IF request1fromuser == 'year' %]
+		and ifnull(tracks.year, 0) = 'PlaylistParameter1'
+	[%- ELSIF request1fromuser == 'decade' %]
+		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
+	[%- ELSIF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]
+		and ifnull(tracks.year, 0) in ('PlaylistParameter1')
+	[%- END %]
+	[%- IF maxyear %]
+		and tracks.year <= [% maxyear %]
+	[%- END %]
+	[%- IF minyear %]
+		and tracks.year >= [% minyear %]
+	[%- END %]
+	[%- IF request1fromuser == 'lastplayed' and playedbefore != 1 %]
+		and (strftime('%s', 'now') - ifnull(tracks_persistent.lastPlayed,0)) <= 'PlaylistParameter1'
+	[%- END %]
+	[%- IF recentlyplayed and playedbefore != 1 %]
+		and ifnull(tracks_persistent.lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF playedbefore == 1 and !recentlyplayed %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
+	[%- END %]
+	[%- IF playedbefore == 2 %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
+	[%- END %]
+	group by tracks.id
+	order by [% IF source == 2 %]tmp_preselection_contributors.contributor, [% END %][% IF orderbyplaycount %]tracks_persistent.playCount [% IF orderbyplaycount == 1 %]desc[% ELSE %]asc[% END %], [% END %]random()
+	[% IF nooftracks %]limit [% nooftracks %][% END %];
+[%- IF source == 2 %]
+drop table tmp_preselection_contributors;
+[%- END %]

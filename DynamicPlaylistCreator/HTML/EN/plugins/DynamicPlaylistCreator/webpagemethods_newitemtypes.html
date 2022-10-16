@@ -1,0 +1,44 @@
+<style>details summary{cursor:pointer;outline:none;margin-bottom:10px;margin-left:10px;}details summary > *{display:inline;}.categoryheader{font-weight:600;text-transform:capitalize;}.templates td:first-child {padding-left:20px;}td.col1{width:16em}.filler{height:4px !important;}</style>
+[%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
+
+[%- pwd_list = BLOCK -%]/
+	<a href="[% webroot %]plugins/DynamicPlaylistCreator/list.html">
+		[% "PLUGIN_DYNAMICPLAYLISTCREATOR" | string %]
+	</a>
+[% END -%]
+[%- pageHeaderInfo = BLOCK %]
+[% END -%]
+[% PROCESS pageheader.html %]
+<br>
+<table border="0">
+	<tr><td colspan="3"><b>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_TYPES_TITLE" | string %]</b></td></tr>
+	<tr><td colspan="3">&nbsp;</td></tr>
+	[% IF pluginWebPageMethodsError %]
+	<tr><td colspan="3">
+	<br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br>
+	</td></tr>
+	<tr><td colspan="3">&nbsp;</td></tr>
+	[% END %]
+	[% odd = 1 %]
+</table>
+[%- FOREACH category = ['tracks', 'artists', 'albums', 'genres', 'years', 'playlists'] %]
+	<details open><summary><span class="categoryheader">[% category %]</span></summary>
+		<table border="0">
+			[%- FOREACH item IN pluginWebPageMethodsTemplates.sort('listweight') %]
+				[%- IF item.menulisttype != "contextmenu" && item.playlistcategory == category %]
+				<tr class="templates">
+					<td class="col1" nowrap>
+						<a href="[% webroot %][% pluginWebPageMethodsPostUrl %]?itemtemplate=[% item.id %]&player=[% player | uri %]">[% item.name %]</a>
+					</td>
+					<td class="[% IF odd %]odd[% ELSE %]even[% END %]">&nbsp;&nbsp;&nbsp;</td>
+					<td class="[% IF odd %]odd[% ELSE %]even[% END %]">[% item.description %]
+					</td>
+				</tr>
+				<tr><td class="[% IF odd %]odd[% ELSE %]even[% END %] filler" colspan="3">&nbsp;</td></tr>
+				[% odd = !odd %]
+				[%- END %]
+			[%- END %]
+		</table>
+	</details>
+<br>
+[% END -%]
