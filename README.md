@@ -29,8 +29,7 @@ Just **create dynamic playlists from each template**. Try *different* (combinati
 
 
 ## Report a bug
-Template bugs will usually give you sql errors (see server log) or result in tracks that do not match your parameter selection at all.<br>
-When in doubt, try to find/play a similar *built-in* dynamic playlist to make sure it's a template bug and not problems in your database.<br><br>
+Template bugs will usually give you sql errors (see server log) or result in tracks that do not match your parameter selection at all. When in doubt, try to find/play a similar *built-in* dynamic playlist to make sure it's a template bug and not problems in your database.<br><br>
 If you think that you've found a bug, open an [**issue here on GitHub**](https://github.com/AF-1/lms-dynamicplaylistcreator/issues) and fill out the ***Bug report* issue template**. Please post bug reports on **GitHub only**.<br>
 <br><br><br>
 
