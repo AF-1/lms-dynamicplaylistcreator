@@ -285,8 +285,8 @@ select distinct tracks.url from tracks
 							genre_track.genre = genres.id and
 							genres.name in ([% excludedgenres %]))
 	[%- END %]
-	[%- IF fileformat %]
-		and tracks.content_type = [% fileformat %]
+	[%- IF includedcontenttypes %]
+		and tracks.content_type in ([% includedcontenttypes %])
 	[%- END %]
 	[%- IF lossless %]
 		and tracks.lossless = 1
