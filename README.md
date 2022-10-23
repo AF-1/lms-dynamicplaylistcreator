@@ -14,7 +14,7 @@ Until then, it will continue to be a beta version with updates as bug reports co
 
 - LMS  database = SQLite. Preferably without major problems to avoid false positives.
 
-- **GitHub account** for bug reports, discussion. **Everything** should be handled **on GitHub**, **not** the LMS forum. I'm just not there that much anymore.
+- **GitHub account** to post bug reports. **Everything** should be handled **on GitHub**, **not** the LMS forum. I'm just not there that much anymore.
 
 - You understand that this is a **beta** version. It's believed to contain bugs and is provided on an “as is” and “as available” basis without any warranty. You should not rely in any way on the correct functioning or performance of a beta version. In no case am I responsible/liable for any damages whatsoever arising out of the use of this plugin.
 

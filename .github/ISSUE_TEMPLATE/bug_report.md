@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+**Please a look at the *closed* issues first to avoid duplicates. Thank you.**
+
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
