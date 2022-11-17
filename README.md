@@ -4,11 +4,13 @@
 It is a **BETA** version because I expect bugs in the templates and I won't release an untested plugin. **I don't use this plugin myself and don't have the time to test the templates against all possible parameter combinations**.<br><br>
 If *enough* beta testers come forward to test the templates **extensively** (thank you!), perhaps one day this plugin can be part of the LMS plugin repository.<br>
 Until then, it will continue to be a beta version with updates as bug reports come in.
+<br><br>
+⚠️ After the release of *Dynamic Playlists* version **4**, *Dynamic Playlist Creator* will only be compatible with this version. If you want to continue to use DPL**3**, please use *SQLPlayList* - which in turn will no longer be compatible with version **4**.
 <br><br><br>
 
 
 ## Requirements
-- the latest Dynamic Playlists 3 version
+- latest version of Dynamic Playlists **4** (after its release), version 3 for now
 
 - LMS version ≥ 7.9
 

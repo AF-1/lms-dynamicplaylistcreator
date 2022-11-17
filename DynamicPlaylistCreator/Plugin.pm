@@ -236,7 +236,7 @@ sub getVirtualLibraries {
 		$log->debug('VL: '.$name.' ('.$count.')');
 
 		push @items, {
-			name => Slim::Utils::Unicode::utf8decode($name, 'utf8').' ('.$count.($count == 1 ? ' track)' : ' tracks)'),
+			name => Slim::Utils::Unicode::utf8decode($name, 'utf8').sprintf(" ($count %s)", $count == 1 ? 'track' : 'tracks'),
 			sortName => Slim::Utils::Unicode::utf8decode($name, 'utf8'),
 			value => $persistentVLID,
 			id => $persistentVLID,
