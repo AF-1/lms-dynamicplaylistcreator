@@ -7,14 +7,17 @@ assignees: ''
 
 ---
 
-**Please a look at the *closed* issues first to avoid duplicates. Thank you.**
+**Please read the *FAQ* and take a look at the *closed* issues first to avoid duplicates. Thank you.**
 
+---
 
-**Describe the bug**
+## DESCRIBE THE BUG
 A clear and concise description of what the bug is.
 
 
-**To Reproduce**
+
+<br><br>
+## TO REPRODUCE
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -22,33 +25,50 @@ Steps to reproduce the behavior:
 4. See error
 
 
-**Expected behavior**
+
+<br><br>
+## EXPECTED BEHAVIOR
 A clear and concise description of what you expected to happen.
 
 
-**DPLC template info - REQUIRED**
-Add the (contents of the) “.sql“ and “.customvalues.xml“ files (from the DPLC folder) that belong to the dynamic playlist you've created.
 
-
-**Log excerpt**
+<br><br>
+## LOG EXCERPT
 Add relevant (error) messages from the LMS server log.
 
 
-**Version info**
-LMS version:
-OS (version):
-Plugin version:
-Web skin/controller:  Examples: LMS Default, Material, jivelite (= piCorePlayer, SqueezePlay, Touch, Radio)
-Browser (version):
+
+<br><br>
+## DYNAMIC PLAYLIST INFO
+If the issue involves a **dynamic playlist** created with *DPLC*, please provide
+* the **name of the template** it's based on and
+* the **contents of the “.sql“ and “.customvalues.xml“ files** (from the DPLC folder) that belong to the dynamic playlist you've created.
 
 
-**Screenshots**
+
+<br><br>
+## VERSION INFO
+* LMS version:
+* OS (version):
+* Plugin version:
+* Web skin/controller:     Examples: LMS Default, Material, jivelite (= piCorePlayer, SqueezePlay, Touch, Radio)
+* Browser (version):
+
+
+
+<br><br>
+## SCREENSHOTS
 If applicable, add screenshots to help explain your problem.
 
 
-**Additional context**
+
+<br><br>
+## ADDITIONAL CONTEXT
 Add any other context about the problem here.
 
 
-**Uploads**
+
+<br><br>
+## UPLOADS
 In case you want to provide larger files to illustrate the problem (e.g. your library.db and persist.db), please use a service like **https://wetransfer.com/** and include the download link in your bug report.
+<br>
