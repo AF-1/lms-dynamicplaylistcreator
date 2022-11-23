@@ -45,7 +45,7 @@ Add the repository URL below at the bottom of *LMS* > *Settings* > *Plugins* and
 
 - DPLC will *always* save a fully “fleshed out” SQLite playlist, even if you use the recommended *Default format* (xml), because *Dynamic Playlists 3* scans the DPLC custom folder for **sql** files. That's how the dynamic playlists you create with DPLC get listed in *Dynamic Playlists 3*.
 - I have combined some templates. Example: *Least/most played* is now an option in other templates.
-- Compatible with *Dynamic Playlists 3*, *Custom Skip 3* and *Alternative Play Count*. CustomScan: untested.
+- Compatible with *Dynamic Playlists* (version 3 or higher), *Custom Skip* 3 and *Alternative Play Count*. CustomScan: untested.
 - You can't import or migrate dynamic playlist definitions from the SQLPlayList plugin. The templates are different.
 - This plugin will not be localized because parameter names and value names are baked into the templates. And a halfway localized version is worse than a non-localized one.
 <br>
