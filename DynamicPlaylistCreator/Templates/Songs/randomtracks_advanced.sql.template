@@ -7,7 +7,10 @@
 [%- IF sqlscope %]
 -- Scope:[% sqlscope %]
 [%- END %]
-[%- IF nooftracks %]
+[%- IF dplversion != 3 %]
+-- PlaylistUseCache: 1
+[%- END %]
+[%- IF nooftracks && dplversion == 3 %]
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
 [%- IF virtuallibrary %]
@@ -138,7 +141,7 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select distinct tracks.url from tracks
+select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 	join library_track on
@@ -285,6 +288,16 @@ select distinct tracks.url from tracks
 							genre_track.genre = genres.id and
 							genres.name in ([% excludedgenres %]))
 	[%- END %]
+	[%- IF excludedstaticplaylists %]
+		and not exists (select * from tracks t2,playlist_track
+						where
+							t2.id = tracks.id and
+							tracks.url = playlist_track.track and
+							playlist_track.playlist in (select max(playlist) from playlist_track, tracks where
+								playlist_track.playlist = tracks.id and
+								tracks.titlesearch in ([% excludedstaticplaylists %])
+								group by playlist_track.playlist))
+	[%- END %]
 	[%- IF includedcontenttypes %]
 		and tracks.content_type in ([% includedcontenttypes %])
 	[%- END %]
@@ -323,12 +336,10 @@ select distinct tracks.url from tracks
 	[%- IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]
 	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 	[%- END %]
-	[%- IF includedcomment or includedartist or includedgenres or minrating or exactrating or recentlyplayed or request1fromuser or request2fromuser %]
 	group by tracks.id
-	[%- END %]
 	[%- IF orderbyplaycount %]
-	order by [% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF orderbyplaycount == 1 %]desc[% ELSE %]asc[% END %], random()
-	[%- ELSE %]
+	order by [% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF orderbyplaycount == 1 %]desc[% ELSE %]asc[% END %][% IF dplversion == 3 %], random()[% END %]
+	[%- ELSIF dplversion == 3 %]
 	order by random()
 	[%- END %]
-	[% IF nooftracks %]limit [% nooftracks %][% END %];
+	[% IF nooftracks && dplversion == 3 %]limit [% nooftracks %][% END %]

@@ -117,7 +117,6 @@ sub readFromDir {
 		# read_file from File::Slurp
 		my $content = undef;
 		if (defined($self->cacheItems) && defined($self->cacheItems->{'items'}->{$path}) && defined($timestamp) && $self->cacheItems->{'items'}->{$path}->{'timestamp'}>=$timestamp) {
-			#$log->debug("Reading $item from cache");
 			$content = $self->cacheItems->{'items'}->{$path}->{'data'};
 		} else {
 			$content = eval { read_file($path) };
@@ -186,7 +185,6 @@ sub readDataFromDir {
 
 	my $timestamp = (stat ($path))[9];
 	if (defined($self->cacheItems) && defined($self->cacheItems->{'items'}->{$path}) && defined($timestamp) && $self->cacheItems->{'items'}->{$path}->{'timestamp'}>=$timestamp) {
-		#$log->debug("Reading $item from cache");
 		return $self->cacheItems->{'items'}->{$path}->{'data'};
 	}
 

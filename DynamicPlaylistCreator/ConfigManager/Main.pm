@@ -39,7 +39,7 @@ use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
 use Data::Dumper;
 
-__PACKAGE__->mk_accessor(rw => qw(pluginVersion contentDirectoryHandler templateContentDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler contentPluginHandler templatePluginHandler parameterHandler templateParser contentParser templateContentParser webPageMethods addSqlErrorCallback templates items));
+__PACKAGE__->mk_accessor(rw => qw(pluginVersion contentDirectoryHandler templateContentDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler contentPluginHandler templatePluginHandler parameterHandler templateParser contentParser templateContentParser webPageMethods addSqlErrorCallback templates items dplVersion));
 
 my $log = logger('plugin.dynamicplaylistcreator');
 my $prefs = preferences('plugin.dynamicplaylistcreator');
@@ -51,8 +51,10 @@ sub new {
 
 	$self->pluginVersion($parameters->{'pluginVersion'});
 	$self->addSqlErrorCallback($parameters->{'addSqlErrorCallback'});
+	$self->dplVersion($parameters->{'dplVersion'});
 
 	$self->init();
+
 	return $self;
 }
 
@@ -140,6 +142,7 @@ sub initWebPageMethods {
 	}
 	my %webPageMethodsParameters = (
 		'pluginVersion' => $self->pluginVersion,
+		'dplVersion' => $self->dplVersion,
 		'extension' => 'sql',
 		'simpleExtension' => 'customvalues.xml',
 		'contentPluginHandler' => $self->contentPluginHandler,

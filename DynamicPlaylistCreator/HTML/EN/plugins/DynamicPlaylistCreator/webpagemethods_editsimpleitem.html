@@ -18,6 +18,7 @@
 	<tr><td colspan="3">&nbsp;</td></tr>
 	[%- FOREACH parameter = pluginWebPageMethodsEditItemParameters %]
 		[% IF !(parameter.type.match('list') or parameter.type.match('checkboxes')) or (parameter.values.size!=0 and !(parameter.values.0.value=='' and parameter.values.size==1))%]
+		[% UNLESS parameter.type == 'text' && parameter.id == 'nooftracks' && usecache && dplversion != 3 %]
 		<tr>
 			<td>[% parameter.name %]</td>
 			<td id="warning_[% parameter.id %]" class="warningbgimg"></td>
@@ -37,20 +38,20 @@
 						</select>
 					</td></tr>
 				</table>
-			[% ELSIF parameter.type.match('multiplelist') %]
+			[% ELSIF parameter.type.match('multiplelist') || parameter.type == 'contributorlistcached' %]
 				<table border="0">
 					<tr><td>
 						<select name="itemparameter_[% parameter.id %]" multiple size="10">
 						[%- FOREACH item = parameter.values %]
 							[%- itemid = item.id %]
-							<option name="[% itemid %]" id="[% itemid %]" value="[% itemid %]" [% IF item.selected %]selected[% END %]>[% item.name | html %]</option>
+							<option name="[% itemid %]" id="[% itemid %]" value="[% itemid %]" [% IF item.selected %]selected[% END %]>[% FILTER truncate(110, '&hellip;') %][% item.name | html %][% END %]</option>
 						[%- END %]
 						</select>
 					</td></tr>
 				</table>
 			[% ELSIF parameter.type == 'checkbox' %]
 				<input type="checkbox" name="itemparameter_[% parameter.id %]" id="itemparameter_[% parameter.id %]" value="1" [% parameter.value ? "checked" : "" %]>
-			[% ELSIF parameter.type.match('checkboxes') %]
+			[% ELSIF parameter.type.match('checkboxes') || parameter.type == 'genrelistcached' || parameter.type.match == 'contenttypelistcached' %]
 				<table border="0">[% USE table parameter.values, cols=3, pad=0 %]
 					[%- FOREACH itemrow = table.rows %]
 						<tr>
@@ -68,6 +69,7 @@
 			[% END %]
 			</td>
 		</tr>
+		[% END %]
 		<tr><td>&nbsp;</td></tr>
 		[% IF parameter.id == 'playlistname' && parameter.basetemplate %]
 		<tr>

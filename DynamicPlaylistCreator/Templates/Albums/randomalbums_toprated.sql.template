@@ -165,7 +165,7 @@ create temporary table tmp_random_albums as
 	order by random()
 	limit [% IF noofalbums %][% noofalbums %][% ELSE %]1[% END %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select distinct tracks.url from tracks
+select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	join tmp_random_albums
 		on tracks.album = tmp_random_albums.album
 	[%- # ------- VIRTUAL LIBRARY ------- %]
@@ -247,9 +247,7 @@ select distinct tracks.url from tracks
 							genre_track.genre = genres.id and
 							genres.name in ([% excludedgenres %]))
 	[%- END %]
-	[%- IF includedgenres or notrepeat %]
 	group by tracks.id
-	[%- END %]
 	order by tmp_random_albums.album, tracks.disc, tracks.tracknum
 	[% IF nooftracks %]limit [% nooftracks %][% END %];
 drop table tmp_random_albums;

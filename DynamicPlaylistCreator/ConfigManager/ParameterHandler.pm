@@ -38,6 +38,7 @@ __PACKAGE__->mk_accessor(rw => qw(parameterPrefix criticalErrorCallback));
 my $newUnicodeHandling = 0;
 
 my $log = logger('plugin.dynamicplaylistcreator');
+my $cache = Slim::Utils::Cache->new();
 
 sub new {
 	my ($class, $parameters) = @_;
@@ -101,6 +102,15 @@ sub addValuesToTemplateParameter {
 			}
 		}
 		$p->{'values'} = $listValues;
+	} elsif ($p->{'type'} =~ 'contributorlistcached') {
+		my $listValues = $cache->get('dplc_contributorlist') || [];
+		$p->{'values'} = $listValues;
+	} elsif ($p->{'type'} =~ 'genrelistcached') {
+		my $genreList = $cache->get('dplc_genrelist') || [];
+		$p->{'values'} = $genreList;
+	} elsif ($p->{'type'} =~ 'contenttypelistcached') {
+		my $contentTypeList = $cache->get('dplc_contenttypes') || [];
+		$p->{'values'} = $contentTypeList;
 	} elsif ($p->{'type'} =~ '.*list$' || $p->{'type'} =~ '.*checkboxes$') {
 		my @listValues = ();
 		my @values = split(/,/, $p->{'data'});
@@ -137,7 +147,7 @@ sub setValueOfTemplateParameter {
 	my ($self, $p, $currentValues) = @_;
 
 	if (defined($currentValues)) {
-		if ($p->{'type'} =~ '^sql.*' || $p->{'type'} =~ 'function.*' || $p->{'type'} =~ '.*list$' || $p->{'type'} =~ '.*checkboxes$') {
+		if ($p->{'type'} =~ '^sql.*' || $p->{'type'} =~ 'function.*' || $p->{'type'} =~ '.*list$' || $p->{'type'} =~ '.*checkboxes$' || $p->{'type'} =~ '.*cached$') {
 			my $listValues = $p->{'values'};
 			for my $v (@{$listValues}) {
 				if ($currentValues->{$v->{'value'}}) {
@@ -157,9 +167,9 @@ sub setValueOfTemplateParameter {
 sub parameterIsSpecified {
 	my ($self, $params, $parameter) = @_;
 
-	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/) {
+	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ '.*cached$') {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/) {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcached') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
@@ -185,9 +195,9 @@ sub getValueOfTemplateParameter {
 
 	my $result = '';
 	my $dbh = getCurrentDBH();
-	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/) {
+	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ '.*cached$') {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/) {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcached') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
@@ -261,9 +271,9 @@ sub getXMLValueOfTemplateParameter {
 	my ($self, $params, $parameter) = @_;
 	my $dbh = getCurrentDBH();
 	my $result = '';
-	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/) {
+	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ '.*cached$') {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/) {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcached') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
@@ -271,8 +281,9 @@ sub getXMLValueOfTemplateParameter {
 		$log->debug("Got ".scalar(keys %{$selectedValues})." values for ".$parameter->{'id'}." to convert to XML");
 
 		my $values = $parameter->{'values'};
+
 		for my $item (@{$values}) {
-			if (defined($selectedValues->{$item->{'id'}})) {
+				if (defined($selectedValues->{$item->{'id'}})) {
 				$result = $result.'<value>';
 				$result = $result.encode_entities($item->{'value'}, "&<>\'\"");
 				$result = $result.'</value>';

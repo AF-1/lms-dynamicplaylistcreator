@@ -5,9 +5,10 @@
 		<description>Random tracks from a static playlist</description>
 		<playlistcategory>playlists</playlistcategory>
 		<listweight>1</listweight>
+		<usecache>1</usecache>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="Random Static Playlist Tracks"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
-		<parameter type="sqlsinglelist" id="playlist" name="Select static playlist" value="" data="select tracks.titlesearch,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort"/>
+		<parameter type="sqlmultiplelist" id="includedstaticplaylists" name="Select static playlists" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,decade=Decade,genre=Genre,year=Year"/>
 		<parameter type="checkbox" id="notrepeat" name="Do &lt;b&gt;not repeat&lt;/b&gt; tracks within same playlist" value="1"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>

@@ -7,7 +7,10 @@
 [%- IF sqlscope %]
 -- Scope:[% sqlscope %]
 [%- END %]
-[%- IF nooftracks %]
+[%- IF dplversion != 3 %]
+-- PlaylistUseCache: 1
+[%- END %]
+[%- IF nooftracks && dplversion == 3 %]
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
 [%- IF virtuallibrary %]
@@ -19,7 +22,7 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
-select distinct tracks.url from tracks
+select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
@@ -79,5 +82,7 @@ select distinct tracks.url from tracks
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
 	group by tracks.id
+	[%- IF dplversion == 3 %]
 	order by random()
-	[% IF nooftracks %]limit [% nooftracks %][% END %];
+	[%- END %]
+	[% IF nooftracks && dplversion == 3 %]limit [% nooftracks %][% END %]

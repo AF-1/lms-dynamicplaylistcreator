@@ -87,7 +87,7 @@ create temporary table tmp_random_genres as
 	order by random()
 	limit [% IF noofgenres %][% noofgenres %][% ELSE %]1[% END %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select distinct tracks.url from tracks
+select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	join genre_track on
 		tracks.id = genre_track.track
 	join tmp_random_genres
@@ -138,9 +138,7 @@ select distinct tracks.url from tracks
 							genre_track.genre = genres.id and
 							genres.name in ([% excludedgenres %]))
 	[%- END %]
-	[%- IF notrepeat %]
 	group by tracks.id
-	[%- END %]
 	order by random()
 	[% IF nooftracks %]limit [% nooftracks %][% END %];
 drop table tmp_random_genres;

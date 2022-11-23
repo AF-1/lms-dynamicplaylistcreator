@@ -28,7 +28,7 @@ create temporary table tmp_preselection_albums as
 limit 1;
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select distinct tracks.url from tracks
+select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	[%- IF source == 2 %]
 	join tmp_preselection_albums
 		on tracks.album = tmp_preselection_albums.album

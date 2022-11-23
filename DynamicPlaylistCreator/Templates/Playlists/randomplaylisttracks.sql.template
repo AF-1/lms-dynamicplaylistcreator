@@ -7,10 +7,15 @@
 [%- IF sqlscope %]
 -- Scope:[% sqlscope %]
 [%- END %]
-[%- IF nooftracks %]
+[%- IF dplversion != 3 %]
+-- PlaylistUseCache: 1
+[%- END %]
+[%- IF nooftracks && dplversion == 3 %]
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
+[%- IF !randomordered %]
 -- PlaylistTrackOrder:ordered
+[%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 [%- IF request1fromuser == 'genre' %]
 -- PlaylistParameter1:genre:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTGENRE:
@@ -29,12 +34,12 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select distinct tracks.url from tracks
+select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	join playlist_track on
 		tracks.url = playlist_track.track and
-		playlist_track.playlist = (select max(playlist) from playlist_track, tracks where
+		playlist_track.playlist in (select max(playlist) from playlist_track, tracks where
 						playlist_track.playlist = tracks.id and
-						tracks.titlesearch = '[% playlist %]'
+						tracks.titlesearch in ([% includedstaticplaylists %])
 					group by playlist_track.playlist)
 	[%- IF request1fromuser == 'artist' %]
 	join contributor_track on
@@ -88,8 +93,6 @@ select distinct tracks.url from tracks
 	[%- IF recentlyplayed and playedbefore != 1 %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
-	[%- IF playlist or request1fromuser == 'genre' or request1fromuser == 'artist' %]
 	group by tracks.id
-	[%- END %]
-	order by [% IF orderbyplaycount %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF orderbyplaycount == 1 %]desc[% ELSE %]asc[% END %], [% END %][% IF randomordered %]random()[% ELSE %]playlist_track.position asc[% END %]
-	[% IF nooftracks %]limit [% nooftracks %][% END %];
+	order by [% IF orderbyplaycount %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF orderbyplaycount == 1 %]desc[% ELSE %]asc[% END %], [% END %][% IF randomordered && dplversion == 3 %]random()[% ELSE %]playlist_track.position asc[% END %]
+	[% IF nooftracks && dplversion != 3 %]limit [% nooftracks %][% END %]

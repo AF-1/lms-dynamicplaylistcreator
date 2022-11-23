@@ -164,11 +164,6 @@ sub parseTemplateContent {
 				undef $content;
 				return undef;
 			}
-			if (!$self->checkTemplateValues($template, $valuesXml, $globalcontext, $localcontext)) {
-				$log->debug("Ignoring $item due to checkTemplateValues");
-				undef $content;
-				return undef;
-			}
 			if (defined($template->{'timestamp'}) && defined($timestamp) && $template->{'timestamp'}>$timestamp) {
 				$timestamp = $template->{'timestamp'};
 				$localcontext->{'timestamp'} = $timestamp;
@@ -245,11 +240,6 @@ sub parseTemplateContent {
 							}
 						}
 					}
-				}
-				if (!$self->checkTemplateParameters($template, \%templateParameters, $globalcontext, $localcontext)) {
-					$log->debug("Ignoring $item due to checkTemplateParameters");
-					undef $content;
-					return undef;
 				}
 				my $templateData = $self->loadTemplate($client, $template, \%templateParameters);
 				if (!defined($templateData)) {
@@ -426,30 +416,9 @@ sub parseContentImplementation {
 			}
 		}
 
-		if ($include) {
-			if ($self->checkContent($xml, $globalcontext, $localcontext)) {
-				return $xml->{$self->contentType};
-			} else {
-				$log->debug("Skipping ".$self->contentType." $item");
-			}
-		}
+		return $xml->{$self->contentType} if $include;
 	}
 	return undef;
-}
-
-sub checkContent {
-	my ($self, $xml, $globalcontext, $localcontext) = @_;
-	return 1;
-}
-
-sub checkTemplateValues {
-	my ($self, $template, $valuesXml, $globalcontext, $localcontext) = @_;
-	return 1;
-}
-
-sub checkTemplateParameters {
-	my ($self, $template, $parameters, $globalcontext, $localcontext) = @_;
-	return 1;
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;

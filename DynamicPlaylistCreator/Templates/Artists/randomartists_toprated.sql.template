@@ -73,7 +73,7 @@ create temporary table toprated_random_contributors as
 	order by random()
 	limit [% IF noofartists %][% noofartists %][% ELSE %]1[% END %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select distinct tracks.url from tracks
+select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	join contributor_track
 		on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
 	join toprated_random_contributors
@@ -116,9 +116,7 @@ select distinct tracks.url from tracks
 							genre_track.genre = genres.id and
 							genres.name in ([% excludedgenres %]))
 	[%- END %]
-	[%- IF includedgenres %]
 	group by tracks.id
-	[%- END %]
 	order by toprated_random_contributors.contributor, random()
 	[% IF nooftracks %]limit [% nooftracks %][% END %];
 drop table toprated_random_contributors;

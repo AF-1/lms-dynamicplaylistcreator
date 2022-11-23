@@ -39,7 +39,7 @@ use FindBin qw($Bin);
 use HTML::Entities;
 use Data::Dumper;
 
-__PACKAGE__->mk_accessor(rw => qw(pluginVersion extension simpleExtension contentPluginHandler templatePluginHandler contentDirectoryHandler contentTemplateDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler parameterHandler contentParser templateDirectories itemDirectories customItemDirectory webCallbacks webTemplates template templateExtension templateDataExtension));
+__PACKAGE__->mk_accessor(rw => qw(pluginVersion dplVersion extension simpleExtension contentPluginHandler templatePluginHandler contentDirectoryHandler contentTemplateDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler parameterHandler contentParser templateDirectories itemDirectories customItemDirectory webCallbacks webTemplates template templateExtension templateDataExtension));
 
 my $utf8filenames = 1;
 my $serverPrefs = preferences('server');
@@ -55,6 +55,7 @@ sub new {
 
 	my $self = $class->SUPER::new($parameters);
 	$self->pluginVersion($parameters->{'pluginVersion'});
+	$self->dplVersion($parameters->{'dplVersion'});
 	$self->extension($parameters->{'extension'});
 	$self->simpleExtension($parameters->{'simpleExtension'});
 	$self->contentPluginHandler($parameters->{'contentPluginHandler'});
@@ -171,6 +172,9 @@ sub webEditItem {
 									$p->{'basetemplate'} = $template->{'name'};
 								}
 
+								# add version of installed DynamicPlaylists plugin
+								$p->{'dplversion'} = $self->dplVersion;
+
 								# add size for input element if specified
 								if ($p->{'type'} eq 'text') {
 									$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
@@ -194,6 +198,8 @@ sub webEditItem {
 					$params->{'pluginWebPageMethodsEditItemTemplate'} = lc($templateData->{'id'});
 					$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
 					$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
+					$params->{'dplversion'} = $self->dplVersion;
+					$params->{'usecache'} = $template->{'usecache'};
 					$params->{'disableconflictcheck'} = $prefs->get('disableconflictcheck');
 					return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditSimpleItem'}, $params);
 				}
@@ -240,6 +246,8 @@ sub webNewItemParameters {
 			}
 		}
 		$params->{'pluginWebPageMethodsNewItemParameters'} = \@parametersToSelect;
+		$params->{'dplversion'} = $self->dplVersion;
+		$params->{'usecache'} = $template->{'usecache'};
 		$params->{'templateName'} = $template->{'name'};
 		$params->{'disableconflictcheck'} = $prefs->get('disableconflictcheck');
 	}
@@ -280,7 +288,6 @@ sub webNewItem {
 	my %templateParameters = ();
 	if (defined($template->{'parameter'})) {
 		my $parameters = $template->{'parameter'};
-		my @parametersToSelect = ();
 		for my $p (@{$parameters}) {
 			if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
 				my $useParameter = 1;
@@ -298,19 +305,27 @@ sub webNewItem {
 
 	# add the name of template on which the dynamic playlist is based
 	$templateParameters{'basetemplate'} = $template->{'name'};
-	if ($menytype ne 'advanced') {
-		$templateParameters{'sqlscope'} = 'dplonly';
-	}
+
+	# add target param to hide DPL-only adv versions of simple type dpls
+	$templateParameters{'sqlscope'} = 'dplonly' if ($menytype ne 'advanced');
+
+	# add version of installed DynamicPlaylists plugin
+	$templateParameters{'dplversion'} = $self->dplVersion;
+
 	my $templateFileData = $templateFile;
 	my $doParsing = 1;
 	my $itemData = undef;
+
 	if ($doParsing) {
 		$itemData = $self->fillTemplate($templateFileData, \%templateParameters);
 	} else {
 		$itemData = $templateFileData;
 	}
+
 	$itemData = encode_entities($itemData, "&<>\'\"");
+
 	$params->{'sqltextdplonly'} = $itemData;
+
 
 	## adv
 	if ($menytype eq 'advanced') {
@@ -394,7 +409,6 @@ sub webSaveSimpleItem {
 			}
 			$parameters = \@parameterArray;
 		}
-		my @parametersToSelect = ();
 		for my $p (@{$parameters}) {
 			if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
 				my $useParameter = 1;
@@ -415,8 +429,11 @@ sub webSaveSimpleItem {
 	# add the name of template on which the dynamic playlist is based
 	$templateParameters{'basetemplate'} = $template->{'name'};
 
-	# add target param to hide DPL3-only adv versions of simple type dpls
-	$templateParameters{'target'} = 'DPL3only' if ($itemtype ne 'advanced');
+	# add version of installed DynamicPlaylists plugin
+	$templateParameters{'dplversion'} = $self->dplVersion;
+
+	# add target param to hide DPL-only adv versions of simple type dpls
+	$templateParameters{'sqlscope'} = 'dplonly' if ($itemtype ne 'advanced');
 
 	my $doParsing = 1;
 	my $templateFileData = $templateFile;
@@ -581,14 +598,12 @@ sub saveSimpleItem {
 	my ($self, $client, $params, $url, $templateId, $templates, $customUrl) = @_;
 	my $fh;
 	$log->debug('Start saveSimpleItem');
-
 	my $regexp = $self->simpleExtension;
 	$regexp =~ s/\./\\./;
 	$regexp = ".*".$regexp."\$";
 	if (!($url =~ /$regexp/)) {
 		$url .= ".".$self->simpleExtension;
 	}
-
 	if (!($params->{'pluginWebPageMethodsError'})) {
 		$log->debug("Opening configuration file: $url");
 		open($fh, ">:encoding(UTF-8)", $url) or do {
@@ -603,7 +618,6 @@ sub saveSimpleItem {
 		$data .= "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<dynamicplaylistcreator>\n\t<template>\n\t\t<id>".$templateId."</id>";
 		if (defined($template->{'parameter'})) {
 			my $parameters = $template->{'parameter'};
-			my @parametersToSelect = ();
 			if (ref($parameters) ne 'ARRAY') {
 				my @parameterArray = ();
 				if (defined($parameters)) {

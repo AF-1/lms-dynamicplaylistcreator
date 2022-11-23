@@ -51,6 +51,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'WARN',
 	'description' => 'PLUGIN_DYNAMICPLAYLISTCREATOR',
 });
+my $cache = Slim::Utils::Cache->new();
+my $dplVersion = 0;
 
 sub initPlugin {
 	my $class = shift;
@@ -61,6 +63,8 @@ sub initPlugin {
 	if (!$::noweb) {
 		Plugins::DynamicPlaylistCreator::Settings->new($class);
 	}
+
+	Slim::Control::Request::subscribe(\&refreshSQLCache, [['rescan'], ['done']]);
 }
 
 sub initPrefs {
@@ -85,6 +89,23 @@ sub initPrefs {
 	}, 'customdirparentfolderpath');
 }
 
+sub postinitPlugin {
+	my $class = shift;
+	unless ($cache->get('dplc_contributorlist') && $cache->get('dplc_genrelist') && $cache->get('dplc_contenttypes')) {
+		$log->info('Refreshing caches for contributors, genres and content types');
+		refreshSQLCache();
+	}
+
+	my @enabledPlugins = Slim::Utils::PluginManager->enabledPlugins();
+	for my $plugin (@enabledPlugins) {
+		if ($plugin =~ /DynamicPlaylists/) {
+			my $version = int(version->parse(Slim::Utils::PluginManager->dataForPlugin($plugin)->{'version'}));
+			$dplVersion = $version if $version > $dplVersion;
+		}
+	}
+	$dplVersion = 4 if !$dplVersion;
+}
+
 sub initPlayLists {
 	my $client = shift;
 	my @pluginDirs = ();
@@ -92,11 +113,9 @@ sub initPlayLists {
 	my $itemConfiguration = getConfigManager()->readItemConfiguration($client, 1);
 	$playLists = $itemConfiguration->{'playlists'};
 
-	# Refresh list of playlists in DPL3
+	# Refresh list of dynamic playlists in DPL
 	if (defined($client)) {
-		$log->debug(('Tell DPL3 to refresh list of dynamic playlists'));
-		my $request = $client->execute(['dynamicplaylist', 'refreshplaylists']);
-		$request->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&refreshDPLplaylists);
 	}
 	$log->debug('playlists = '.Dumper($playLists));
 }
@@ -106,12 +125,21 @@ sub getConfigManager {
 		my %parameters = (
 			'pluginVersion' => $pluginVersion,
 			'addSqlErrorCallback' => undef,
+			'dplVersion' => $dplVersion
 		);
 		$configManager = Plugins::DynamicPlaylistCreator::ConfigManager::Main->new(\%parameters);
 	}
 	return $configManager;
 }
 
+sub refreshDPLplaylists {
+	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&refreshDPLplaylists);
+	$log->debug('Tell DPL to refresh list of dynamic playlists');
+	my $request = $client->execute(['dynamicplaylist', 'refreshplaylists']);
+	$request->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
+}
 
 ### web pages
 
@@ -230,7 +258,7 @@ sub getVirtualLibraries {
 	$log->debug('ALL virtual libraries: '.Dumper($libraries));
 
 	while (my ($key, $values) = each %{$libraries}) {
-		my $count = Slim::Utils::Misc::delimitThousands(Slim::Music::VirtualLibraries->getTrackCount($key)) + 0;
+		my $count = Slim::Utils::Misc::delimitThousands(Slim::Music::VirtualLibraries->getTrackCount($key));
 		my $name = $values->{'name'};
 		my $persistentVLID = $values->{'id'};
 		$log->debug('VL: '.$name.' ('.$count.')');
@@ -254,6 +282,26 @@ sub getVirtualLibraries {
 		@items = sort {lc($a->{sortName}) cmp lc($b->{sortName})} @items;
 	}
 	return \@items;
+}
+
+sub refreshSQLCache {
+	$log->debug('Deleting old caches and creating new ones');
+	$cache->remove('dplc_contributorlist');
+	$cache->remove('dplc_genrelist');
+	$cache->remove('dplc_contenttypes');
+
+	my $contributorSQL = "select contributors.id,contributors.name,contributors.name from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc";
+	my $genreSQL = "select id,name,name from genres order by namesort asc";
+	my $contentTypesSQL = "select distinct tracks.content_type,tracks.content_type,tracks.content_type from tracks where tracks.content_type is not null and tracks.content_type != 'cpl' and tracks.content_type != 'src' and tracks.content_type != 'ssp' and tracks.content_type != 'dir' order by tracks.content_type asc";
+
+	my $contributorList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL);
+	$cache->set('dplc_contributorlist', $contributorList, 'never') if scalar($contributorList) > 0;
+
+	my $genreList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $genreSQL);
+	$cache->set('dplc_genrelist', $genreList, 'never') if scalar($genreList) > 0;
+
+	my $contentTypesList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contentTypesSQL);
+	$cache->set('dplc_contenttypes', $contentTypesList, 'never') if scalar($contentTypesList) > 0;
 }
 
 sub clearCache {

@@ -22,7 +22,7 @@
 drop table if exists randomweightedratingslow;
 drop table if exists randomweightedratingshigh;
 drop table if exists randomweightedratingscombined;
-create temporary table randomweightedratingslow as select tracks.url as url from tracks
+create temporary table randomweightedratingslow as select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 	join library_track on
 		library_track.track = tracks.id
@@ -64,13 +64,11 @@ create temporary table randomweightedratingslow as select tracks.url as url from
 	[%- IF recentlyplayed %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
-	[%- IF includedgenres %]
 	group by tracks.id
-	[%- END %]
 	order by random()
 	limit [% percentage %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
-create temporary table randomweightedratingshigh as select tracks.url as url from tracks
+create temporary table randomweightedratingshigh as select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 	join library_track on
 		library_track.track = tracks.id
@@ -116,9 +114,7 @@ create temporary table randomweightedratingshigh as select tracks.url as url fro
 		and ifnull(tracks_persistent.lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
 		[%- END %]
 	[%- END %]
-	[%- IF includedgenres %]
 	group by tracks.id
-	[%- END %]
 	order by random()
 	limit [% 100 - percentage %];
 [% # --------------------------------------------------------------------------------------------------------------- %]

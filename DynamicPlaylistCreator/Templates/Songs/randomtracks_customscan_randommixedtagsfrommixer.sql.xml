@@ -6,6 +6,7 @@
 		<description>Random tracks for specified tags from the Mixed Tag scanning module in Custom Scan with values from specified selection.</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>5</listweight>
+		<usecache>1</usecache>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="Random for Specified Mixed Tags"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="checkbox" id="notrepeat" name="Do &lt;b&gt;not repeat&lt;/b&gt; tracks within same playlist" value="1"/>
