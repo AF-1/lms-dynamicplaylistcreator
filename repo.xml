@@ -3,13 +3,13 @@
 		<title lang="EN">DPLC BETA Repo (AF1)</title>
 	</details>
 	<plugins>
-		<plugin name="DynamicPlaylistCreator" version="0.2.0" minTarget="7.9" maxTarget="*">
+		<plugin name="DynamicPlaylistCreator" version="0.2.1" minTarget="7.9" maxTarget="*">
 			<title lang="EN">Dynamic Playlist Creator - BETA</title>
 			<desc lang="EN">BETA release versions of Dynamic Playlist Creator. Please read the requirements on the GitHub page first.</desc>
-			<url>https://github.com/AF-1/lms-dynamicplaylistcreator/releases/download/0.2.0/lms-dynamicplaylistcreator-0.2.0.zip</url>
+			<url>https://github.com/AF-1/lms-dynamicplaylistcreator/releases/download/0.2.1/lms-dynamicplaylistcreator-0.2.1.zip</url>
 			<creator>AF</creator>
 			<link>https://github.com/AF-1/lms-dynamicplaylistcreator</link>
-			<sha>9aa554408d1607a1587fa64b69cfef2cead29c66</sha>
+			<sha>a38dc2a0b65eda6d64e5d79f706a3cb6d64056f4</sha>
 		</plugin>
 	</plugins>
 </extensions>
