@@ -1,6 +1,6 @@
-# Dynamic Playlist Creator - BETA
+# Dynamic Playlist Creator
 
-**Dynamic Playlist Creator** [^1] is a companion plugin for the *Dynamic Playlists 3* plugin. It helps you create dynamic playlists using templates.<br><br>
+**Dynamic Playlist Creator** [^1] is a companion plugin for the *Dynamic Playlists* plugin. It helps you create dynamic playlists using templates.<br><br>
 It is a **BETA** version because I expect bugs in the templates and I won't release an untested plugin. **I don't use this plugin myself and don't have the time to test the templates against all possible parameter combinations**.<br><br>
 If *enough* beta testers come forward to test the templates **extensively** (thank you!), perhaps one day this plugin can be part of the LMS plugin repository.<br>
 Until then, it will continue to be a beta version with updates as bug reports come in.
@@ -8,7 +8,7 @@ Until then, it will continue to be a beta version with updates as bug reports co
 
 
 ## Requirements
-- latest Dynamic Playlists version 3 or 4
+- latest Dynamic Playlists version 3 or higher
 
 - LMS version ≥ 7.9
 
@@ -16,7 +16,7 @@ Until then, it will continue to be a beta version with updates as bug reports co
 
 - **GitHub account** to post bug reports. **Everything** should be handled **on GitHub**, **not** the LMS forum. I'm just not there that much anymore.
 
-- You understand that this is a **beta** version. It's believed to contain bugs and is provided on an “as is” and “as available” basis without any warranty. You should not rely in any way on the correct functioning or performance of a beta version. In no case am I responsible/liable for any damages whatsoever arising out of the use of this plugin.
+- You understand that this is a **BETA** version. It's believed to contain bugs and is provided on an “as is” and “as available” basis without any warranty. You should not rely in any way on the correct functioning or performance of a beta version. In no case am I responsible/liable for any damages whatsoever arising out of the use of this plugin.
 
 - Patience
 <br><br><br>
@@ -24,7 +24,7 @@ Until then, it will continue to be a beta version with updates as bug reports co
 
 ## What to test for
 Look for **template** bugs in particular.<br>
-Just **create dynamic playlists from each template**. Try *different* (combinations of) *parameters* for each dynamic playlist you create. Then play them with *Dynamic Playlists 3*. This beta is mainly about finding bugs, not about making feature requests.
+Just **create dynamic playlists from each template**. Try *different* (combinations of) *parameters* for each dynamic playlist you create. Then play them with *Dynamic Playlists*. This beta is mainly about finding bugs, not about making feature requests.
 <br><br><br>
 
 
@@ -43,7 +43,7 @@ Add the repository URL below at the bottom of *LMS* > *Settings* > *Plugins* and
 
 ## Notes
 
-- DPLC will *always* save a fully “fleshed out” SQLite playlist, even if you use the recommended *Default format* (xml), because *Dynamic Playlists 3* scans the DPLC custom folder for **sql** files. That's how the dynamic playlists you create with DPLC get listed in *Dynamic Playlists 3*.
+- DPLC will *always* save a fully “fleshed out” SQLite playlist, even if you use the recommended *Default format* (xml), because *Dynamic Playlists* scans the DPLC custom folder for **sql** files. That's how the dynamic playlists you create with DPLC get listed in *Dynamic Playlists*.
 - I have combined some templates. Example: *Least/most played* is now an option in other templates.
 - Compatible with *Dynamic Playlists* (version 3 or higher), *Custom Skip* 3 and *Alternative Play Count*. CustomScan: untested.
 - You can't import or migrate dynamic playlist definitions from the SQLPlayList plugin. The templates are different.
