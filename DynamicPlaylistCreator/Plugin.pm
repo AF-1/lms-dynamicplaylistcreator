@@ -92,7 +92,7 @@ sub initPrefs {
 sub postinitPlugin {
 	my $class = shift;
 	unless ($cache->get('dplc_contributorlist') && $cache->get('dplc_genrelist') && $cache->get('dplc_contenttypes')) {
-		$log->info('Refreshing caches for contributors, genres and content types');
+		$log->debug('Refreshing caches for contributors, genres and content types');
 		refreshSQLCache();
 	}
 
