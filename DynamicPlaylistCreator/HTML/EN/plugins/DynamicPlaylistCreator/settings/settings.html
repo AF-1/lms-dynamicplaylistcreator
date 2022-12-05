@@ -11,5 +11,10 @@
 	[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK_DESC" %]
 		<input name="pref_disableconflictcheck" id="disableconflictcheck" type="checkbox" [% IF prefs.disableconflictcheck %] checked [% END %]>
 	[% END %]
+	<br>
+
+	[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING_DESC" %]
+		<input name="pref_allowsqlcustomizing" id="allowsqlcustomizing" type="checkbox" [% IF prefs.allowsqlcustomizing %] checked [% END %]>
+	[% END %]
 
 [% PROCESS settings/footer.html %]

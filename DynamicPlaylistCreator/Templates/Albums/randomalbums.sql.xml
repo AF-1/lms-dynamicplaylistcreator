@@ -18,7 +18,7 @@
 		<parameter type="text" id="noofalbums" name="Number of albums from which to get new tracks per batch" value="1"/>
 		<parameter type="text" id="nooftracks" name="Number of tracks added per batch" value=""/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
-		<parameter type="optionalsinglelist" id="orderbyplaycount" name="Play &lt;b&gt;most/least played&lt;/b&gt; albums first" value="" data="1=Most played,2=Least played"/>
+		<parameter type="optionalsinglelist" id="sortorder" name="Album sort order" value="" data="1=Most played albums first,2=Least played albums first"/>
 		<parameter type="optionalsinglelist" id="compis" name="Limit to or exclude &lt;b&gt;compilations&lt;/b&gt;" value="" data="1=Only compilations,2=No compilations"/>
 		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude genres" value="0" quotevalue="1"/>
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude genres" value="0" quotevalue="1"/>

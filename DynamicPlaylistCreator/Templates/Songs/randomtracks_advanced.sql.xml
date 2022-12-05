@@ -36,12 +36,12 @@
 		<parameter type="checkbox" id="lyrics" name="Only tracks with &lt;b&gt;lyrics&lt;/b&gt;" value="0"/>
 		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude genres" value="0" quotevalue="1"/>
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude genres" value="0" quotevalue="1"/>
-		<parameter type="sqlmultiplelist" id="includedartists" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks for selected &lt;b&gt;artists&lt;/b&gt;" data="select contributors.id,contributors.name,contributors.name from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc" value="" quotevalue="1"/>
+		<parameter type="contributorlistcached" id="includedartists" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks for selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>
 		<parameter type="contributorlistcached" id="excludedartists" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks for selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>
 		<parameter type="sqlmultiplelist" id="excludedstaticplaylists" name="Ignore tracks in these static playlists" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="checkbox" id="lossless" name="Only lossless formats" value="0"/>
 		<parameter type="contenttypelistcached" id="includedcontenttypes" name="Only include tracks with this &lt;b&gt;file format&lt;/b&gt;" value="0" quotevalue="1"/>
-		<parameter type="optionalsinglelist" id="orderbyplaycount" name="Play &lt;b&gt;most/least played&lt;/b&gt; tracks first" value="" data="1=Most played,2=Least played"/>
+		<parameter type="optionalsinglelist" id="sortorder" name="Track sort order&lt;br&gt;(default = random order)" value="" data="1=Most played first,2=Least played first"/>
 		<parameter type="optionalsinglelist" id="remote" name="Limit to &lt;b&gt;remote / local&lt;/b&gt; tracks" value="" data="1=Only local library tracks,2=Only remote library tracks"/>
 		<parameter type="text" id="nooftracks" name="Number of tracks added per batch" value="15"/>
 		<parameter type="checkbox" id="activevirtuallibrary" name="Limit to &lt;b&gt;currently selected&lt;/b&gt; virtual library on &lt;b&gt;player&lt;/b&gt;" value=""/>

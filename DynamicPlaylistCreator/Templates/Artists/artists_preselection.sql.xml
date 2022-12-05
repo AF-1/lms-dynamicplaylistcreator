@@ -12,11 +12,11 @@
 		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
 		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
 		<parameter type="singlelist" id="source" name="All artists &lt;b&gt;mixed or one at a time&lt;/b&gt;" value="1" data="1=All artists mixed,2=One artist at a time"/>
+		<parameter type="text" id="nooftracks" name="Number of tracks added per batch" value="20"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
-		<parameter type="optionalsinglelist" id="orderbyplaycount" name="Play &lt;b&gt;most/least played&lt;/b&gt; tracks first" value="" data="1=Most played,2=Least played"/>
+		<parameter type="optionalsinglelist" id="sortorder" name="Track sort order&lt;br&gt;(default = random order)" value="" data="1=Most played first,2=Least played first"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;date last played&lt;/b&gt;" value="0"/>
-		<parameter type="text" id="nooftracks" name="Number of tracks added per batch" value="20"/>
 		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>
 	</template>
 </dynamicplaylistcreator>

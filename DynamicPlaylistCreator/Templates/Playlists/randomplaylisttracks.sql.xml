@@ -16,9 +16,8 @@
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;recently played&lt;/b&gt;" value="0"/>
 		<parameter type="text" requireplugins="AlternativePlayCount::Plugin" id="maxskipcount" name="Only include tracks with a &lt;b&gt;skip count&lt;/b&gt; less than" value=""/>
 		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="recentlyskipped" name="Ignore &lt;b&gt;recently skipped&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
-		<parameter type="checkbox" id="randomordered" name="Play in random order" value="1"/>
 		<parameter type="text" id="nooftracks" name="Number of tracks added per batch" value="15"/>
-		<parameter type="optionalsinglelist" id="orderbyplaycount" name="Play &lt;b&gt;most/least played&lt;/b&gt; artists first" value="" data="1=Most played,2=Least played"/>
+		<parameter type="optionalsinglelist" id="sortorder" name="Track sort order&lt;br&gt;(default = playlist track order)" value="" data="1=Most played first,2=Least played first,3=random order"/>
 		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>
 	</template>
 </dynamicplaylistcreator>

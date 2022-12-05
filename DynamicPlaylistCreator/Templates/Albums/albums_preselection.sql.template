@@ -1,17 +1,21 @@
 -- PlaylistName:[% playlistname %]
 -- PlaylistGroups:[% playlistgroups %]
 -- PlaylistCategory:albums
+[%- IF source == 1 %]
+-- PlaylistUseCache: 1
+[%- END %]
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
 [%- IF sqlscope %]
 -- Scope:[% sqlscope %]
 [%- END %]
+[% IF sortorder == 1 %]
+-- PlaylistTrackOrder:ordereddescrandom
+[% ELSIF sortorder == 2 %]
+-- PlaylistTrackOrder:orderedascrandom
+[% ELSIF sortorder != 3 %]
 -- PlaylistTrackOrder:ordered
-[%- IF nooftracks %]
--- PlaylistLimitOption:[% nooftracks %]
-[%- ELSE %]
--- PlaylistLimitOption:unlimited
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 [%- IF customskipfilter %]
@@ -31,19 +35,19 @@ limit 1;
 select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	[%- IF source == 2 %]
 	join tmp_preselection_albums
-		on tracks.album = tmp_preselection_albums.album
+		on tmp_preselection_albums.album = tracks.album
 	[%- END %]
-	[%- IF useapcvalues and (recentlyplayed or playedbeforeor or orderbyplaycount) %]
+	[%- IF useapcvalues and (recentlyplayed or playedbeforeor or sortorder) %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF !useapcvalues and (recentlyplayed or playedbefore or orderbyplaycount) %]
+	[%- IF !useapcvalues and (recentlyplayed or playedbefore or sortorder) %]
 	left join tracks_persistent on
-		tracks.url = tracks_persistent.url
+		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
 	WHERE
 		tracks.audio = 1
@@ -63,8 +67,7 @@ select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_art
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
 	[%- END %]
 	group by tracks.id
-	order by [% IF source == 2 %]tmp_preselection_albums.album, tracks.disc, tracks.tracknum, [% END %][% IF orderbyplaycount %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF orderbyplaycount == 1 %]desc[% ELSE %]asc[% END %], [% END %]random()
-	[% IF nooftracks %]limit [% nooftracks %][% END %];
+	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %][% IF source == 2 %]tmp_preselection_albums.album, tracks.disc, tracks.tracknum[% ELSE %]tracks.album, tracks.disc, tracks.tracknum[% END %][% END %]
 [%- IF source == 2 %]
 drop table tmp_preselection_albums;
 [%- END %]

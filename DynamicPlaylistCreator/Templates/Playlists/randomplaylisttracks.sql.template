@@ -13,7 +13,11 @@
 [%- IF nooftracks && dplversion == 3 %]
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
-[%- IF !randomordered %]
+[% IF sortorder == 1 %]
+-- PlaylistTrackOrder:ordereddescrandom
+[% ELSIF sortorder == 2 %]
+-- PlaylistTrackOrder:orderedascrandom
+[% ELSIF sortorder != 3 %]
 -- PlaylistTrackOrder:ordered
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
@@ -36,33 +40,33 @@
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	join playlist_track on
-		tracks.url = playlist_track.track and
+		playlist_track.track = tracks.url and
 		playlist_track.playlist in (select max(playlist) from playlist_track, tracks where
 						playlist_track.playlist = tracks.id and
 						tracks.titlesearch in ([% includedstaticplaylists %])
 					group by playlist_track.playlist)
 	[%- IF request1fromuser == 'artist' %]
 	join contributor_track on
-		tracks.id = contributor_track.track and
+		contributor_track.track = tracks.id and
 		contributor_track.contributor = 'PlaylistParameter1'
 	[%- END %]
 	[%- IF request1fromuser == 'genre' %]
 	join genre_track on
-		tracks.id = genre_track.track
+		genre_track.track = tracks.id
 	join genres on
-		genre_track.genre = genres.id
+		genres.id = genre_track.genre
 	[%- END %]
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
-	[%- IF (useapcvalues and (recentlyplayed or orderbyplaycount or playedbefore)) or maxskipcount or recentlyskipped %]
+	[%- IF (useapcvalues and (recentlyplayed or sortorder or playedbefore)) or maxskipcount or recentlyskipped %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF !useapcvalues and (recentlyplayed or orderbyplaycount or playedbefore) %]
+	[%- IF !useapcvalues and (recentlyplayed or sortorder or playedbefore) %]
 	left join tracks_persistent on
-		tracks.url = tracks_persistent.url
+		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	WHERE
 		tracks.audio = 1
@@ -94,5 +98,5 @@ select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_art
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
 	group by tracks.id
-	order by [% IF orderbyplaycount %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF orderbyplaycount == 1 %]desc[% ELSE %]asc[% END %], [% END %][% IF randomordered && dplversion == 3 %]random()[% ELSE %]playlist_track.position asc[% END %]
+	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]playlist_track.position asc[% END %]
 	[% IF nooftracks && dplversion != 3 %]limit [% nooftracks %][% END %]

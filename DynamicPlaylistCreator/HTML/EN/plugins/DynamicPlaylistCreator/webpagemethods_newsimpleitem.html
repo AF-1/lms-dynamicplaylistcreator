@@ -10,7 +10,7 @@
 [% END -%]
 [% PROCESS pageheader.html %]
 [% PROCESS plugins/DynamicPlaylistCreator/html/js/catchtab.js %]
-
+<br>
 <form action="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_savenewsimpleitem.html" name="editForm" method="post">
 	<table>
 	<tr>
@@ -36,13 +36,14 @@
 	<input type="hidden" name="sqltextdplonly" value="[% sqltextdplonly %]">
 	<tr><td>&nbsp;</td></tr>
 	<tr><td colspan="1">
-	<input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'>
+		<input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'>
 	</td></tr>
 	[% IF pluginWebPageMethodsError %]
 	<tr><td colspan="2">
-	<br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br>
+		<br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br>
 	</td></tr>
 	[% END %]
 	</table>
-	<br>
+</form>
+<br>
 [% PROCESS pagefooter.html %]

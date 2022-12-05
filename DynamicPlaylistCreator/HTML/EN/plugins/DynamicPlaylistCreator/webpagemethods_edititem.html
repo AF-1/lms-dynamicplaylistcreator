@@ -10,37 +10,38 @@
 [% END -%]
 [% PROCESS pageheader.html %]
 [% PROCESS plugins/DynamicPlaylistCreator/html/js/catchtab.js %]
-
+<br>
 <form action="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_saveitem.html" name="editForm" method="post">
 	<table>
-	<tr>
-		<td>
-			[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME" | string %]&nbsp;&nbsp;&nbsp;
-			<input type="text" name="file" size="50" value="[% pluginWebPageMethodsEditItemFileUnescaped %]">
-		</td>
-	</tr>
-	<tr><td>&nbsp;</td></tr>
-	<tr valign="top">
-		<td colspan="2">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_DATA" | string %]: <br>
-		<textarea name="text" cols="100" rows="25" style="width:95%;height:100%;" wrap="off" onkeydown="return catchTab(this, event)">[% pluginWebPageMethodsEditItemData |utf8on %]</textarea>
-		</td>
-	</tr>
-	[% IF pluginWebPageMethodsEditItemDeleteSimple %]
-	<input type="hidden" name="deletesimple" value="[% pluginWebPageMethodsEditItemDeleteSimple %]">
-	[% END %]
-	<tr><td>&nbsp;</td></tr>
-	<tr><td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED_INFO" | string %]</td></tr>
-	<tr><td>&nbsp;</td></tr>
-	<tr>
-		<td>
-			<input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'>
-		</td>
-	</tr>
-	[% IF pluginWebPageMethodsError %]
-	<tr>
-		<td colspan="2"><br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br></td>
-	</tr>
-	[% END %]
+		<tr>
+			<td>
+				[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME" | string %]&nbsp;&nbsp;&nbsp;
+				<input type="text" name="file" size="50" value="[% pluginWebPageMethodsEditItemFileUnescaped %]">
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr valign="top">
+			<td colspan="2">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_DATA" | string %]: <br>
+			<textarea name="text" cols="100" rows="25" style="width:95%;height:100%;" wrap="off" onkeydown="return catchTab(this, event)">[% pluginWebPageMethodsEditItemData |utf8on %]</textarea>
+			</td>
+		</tr>
+		[% IF pluginWebPageMethodsEditItemDeleteSimple %]
+		<input type="hidden" name="deletesimple" value="[% pluginWebPageMethodsEditItemDeleteSimple %]">
+		[% END %]
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED_INFO" | string %]</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>
+				<input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'>
+			</td>
+		</tr>
+		[% IF pluginWebPageMethodsError %]
+		<tr>
+			<td colspan="2"><br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br></td>
+		</tr>
+		[% END %]
 	</table>
 </form>
+<br>
 [% PROCESS pagefooter.html %]

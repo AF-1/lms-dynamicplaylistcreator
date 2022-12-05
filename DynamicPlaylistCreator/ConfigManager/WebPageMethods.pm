@@ -200,6 +200,7 @@ sub webEditItem {
 					$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
 					$params->{'dplversion'} = $self->dplVersion;
 					$params->{'usecache'} = $template->{'usecache'};
+					$params->{'allowsqlcustomizing'} = $prefs->get('allowsqlcustomizing');
 					$params->{'disableconflictcheck'} = $prefs->get('disableconflictcheck');
 					return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditSimpleItem'}, $params);
 				}
@@ -248,6 +249,7 @@ sub webNewItemParameters {
 		$params->{'pluginWebPageMethodsNewItemParameters'} = \@parametersToSelect;
 		$params->{'dplversion'} = $self->dplVersion;
 		$params->{'usecache'} = $template->{'usecache'};
+		$params->{'allowsqlcustomizing'} = $prefs->get('allowsqlcustomizing');
 		$params->{'templateName'} = $template->{'name'};
 		$params->{'disableconflictcheck'} = $prefs->get('disableconflictcheck');
 	}

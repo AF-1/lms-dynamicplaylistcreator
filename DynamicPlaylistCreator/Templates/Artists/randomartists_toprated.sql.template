@@ -24,7 +24,7 @@ create temporary table toprated_random_contributors as
 	select subselection.contributor as contributor from
 		(select contributor_track.contributor, avg(ifnull(tracks_persistent.rating,0)) as avgrating from tracks
 		join contributor_track
-			on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
+			on contributor_track.track = tracks.id and contributor_track.role in (1,5,6)
 		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 		join library_track on
 			library_track.track = tracks.id
@@ -32,16 +32,16 @@ create temporary table toprated_random_contributors as
 		[%- END %]
 		[%- IF includedgenres %]
 		join genre_track on
-			tracks.id = genre_track.track
+			genre_track.track = tracks.id
 		join genres on
-			genre_track.genre = genres.id
+			genres.id = genre_track.genre
 		[%- END %]
 		[%- IF notrepeat %]
 		left join dynamicplaylist_history on
-			tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 		[%- END %]
 		left join tracks_persistent on
-			tracks.url = tracks_persistent.url
+			tracks_persistent.urlmd5 = tracks.urlmd5
 		[%- IF useapcvalues %]
 		join alternativeplaycount on
 			alternativeplaycount.urlmd5 = tracks.urlmd5
@@ -58,7 +58,7 @@ create temporary table toprated_random_contributors as
 			and not exists (select * from tracks t2,genre_track,genres
 							where
 								t2.id = tracks.id and
-								tracks.id = genre_track.track and
+								genre_track.track = tracks.id and
 								genre_track.genre = genres.id and
 								genres.name in ([% excludedgenres %]))
 		[%- END %]
@@ -75,9 +75,9 @@ create temporary table toprated_random_contributors as
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	join contributor_track
-		on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
+		on contributor_track.track = tracks.id and contributor_track.role in (1,5,6)
 	join toprated_random_contributors
-		on contributor_track.contributor = toprated_random_contributors.contributor
+		on toprated_random_contributors.contributor = contributor_track.contributor
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 	join library_track on
 		library_track.track = tracks.id
@@ -85,17 +85,22 @@ select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_art
 	[%- END %]
 	[%- IF includedgenres %]
 	join genre_track on
-		tracks.id = genre_track.track
+		genre_track.track = tracks.id
 	join genres on
-		genre_track.genre = genres.id
+		genres.id = genre_track.genre
 	[%- END %]
-	[%- IF useapcvalues %]
+	[%- IF recentlyplayed %]
+		[%- IF useapcvalues %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
+		[%- ELSE %]
+	left join tracks_persistent on
+		tracks_persistent.urlmd5 = tracks.urlmd5
+		[%- END %]
 	[%- END %]
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
 	WHERE
 		tracks.audio = 1
@@ -112,7 +117,7 @@ select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_art
 		and not exists (select * from tracks t2,genre_track,genres
 						where
 							t2.id = tracks.id and
-							tracks.id = genre_track.track and
+							genre_track.track = tracks.id and
 							genre_track.genre = genres.id and
 							genres.name in ([% excludedgenres %]))
 	[%- END %]

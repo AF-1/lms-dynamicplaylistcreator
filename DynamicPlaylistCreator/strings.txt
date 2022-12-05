@@ -27,6 +27,12 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK_DESC
 	EN	Disable the display of warning icons that alert you to potential conflicts in your parameter selection.
 
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING
+	EN	Allow SQLite customizing
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING_DESC
+	EN	This will allow you to customize the SQLite statement of your dynamic playlist.<br><br><b>Please note:</b> Once you have saved the file as <i>customized SQLite</i>, you can't convert it back to the default format (xml).<br><br>If you know how to customize SQLite, it might even be easier for you to write your own customized SQLite statement and drop the file into <i>Dynamic Playlist</i>'s folder for custom dynamic playlists.<br>See <a href="https://github.com/AF-1/lms-dynamicplaylists#faq" target="_blank" rel="noopener noreferrer"><b>Dynamic Playlists FAQ</b></a>.
+
 PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
 	EN	<b>Custom dynamic playlists created with this plugin:</b>
 
@@ -76,7 +82,7 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED
 	EN	Customized SQLite
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED_INFO
-	EN	<b>Please note:</b> Once you have saved the file as <i>customized SQLite</i>, you can no longer convert it back to the default format.
+	EN	<b>Please note:</b> Once you have saved the file as <i>customized SQLite</i>, you can't convert it back to the default format.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_PARAMETERS_TITLE
 	EN	Please enter dynamic playlist parameters

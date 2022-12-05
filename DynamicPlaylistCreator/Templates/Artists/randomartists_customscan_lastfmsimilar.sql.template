@@ -27,11 +27,11 @@ create temporary table similar_tracks as select [% IF dplversion == 3 %]tracks.u
 	join contributors on contributors.id = contributor_track.contributor
 	[%- IF toprated or notrated %]
 	left join tracks_persistent on
-		tracks.url = tracks_persistent.url
+		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
 	left join customscan_contributor_attributes as attr1 on
 		attr1.contributor = contributors.id and
@@ -61,11 +61,11 @@ insert into similar_tracks ([% IF dplversion == 3 %]url[% ELSE %]id,primary_arti
 	join contributors on contributors.id = contributor_track.contributor
 	[%- IF toprated or notrated %]
 	left join tracks_persistent on
-		tracks.url = tracks_persistent.url
+		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
 	left join customscan_contributor_attributes as attr2 on
 		attr2.value = contributors.name and
@@ -93,11 +93,11 @@ insert into similar_tracks ([% IF dplversion == 3 %]url[% ELSE %]id,primary_arti
 	join contributors on contributors.id = contributor_track.contributor
 	[%- IF toprated or notrated %]
 	left join tracks_persistent on
-		tracks.url = tracks_persistent.url
+		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
 	WHERE
 		tracks.audio = 1

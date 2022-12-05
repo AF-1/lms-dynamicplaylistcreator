@@ -21,78 +21,78 @@
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
 	join albums on
-		tracks.album = albums.id
+		albums.id = tracks.album
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
 	[%- IF includedperformer %]
 	join customscan_track_attributes includedperformer on
-		tracks.id = includedperformer.track and includedperformer.module = 'mixedtag' and includedperformer.attr = 'PERFORMER' and includedperformer.value in ([% includedperformer %])
+		includedperformer.track = tracks.id and includedperformer.module = 'mixedtag' and includedperformer.attr = 'PERFORMER' and includedperformer.value in ([% includedperformer %])
 	[%- END %]
 	[%- IF excludedperformer %]
 	left join customscan_track_attributes excludedperformer on
-		tracks.id = excludedperformer.track and excludedperformer.module = 'mixedtag' and excludedperformer.attr = 'PERFORMER' and excludedperformer.value in ([% excludedperformer %])
+		excludedperformer.track = tracks.id and excludedperformer.module = 'mixedtag' and excludedperformer.attr = 'PERFORMER' and excludedperformer.value in ([% excludedperformer %])
 	[%- END %]
 	[%- IF includedartist %]
 	join customscan_track_attributes includedartist on
-		tracks.id = includedartist.track and includedartist.module = 'mixedtag' and includedartist.attr = 'ARTIST' and includedartist.value in ([% includedartist %])
+		includedartist.track = tracks.id and includedartist.module = 'mixedtag' and includedartist.attr = 'ARTIST' and includedartist.value in ([% includedartist %])
 	[%- END %]
 	[%- IF excludedartist %]
 	left join customscan_track_attributes excludedartist on
-		tracks.id = excludedartist.track and excludedartist.module = 'mixedtag' and excludedartist.attr = 'ARTIST' and excludedartist.value in ([% excludedartist %])
+		excludedartist.track = tracks.id and excludedartist.module = 'mixedtag' and excludedartist.attr = 'ARTIST' and excludedartist.value in ([% excludedartist %])
 	[%- END %]
 	[%- IF includedcomposer %]
 	join customscan_track_attributes includedcomposer on
-		tracks.id = includedcomposer.track and includedcomposer.module = 'mixedtag' and includedcomposer.attr = 'COMPOSER' and includedcomposer.value in ([% includedcomposer %])
+		includedcomposer.track = tracks.id and includedcomposer.module = 'mixedtag' and includedcomposer.attr = 'COMPOSER' and includedcomposer.value in ([% includedcomposer %])
 	[%- END %]
 	[%- IF excludedcomposer %]
 	left join customscan_track_attributes excludedcomposer on
-		tracks.id = excludedcomposer.track and excludedcomposer.module = 'mixedtag' and excludedcomposer.attr = 'COMPOSER' and excludedcomposer.value in ([% excludedcomposer %])
+		excludedcomposer.track = tracks.id and excludedcomposer.module = 'mixedtag' and excludedcomposer.attr = 'COMPOSER' and excludedcomposer.value in ([% excludedcomposer %])
 	[%- END %]
 	[%- IF includedconductor %]
 	join customscan_track_attributes includedconductor on
-		tracks.id = includedconductor.track and includedconductor.module = 'mixedtag' and includedconductor.attr = 'CONDUCTOR' and includedconductor.value in ([% includedconductor %])
+		includedconductor.track = tracks.id and includedconductor.module = 'mixedtag' and includedconductor.attr = 'CONDUCTOR' and includedconductor.value in ([% includedconductor %])
 	[%- END %]
 	[%- IF excludedconductor %]
 	left join customscan_track_attributes excludedconductor on
-		tracks.id = excludedconductor.track and excludedconductor.module = 'mixedtag' and excludedconductor.attr = 'CONDUCTOR' and excludedconductor.value in ([% excludedconductor %])
+		excludedconductor.track = tracks.id and excludedconductor.module = 'mixedtag' and excludedconductor.attr = 'CONDUCTOR' and excludedconductor.value in ([% excludedconductor %])
 	[%- END %]
 	[%- IF includedgenre %]
 	join customscan_track_attributes includedgenre on
-		tracks.id = includedgenre.track and includedgenre.module = 'mixedtag' and includedgenre.attr = 'GENRE' and includedgenre.value in ([% includedgenre %])
+		includedgenre.track = tracks.id and includedgenre.module = 'mixedtag' and includedgenre.attr = 'GENRE' and includedgenre.value in ([% includedgenre %])
 	[%- END %]
 	[%- IF excludedgenre %]
 	left join customscan_track_attributes excludedgenre on
-		tracks.id = excludedgenre.track and excludedgenre.module = 'mixedtag' and excludedgenre.attr = 'GENRE' and excludedgenre.value in ([% excludedgenre %])
+		excludedgenre.track = tracks.id and excludedgenre.module = 'mixedtag' and excludedgenre.attr = 'GENRE' and excludedgenre.value in ([% excludedgenre %])
 	[%- END %]
 	[%- IF includedmood %]
 	join customscan_track_attributes includedmood on
-		tracks.id = includedmood.track and includedmood.module = 'mixedtag' and includedmood.attr = 'MOOD' and includedmood.value in ([% includedmood %])
+		includedmood.track = tracks.id and includedmood.module = 'mixedtag' and includedmood.attr = 'MOOD' and includedmood.value in ([% includedmood %])
 	[%- END %]
 	[%- IF excludedmood %]
 	left join customscan_track_attributes excludedmood on
-		tracks.id = excludedmood.track and excludedmood.module = 'mixedtag' and excludedmood.attr = 'MOOD' and excludedmood.value in ([% excludedmood %])
+		excludedmood.track = tracks.id and excludedmood.module = 'mixedtag' and excludedmood.attr = 'MOOD' and excludedmood.value in ([% excludedmood %])
 	[%- END %]
 	[%- IF includedtheme %]
 	join customscan_track_attributes includedtheme on
-		tracks.id = includedtheme.track and includedtheme.module = 'mixedtag' and includedtheme.attr = 'THEME' and includedtheme.value in ([% includedtheme %])
+		includedtheme.track = tracks.id and includedtheme.module = 'mixedtag' and includedtheme.attr = 'THEME' and includedtheme.value in ([% includedtheme %])
 	[%- END %]
 	[%- IF excludedtheme %]
 	left join customscan_track_attributes excludedtheme on
-		tracks.id = excludedtheme.track and excludedtheme.module = 'mixedtag' and excludedtheme.attr = 'THEME' and excludedtheme.value in ([% excludedtheme %])
+		excludedtheme.track = tracks.id and excludedtheme.module = 'mixedtag' and excludedtheme.attr = 'THEME' and excludedtheme.value in ([% excludedtheme %])
 	[%- END %]
 	[%- IF includedstyle %]
 	join customscan_track_attributes includedstyle on
-		tracks.id = includedstyle.track and includedstyle.module = 'mixedtag' and includedstyle.attr = 'STYLE' and includedstyle.value in ([% includedstyle %])
+		includedstyle.track = tracks.id and includedstyle.module = 'mixedtag' and includedstyle.attr = 'STYLE' and includedstyle.value in ([% includedstyle %])
 	[%- END %]
 	[%- IF excludedstyle %]
 	left join customscan_track_attributes excludedstyle on
-		tracks.id = excludedstyle.track and excludedstyle.module = 'mixedtag' and excludedstyle.attr = 'STYLE' and excludedstyle.value in ([% excludedstyle %])
+		excludedstyle.track = tracks.id and excludedstyle.module = 'mixedtag' and excludedstyle.attr = 'STYLE' and excludedstyle.value in ([% excludedstyle %])
 	[%- END %]
 	[%- IF minalbumrating or maxalbumrating %]
 	join customscan_track_attributes includedalbumrating on
-		tracks.id = includedalbumrating.track and includedalbumrating.module = 'mixedtag' and includedalbumrating.attr = 'ALBUM RATING' [% IF minalbumrating %]and includedalbumrating.value >= '[% minalbumrating %]'[% END %][% IF maxalbumrating %]and includedalbumrating.value <= [% maxalbumrating %][% END %]
+		includedalbumrating.track = tracks.id and includedalbumrating.module = 'mixedtag' and includedalbumrating.attr = 'ALBUM RATING' [% IF minalbumrating %]and includedalbumrating.value >= '[% minalbumrating %]'[% END %][% IF maxalbumrating %]and includedalbumrating.value <= [% maxalbumrating %][% END %]
 	[%- END %]
 	WHERE
 		tracks.audio = 1

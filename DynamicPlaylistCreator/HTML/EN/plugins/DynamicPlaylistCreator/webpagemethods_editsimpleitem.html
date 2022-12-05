@@ -12,102 +12,109 @@
 [%- IF !disableconflictcheck %]
 [% PROCESS plugins/DynamicPlaylistCreator/html/js/conflictcheck.js %]
 [% END -%]
+<br>
 <form action="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_savesimpleitem.html" name="editForm" method="post">
-<table border="0">
-	<tr><td colspan="3"><b>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE" | string %]</b></td></tr>
-	<tr><td colspan="3">&nbsp;</td></tr>
-	[%- FOREACH parameter = pluginWebPageMethodsEditItemParameters %]
-		[% IF !(parameter.type.match('list') or parameter.type.match('checkboxes')) or (parameter.values.size!=0 and !(parameter.values.0.value=='' and parameter.values.size==1))%]
-		[% UNLESS parameter.type == 'text' && parameter.id == 'nooftracks' && usecache && dplversion != 3 %]
-		<tr>
-			<td>[% parameter.name %]</td>
-			<td id="warning_[% parameter.id %]" class="warningbgimg"></td>
-			<td>
-			[% IF parameter.type == 'text' %]
-				<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.id == 'playlistname' %] required [% END %]>
-			[% ELSIF parameter.type == 'multilinetext' %]
-				<textarea name="itemparameter_[% parameter.id %]" cols="60" rows="10" style="width:95%;height:100%;" wrap="off" onkeydown="return catchTab(this, event)">[% parameter.value | html %]</textarea>
-			[% ELSIF parameter.type.match('singlelist') %]
-				<table border="0">
-					<tr><td>
-						<select name="itemparameter_[% parameter.id %]">
-						[%- FOREACH item = parameter.values %]
-							[%- itemid = item.id %]
-							<option name="[% itemid %]" id="[% itemid %]" value="[% itemid %]" [% IF item.selected %]selected[% END %]>[% item.name | html %]</option>
-						[%- END %]
-						</select>
-					</td></tr>
-				</table>
-			[% ELSIF parameter.type.match('multiplelist') || parameter.type == 'contributorlistcached' %]
-				<table border="0">
-					<tr><td>
-						<select name="itemparameter_[% parameter.id %]" multiple size="10">
-						[%- FOREACH item = parameter.values %]
-							[%- itemid = item.id %]
-							<option name="[% itemid %]" id="[% itemid %]" value="[% itemid %]" [% IF item.selected %]selected[% END %]>[% FILTER truncate(110, '&hellip;') %][% item.name | html %][% END %]</option>
-						[%- END %]
-						</select>
-					</td></tr>
-				</table>
-			[% ELSIF parameter.type == 'checkbox' %]
-				<input type="checkbox" name="itemparameter_[% parameter.id %]" id="itemparameter_[% parameter.id %]" value="1" [% parameter.value ? "checked" : "" %]>
-			[% ELSIF parameter.type.match('checkboxes') || parameter.type == 'genrelistcached' || parameter.type.match == 'contenttypelistcached' %]
-				<table border="0">[% USE table parameter.values, cols=3, pad=0 %]
-					[%- FOREACH itemrow = table.rows %]
-						<tr>
-						[%- FOREACH item = itemrow %]
-							[%- itemid = "itemparameter_" _ parameter.id _ "_" _ item.id %]
-							[%- IF not loop.first %]
-								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+	<table border="0">
+		<tr><td colspan="3"><b>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE" | string %]</b></td></tr>
+		<tr><td colspan="3">&nbsp;</td></tr>
+		[%- FOREACH parameter = pluginWebPageMethodsEditItemParameters %]
+			[% IF !(parameter.type.match('list') or parameter.type.match('checkboxes')) or (parameter.values.size!=0 and !(parameter.values.0.value=='' and parameter.values.size==1))%]
+			[% UNLESS parameter.type == 'text' && parameter.id == 'nooftracks' && usecache && dplversion != 3 %]
+			<tr>
+				<td>[% parameter.name %]</td>
+				<td id="warning_[% parameter.id %]" class="warningbgimg"></td>
+				<td>
+				[% IF parameter.type == 'text' %]
+					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.id == 'playlistname' %] required [% END %]>
+				[% ELSIF parameter.type == 'multilinetext' %]
+					<textarea name="itemparameter_[% parameter.id %]" cols="60" rows="10" style="width:95%;height:100%;" wrap="off" onkeydown="return catchTab(this, event)">[% parameter.value | html %]</textarea>
+				[% ELSIF parameter.type.match('singlelist') %]
+					<table border="0">
+						<tr><td>
+							<select name="itemparameter_[% parameter.id %]">
+							[%- FOREACH item = parameter.values %]
+								[%- itemid = item.id %]
+								<option name="[% itemid %]" id="[% itemid %]" value="[% itemid %]" [% IF item.selected %]selected[% END %]>[% item.name | html %]</option>
 							[%- END %]
-							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1" [% item.selected ? "checked" : "" %]>
-							<label for="[% itemid %]">[% item.name | html %]</label></td>
+							</select>
+						</td></tr>
+					</table>
+				[% ELSIF parameter.type.match('multiplelist') || parameter.type == 'contributorlistcached' %]
+					<table border="0">
+						<tr><td>
+							<select name="itemparameter_[% parameter.id %]" multiple size="10">
+							[%- FOREACH item = parameter.values %]
+								[%- itemid = item.id %]
+								<option name="[% itemid %]" id="[% itemid %]" value="[% itemid %]" [% IF item.selected %]selected[% END %]>[% FILTER truncate(110, '&hellip;') %][% item.name | html %][% END %]</option>
+							[%- END %]
+							</select>
+						</td></tr>
+					</table>
+				[% ELSIF parameter.type == 'checkbox' %]
+					<input type="checkbox" name="itemparameter_[% parameter.id %]" id="itemparameter_[% parameter.id %]" value="1" [% parameter.value ? "checked" : "" %]>
+				[% ELSIF parameter.type.match('checkboxes') || parameter.type == 'genrelistcached' || parameter.type.match == 'contenttypelistcached' %]
+					<table border="0">[% USE table parameter.values, cols=3, pad=0 %]
+						[%- FOREACH itemrow = table.rows %]
+							<tr>
+							[%- FOREACH item = itemrow %]
+								[%- itemid = "itemparameter_" _ parameter.id _ "_" _ item.id %]
+								[%- IF not loop.first %]
+									<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+								[%- END %]
+								<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1" [% item.selected ? "checked" : "" %]>
+								<label for="[% itemid %]">[% item.name | html %]</label></td>
+							[%- END %]
+							</tr>
 						[%- END %]
-						</tr>
-					[%- END %]
-				</table>
+					</table>
+				[% END %]
+				</td>
+			</tr>
 			[% END %]
+			<tr><td>&nbsp;</td></tr>
+			[% IF parameter.id == 'playlistname' && parameter.basetemplate %]
+			<tr>
+				<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE" | string %]</td>
+				<td>&nbsp;&nbsp;&nbsp;</td>
+				<td>[% parameter.basetemplate %]
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			[% END %]
+			[% END %]
+		[%- END %]
+		<tr>
+			<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME" | string %]</td><td>&nbsp;&nbsp;&nbsp;</td>
+			<td>
+				<input type="text" name="file" size="50" value="[% pluginWebPageMethodsEditItemFileUnescaped %]">
 			</td>
 		</tr>
-		[% END %]
 		<tr><td>&nbsp;</td></tr>
-		[% IF parameter.id == 'playlistname' && parameter.basetemplate %]
+		[% IF allowsqlcustomizing %]
 		<tr>
-			<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE" | string %]</td>
+			<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE" | string %]</td>
 			<td>&nbsp;&nbsp;&nbsp;</td>
-			<td>[% parameter.basetemplate %]
+			<td>
+				<select name="itemtype">
+					<option name="itemtype" value="simple" selected>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_SIMPLE" | string %]</option>
+					<option name="itemtype" value="advanced">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED" | string %]</option>
+				</select>
+			</td>
 		</tr>
-		<tr><td>&nbsp;</td></tr>
+		[% ELSE %]
+		<input type="hidden" name="itemtype" value="simple">
 		[% END %]
+		<tr><td colspan="3">&nbsp;</td></tr>
+		<input type="hidden" name="itemtemplate" value="[% pluginWebPageMethodsEditItemTemplate %]">
+		<input type="hidden" name="sqltextdplonly" value="[% sqltextdplonly %]">
+		<tr><td>
+			<input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'></td><td id="conflictwarning" class="warning" colspan="2">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_PARAM_CONFLICT" | string %]
+		</td></tr>
+		[% IF pluginWebPageMethodsError %]
+		<tr><td colspan="3">
+			<br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br>
+		</td></tr>
 		[% END %]
-	[%- END %]
-	<tr>
-		<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME" | string %]</td><td>&nbsp;&nbsp;&nbsp;</td>
-		<td>
-			<input type="text" name="file" size="50" value="[% pluginWebPageMethodsEditItemFileUnescaped %]">
-		</td>
-	</tr>
-	<tr><td>&nbsp;</td></tr>
-	<tr>
-		<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE" | string %]</td>
-		<td>&nbsp;&nbsp;&nbsp;</td>
-		<td>
-			<select name="itemtype">
-				<option name="itemtype" value="simple" selected>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_SIMPLE" | string %]</option>
-				<option name="itemtype" value="advanced">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED" | string %]</option>
-			</select>
-		</td>
-	</tr>
-	<tr><td colspan="3">&nbsp;</td></tr>
-	<input type="hidden" name="itemtemplate" value="[% pluginWebPageMethodsEditItemTemplate %]">
-	<input type="hidden" name="sqltextdplonly" value="[% sqltextdplonly %]">
-	<tr><td><input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'></td><td id="conflictwarning" class="warning" colspan="2">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_PARAM_CONFLICT" | string %]</td></tr>
-	[% IF pluginWebPageMethodsError %]
-	<tr><td colspan="3">
-	<br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br>
-	</td></tr>
-	[% END %]
-</table>
+	</table>
 </form>
 <br>
 [% PROCESS pagefooter.html %]

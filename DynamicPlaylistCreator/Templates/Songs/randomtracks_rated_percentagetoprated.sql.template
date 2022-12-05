@@ -30,16 +30,16 @@ create temporary table randomweightedratingslow as select [% IF dplversion == 3 
 	[%- END %]
 	[%- IF includedgenres %]
 	join genre_track on
-		tracks.id = genre_track.track
+		genre_track.track = tracks.id
 	join genres on
-		genre_track.genre = genres.id
+		genres.id = genre_track.genre
 	[%- END %]
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
 	left join tracks_persistent on
-		tracks.url = tracks_persistent.url
+		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- IF recentlyplayed and useapcvalues %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
@@ -57,7 +57,7 @@ create temporary table randomweightedratingslow as select [% IF dplversion == 3 
 		and not exists (select * from tracks t2,genre_track,genres
 						where
 							t2.id = tracks.id and
-							tracks.id = genre_track.track and
+							genre_track.track = tracks.id and
 							genre_track.genre = genres.id and
 							genres.name in ([% excludedgenres %]))
 	[%- END %]
@@ -76,16 +76,16 @@ create temporary table randomweightedratingshigh as select [% IF dplversion == 3
 	[%- END %]
 	[%- IF includedgenres %]
 	join genre_track on
-		tracks.id = genre_track.track
+		genre_track.track = tracks.id
 	join genres on
-		genre_track.genre = genres.id
+		genres.id = genre_track.genre
 	[%- END %]
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
-		tracks.id = dynamicplaylist_history.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- END %]
 	left join tracks_persistent on
-		tracks.url = tracks_persistent.url
+		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- IF recentlyplayed and useapcvalues %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
@@ -103,7 +103,7 @@ create temporary table randomweightedratingshigh as select [% IF dplversion == 3
 		and not exists (select * from tracks t2,genre_track,genres
 						where
 							t2.id = tracks.id and
-							tracks.id = genre_track.track and
+							genre_track.track = tracks.id and
 							genre_track.genre = genres.id and
 							genres.name in ([% excludedgenres %]))
 	[%- END %]
