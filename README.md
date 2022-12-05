@@ -1,9 +1,9 @@
 # Dynamic Playlist Creator
 
 **Dynamic Playlist Creator** [^1] is a companion plugin for the *Dynamic Playlists* plugin. It helps you create dynamic playlists using templates.<br><br>
-It is a **BETA** version because I expect bugs in the templates and I won't release an untested plugin. **I don't use this plugin myself and don't have the time to test the templates against all possible parameter combinations**.<br><br>
+It's a **BETA** version because there may still be bugs in the templates. **I don't use this plugin myself and don't have the time to test the templates against all possible parameter combinations**.<br><br>
 If *enough* beta testers come forward to test the templates **extensively** (thank you!), perhaps one day this plugin can be part of the LMS plugin repository.<br>
-Until then, it will continue to be a beta version with updates as bug reports come in.
+Until then, it will continue to be officially a beta version with updates as bug reports come in, even if the plugin is already working.
 <br><br><br>
 
 
@@ -46,7 +46,7 @@ Add the repository URL below at the bottom of *LMS* > *Settings* > *Plugins* and
 - DPLC will *always* save a fully “fleshed out” SQLite playlist, even if you use the recommended *Default format* (xml), because *Dynamic Playlists* scans the DPLC custom folder for **sql** files. That's how the dynamic playlists you create with DPLC get listed in *Dynamic Playlists*.
 - I have combined some templates. Example: *Least/most played* is now an option in other templates.
 - Compatible with *Dynamic Playlists* (version 3 or higher), *Custom Skip* 3 and *Alternative Play Count*. CustomScan: untested.
-- You can't import or migrate dynamic playlist definitions from the SQLPlayList plugin. The templates are different.
+- You **can't** import or migrate dynamic playlist definitions from the *SQLPlayList* plugin. The templates are different.
 - This plugin will not be localized because parameter names and value names are baked into the templates. And a halfway localized version is worse than a non-localized one.
 <br>
 
