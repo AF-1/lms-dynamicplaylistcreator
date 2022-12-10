@@ -1,36 +1,29 @@
 # Dynamic Playlist Creator
 
-**Dynamic Playlist Creator** [^1] is a companion plugin for the *Dynamic Playlists* plugin. It helps you create dynamic playlists using templates.<br><br>
-It's a **BETA** version because there may still be bugs in the templates. **I don't use this plugin myself and don't have the time to test the templates against all possible parameter combinations**.<br><br>
-If *enough* beta testers come forward to test the templates **extensively** (thank you!), perhaps one day this plugin can be part of the LMS plugin repository.<br>
-Until then, it will continue to be officially a beta version with updates as bug reports come in, even if the plugin is already working.
+**Dynamic Playlist Creator** [^1] allows you to create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br><br>
+It's a **BETA** version. It probably still contains some (template) bugs and is provided on an “as is” and “as available” basis without any warranty or liability on my part. **I simply don't have the time to test the templates against all possible parameter combinations**. But if *enough* beta testers come forward to test the templates **extensively** (thank you!), perhaps one day this plugin can be part of the LMS plugin repository.<br>
+Until then, this plugin will continue to be officially a beta version with updates as bug reports come in, even if it's already working.
 <br><br><br>
 
 
 ## Requirements
-- latest Dynamic Playlists version 3 or higher
+- Dynamic Playlists version **3**.7.7 or **4**.x
 
 - LMS version ≥ 7.9
 
 - LMS  database = SQLite. Preferably without major problems to avoid false positives.
-
-- **GitHub account** to post bug reports. **Everything** should be handled **on GitHub**, **not** the LMS forum. I'm just not there that much anymore.
-
-- You understand that this is a **BETA** version. It's believed to contain bugs and is provided on an “as is” and “as available” basis without any warranty. You should not rely in any way on the correct functioning or performance of a beta version. In no case am I responsible/liable for any damages whatsoever arising out of the use of this plugin.
-
-- Patience
 <br><br><br>
 
 
-## What to test for
-Look for **template** bugs in particular.<br>
-Just **create dynamic playlists from each template**. Try *different* (combinations of) *parameters* for each dynamic playlist you create. Then play them with *Dynamic Playlists*. This beta is mainly about finding bugs, not about making feature requests.
+## How to contribute as a beta user
+Use the plugin to **create custom dynamic playlists**. Try different *templates* and *different* (combinations of) *parameters* for each dynamic playlist you create. Then play them with *Dynamic Playlists* to see if they work.
 <br><br><br>
 
 
 ## Report a bug
-Template bugs will usually give you sql errors (see server log) or result in tracks that do not match your parameter selection at all. When in doubt, try to find/play a similar *built-in* dynamic playlist to make sure it's a template bug and not problems in your database.<br><br>
-If you think that you've found a bug, open an [**issue here on GitHub**](https://github.com/AF-1/lms-dynamicplaylistcreator/issues) and fill out the ***Bug report* issue template**. Please post bug reports on **GitHub only**.<br>
+If you think that you've found a bug, open an [**issue here on GitHub**](https://github.com/AF-1/lms-dynamicplaylistcreator/issues) and fill out the ***Bug report* issue template** including as much information as possible.<br>
+Please post bug reports on **GitHub only**, **not** the LMS forum.
+<br>
 <br><br><br>
 
 

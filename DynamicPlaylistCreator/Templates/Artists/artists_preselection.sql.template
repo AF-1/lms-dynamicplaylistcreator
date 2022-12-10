@@ -7,8 +7,8 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF sqlscope %]
--- Scope:[% sqlscope %]
+[%- IF dplversion %]
+-- dplTargetVersion:[% dplversion %]
 [%- END %]
 [% IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom

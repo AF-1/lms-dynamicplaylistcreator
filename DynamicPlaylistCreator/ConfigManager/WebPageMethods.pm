@@ -246,6 +246,7 @@ sub webNewItemParameters {
 				}
 			}
 		}
+
 		$params->{'pluginWebPageMethodsNewItemParameters'} = \@parametersToSelect;
 		$params->{'dplversion'} = $self->dplVersion;
 		$params->{'usecache'} = $template->{'usecache'};
@@ -307,9 +308,6 @@ sub webNewItem {
 
 	# add the name of template on which the dynamic playlist is based
 	$templateParameters{'basetemplate'} = $template->{'name'};
-
-	# add target param to hide DPL-only adv versions of simple type dpls
-	$templateParameters{'sqlscope'} = 'dplonly' if ($menytype ne 'advanced');
 
 	# add version of installed DynamicPlaylists plugin
 	$templateParameters{'dplversion'} = $self->dplVersion;
@@ -433,9 +431,6 @@ sub webSaveSimpleItem {
 
 	# add version of installed DynamicPlaylists plugin
 	$templateParameters{'dplversion'} = $self->dplVersion;
-
-	# add target param to hide DPL-only adv versions of simple type dpls
-	$templateParameters{'sqlscope'} = 'dplonly' if ($itemtype ne 'advanced');
 
 	my $doParsing = 1;
 	my $templateFileData = $templateFile;
@@ -618,6 +613,9 @@ sub saveSimpleItem {
 		my %templateParameters = ();
 		my $data = "";
 		$data .= "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<dynamicplaylistcreator>\n\t<template>\n\t\t<id>".$templateId."</id>";
+		# add dpltargetversion
+		$data .= "\n\t\t<parameter type=\"text\" id=\"dpltargetversion\"><value>".$self->dplVersion."</value></parameter>";
+
 		if (defined($template->{'parameter'})) {
 			my $parameters = $template->{'parameter'};
 			if (ref($parameters) ne 'ARRAY') {
@@ -759,6 +757,7 @@ sub saveItem {
 		$url .= ".".$self->extension;
 	}
 	my $data = undef;
+
 	$data = $dplonly ? Slim::Utils::Unicode::utf8decode_locale($params->{'sqltextdplonly'}) : Slim::Utils::Unicode::utf8decode_locale($params->{'text'});
 	$data =~ s/\r+\n/\n/g; # Remove any extra \r character, will create duplicate linefeeds on Windows if not removed
 	if (!($params->{'pluginWebPageMethodsError'}) && defined($self->contentParser)) {

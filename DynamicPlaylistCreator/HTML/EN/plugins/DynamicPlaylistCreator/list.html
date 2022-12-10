@@ -1,4 +1,4 @@
-<style>.inputbtn{padding:2px;}</style>
+<style>.inputbtn{padding:2px;}.versionmismatch{color: red !important;}.emphbold{font-weight:600;}</style>
 [%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
 
 [%- pwd_list = BLOCK -%]/
@@ -8,6 +8,13 @@
 [% END -%]
 [% PROCESS pageheader.html %]
 <br>
+[% BLOCK RemoveDynamicPlaylistLink %]
+		[% link='cmdlink' cmdimage='dplc_delete.gif' cmdtitle='PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM' %]
+		[% WRAPPER $link noTarget=1 %]
+			href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id |uri %]" onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"
+		[% END %]
+[% END %]
+
 [% WRAPPER contentcontainer %]
 	<p>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER" | string %]</p>
 		<tr>
@@ -21,12 +28,15 @@
 		[% ELSE %]
 			[% FOREACH playlist IN pluginDynamicPlaylistCreatorPlayLists %]
 				[% BLOCK controls %]
-					[% WRAPPER removelink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id |uri %]" onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %]
-					[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id |uri %]"
+					[%- IF systemSkin != "material" %]
+						[% PROCESS RemoveDynamicPlaylistLink %]
+					[%- ELSE %]
+						[% WRAPPER removelink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id |uri %]" onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %]
 					[%- END %]
+						[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id |uri %]"[% END %]
 				[% END %]
 				[%- WRAPPER contentitem controls='controls' %]
-					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id |uri %]">[% playlist.name %]</a>
+					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id |uri %]">[% IF dplversion && playlist.dpltargetversion && dplversion != playlist.dpltargetversion %][% versionmismatch = 1 %][% versionmismatchcustomized = 1 IF !playlist.simple %]<span class="versionmismatch">[% END %][% playlist.name %][% IF dplversion && playlist.dpltargetversion && dplversion != playlist.dpltargetversion %]</span>[% END %]</a>
 				[% END %]
 			[% odd = (not odd) %]
 			[% END %]
@@ -53,6 +63,11 @@
 		[% END %]
 		[% IF pluginWebPageMethodsMessage %]
 			<p><br><br>[% pluginWebPageMethodsMessage %]</p>
+		[% END %]
+		[% IF versionmismatch %]
+			<p><br><br><span class="versionmismatch">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_VERSIONMISMATCH_DETAILS" | string %]
+			[% IF versionmismatchcustomized %]<br><br>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_VERSIONMISMATCH_DETAILS_CUSTOMIZEDSQLITE" | string %][% END %]
+			</span></p>
 		[% END %]
 [% END %]
 <br>

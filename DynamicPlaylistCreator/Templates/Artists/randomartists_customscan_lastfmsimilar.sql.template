@@ -4,8 +4,8 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF sqlscope %]
--- Scope:[% sqlscope %]
+[%- IF dplversion %]
+-- dplTargetVersion:[% dplversion %]
 [%- END %]
 [%- IF dplversion != 3 %]
 -- PlaylistUseCache: 1

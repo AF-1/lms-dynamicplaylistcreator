@@ -4,8 +4,8 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF sqlscope %]
--- Scope:[% sqlscope %]
+[%- IF dplversion %]
+-- dplTargetVersion:[% dplversion %]
 [%- END %]
 -- PlaylistTrackOrder:ordered
 [%- IF nooftracks %]

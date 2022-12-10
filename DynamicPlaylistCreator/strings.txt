@@ -2,7 +2,7 @@ PLUGIN_DYNAMICPLAYLISTCREATOR
 	EN	Dynamic Playlist Creator
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_DESC
-	EN	Dynamic Playlist Creator is a companion app for the Dynamic Playlists 3 plugin. It helps you create dynamic playlists based on templates.
+	EN	Dynamic Playlist Creator allows you to create custom dynamic playlists for the Dynamic Playlists plugin using templates.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_SETTINGS
 	EN	Various Settings
@@ -31,7 +31,7 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING
 	EN	Allow SQLite customizing
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING_DESC
-	EN	This will allow you to customize the SQLite statement of your dynamic playlist.<br><br><b>Please note:</b> Once you have saved the file as <i>customized SQLite</i>, you can't convert it back to the default format (xml).<br><br>If you know how to customize SQLite, it might even be easier for you to write your own customized SQLite statement and drop the file into <i>Dynamic Playlist</i>'s folder for custom dynamic playlists.<br>See <a href="https://github.com/AF-1/lms-dynamicplaylists#faq" target="_blank" rel="noopener noreferrer"><b>Dynamic Playlists FAQ</b></a>.
+	EN	This will allow you to customize the SQLite statement of your dynamic playlist.<br><b>Recommended only for users who are familiar with SQLite.</b><br><br><b>Please note:</b> Once you have saved the file as <i>customized SQLite</i>, you can't convert it back to the default format (xml).<br><br>If you know how to customize SQLite, it might be easier for you to write your own customized SQLite statement and drop the file into <i>Dynamic Playlist</i>'s folder for custom dynamic playlists.<br>See <a href="https://github.com/AF-1/lms-dynamicplaylists#faq" target="_blank" rel="noopener noreferrer"><b>Dynamic Playlists FAQ</b></a>.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
 	EN	<b>Custom dynamic playlists created with this plugin:</b>
@@ -45,8 +45,11 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM
 	EN	Create new dynamic playlist
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_CLEARCACHE
-	EN	Clear cache
+PLUGIN_DYNAMICPLAYLISTCREATOR_VERSIONMISMATCH_DETAILS
+	EN	Custom dynamic playlists with names in red font are not compatible with your current major version of <i>Dynamic Playlists</i>.<br>You can update incompatible dynamic playlists by clicking on the <span class="emphbold">Edit</span> button and simply <span class="emphbold">saving</span> them again.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_VERSIONMISMATCH_DETAILS_CUSTOMIZEDSQLITE
+	EN	Incompatible dynamic playlists saved in the <span class="emphbold">Customized SQLite</span> format have to be updated <span class="emphbold">manually</span> to make them compatible with your current major version of <i>Dynamic Playlists</i>.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_TYPES_TITLE
 	EN	Select a template on which to base your new dynamic playlist:

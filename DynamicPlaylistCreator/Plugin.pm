@@ -179,8 +179,9 @@ sub handleWebList {
 	@webPlaylists = sort {uc($a->{'name'}) cmp uc($b->{'name'})} @webPlaylists;
 
 	$params->{'nocustomdynamicplaylists'} = 1 if (scalar @webPlaylists == 0);
+	$params->{'dplversion'} = $dplVersion if $dplVersion;
 	$params->{'pluginDynamicPlaylistCreatorPlayLists'} = \@webPlaylists;
-
+	$log->debug('webPlaylists = '.Dumper(\@webPlaylists));
 	return Slim::Web::HTTP::filltemplatefile('plugins/DynamicPlaylistCreator/list.html', $params);
 }
 

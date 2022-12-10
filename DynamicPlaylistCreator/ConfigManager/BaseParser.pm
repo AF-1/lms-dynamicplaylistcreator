@@ -241,6 +241,10 @@ sub parseTemplateContent {
 						}
 					}
 				}
+
+				# add dpltargetversion to localcontext
+				$localcontext->{'dpltargetversion'} = $templateParameters{'dpltargetversion'};
+
 				my $templateData = $self->loadTemplate($client, $template, \%templateParameters);
 				if (!defined($templateData)) {
 					$log->debug("Ignoring $item due to loadTemplate");
@@ -248,6 +252,7 @@ sub parseTemplateContent {
 					return undef;
 				}
 				my $templateFileData = $templateData->{'data'};
+
 				my $doParsing = 1;
 				if (!defined($templateData->{'parse'})) {
 					$doParsing = 0;
@@ -258,6 +263,7 @@ sub parseTemplateContent {
 				} else {
 					$itemData = $templateFileData;
 				}
+
 				if (defined($timestamp) && defined($self->cacheItems)) {
 					my %entry = (
 						'data' => $itemData,
@@ -267,13 +273,14 @@ sub parseTemplateContent {
 					$self->cacheItems->{'items'}->{'templatecontent_'.$cacheName} = \%entry;
 				}
 			}
+
 			my $result = eval {$self->parseContentImplementation($client, $item, $itemData, $items, $globalcontext, $localcontext) };
 			if (!$@ && defined($result)) {
 			my $timestamp = undef;
 				if (defined($localcontext->{'timestamp'})) {
 					$timestamp = $localcontext->{'timestamp'};
 				}
-				if (!defined($items->{$item}) || !defined($timestamp) || !defined($items->{$item}->{'timestamp'}) || $items->{$item}->{'timestamp'}<=$timestamp) {
+				if (!defined($items->{$item}) || !defined($timestamp) || !defined($items->{$item}->{'timestamp'}) || $items->{$item}->{'timestamp'} <= $timestamp) {
 					$log->debug("Storing parsed result for $item");
 					$items->{$item} = $result;
 				} else {
