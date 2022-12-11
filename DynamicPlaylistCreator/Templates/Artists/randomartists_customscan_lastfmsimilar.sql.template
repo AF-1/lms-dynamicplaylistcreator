@@ -14,7 +14,7 @@
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
--- PlaylistParameter1:artist:PLUGIN_DYNAMICPLAYLISTS3_PARAMNAME_SELECTARTIST:
+-- PlaylistParameter1:artist:PLUGIN_DYNAMICPLAYLISTS[% IF dplversion == 3 %]3[% ELSE %]4[% END %]_PARAMNAME_SELECTARTIST:
 [%- # ----------- %]
 [%- IF customskipfilter %]
 -- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]

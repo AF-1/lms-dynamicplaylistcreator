@@ -1,8 +1,7 @@
 # Dynamic Playlist Creator
 
 **Dynamic Playlist Creator** [^1] allows you to create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br><br>
-It's a **BETA** version. It probably still contains some (template) bugs and is provided on an “as is” and “as available” basis without any warranty or liability on my part. **I simply don't have the time to test the templates against all possible parameter combinations**. But if *enough* beta testers come forward to test the templates **extensively** (thank you!), perhaps one day this plugin can be part of the LMS plugin repository.<br>
-Until then, this plugin will continue to be officially a beta version with updates as bug reports come in, even if it's already working.
+Even though the plugin works, it is officially a **beta** version until *enough* users have tested the templates **extensively** (thank you!). I simply don't have the time to test the templates against all possible parameter combinations. It's provided on an “as is” and “as available” basis without any warranty/liability on my part.
 <br><br><br>
 
 
@@ -15,7 +14,7 @@ Until then, this plugin will continue to be officially a beta version with updat
 <br><br><br>
 
 
-## How to contribute as a beta user
+## How to contribute as a user
 Use the plugin to **create custom dynamic playlists**. Try different *templates* and *different* (combinations of) *parameters* for each dynamic playlist you create. Then play them with *Dynamic Playlists* to see if they work.
 <br><br><br>
 
