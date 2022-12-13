@@ -2,6 +2,8 @@
 
 **Dynamic Playlist Creator**[^1] allows you to create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br><br>
 Please note that this is and will remain a [**release candidate**](https://en.wiktionary.org/wiki/release_candidate) version for the foreseeable future until *enough* users have tested the templates **extensively** (thank you!). I simply don't have the time to test the templates against all possible parameter combinations. It's provided on an “as is” and “as available” basis without any warranty/liability on my part.
+<br><br>
+[⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
 <br><br><br>
 
 
