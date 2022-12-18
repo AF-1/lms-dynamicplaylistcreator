@@ -8,7 +8,7 @@ Please note that this is and will remain a [**release candidate**](https://en.wi
 
 
 ## Requirements
-- Dynamic Playlists version **4**.x or version 3.7.7+ (but support for v3 will end at some point)
+- Dynamic Playlists version **4**
 
 - LMS version ≥ 7.9
 
@@ -59,12 +59,11 @@ In addition, DPLC will <b>always</b> save your custom dynamic playlist as an SQL
 </p></details><br>
 
 <details><summary>»<b>Which plugins does DPLC work with?</b>«</summary><br><p>
-It's compatible with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a> and <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip 3</b></a>.<br><b>CustomScan</b>: could work, not tested. Compatibility not guaranteed, not supported by me.<br>
-For now, DPLC supports <i>Dynamic Playlists</i> version 3 and 4. At some point, I'll drop support for DPL version 3.
+It's compatible with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists 4</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a> and <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip 3</b></a>.<br><b>CustomScan</b>: could work, not tested. Compatibility not guaranteed, not supported by me.
 </p></details><br>
 
 <details><summary>»<b>Can I use <i>Dynamic Playlist Creator</i> and <i>SQLPlayList</i> at the same time?</b>«</summary><br><p>
-Yes. <i>Dynamic Playlists</i> version <b>4</b> will ignore SQLPlayList but there's no harm in keeping it installed.<br>At present, <i>Dynamic Playlists</i> version <b>3</b> works with both.
+Yes. <i>Dynamic Playlists</i> version <b>4</b> will ignore SQLPlayList but there's no harm in keeping it installed.
 </p></details><br>
 
 <details><summary>»<b>Can you translate DPLC into my language?</b>«</summary><br><p>
