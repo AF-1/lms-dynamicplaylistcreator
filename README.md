@@ -60,7 +60,7 @@ In addition, DPLC will <b>always</b> save your custom dynamic playlist as an SQL
 </p></details><br>
 
 <details><summary>»<b>Why can't I <i>start</i> dynamic playlists from the list of created dynamic playlists in DPLC?</b>«</summary><br><p>
-DPLC does not contain any code to play songs or handle parameters - which it would need to handle dynamic playlists with <i>user-input parameters</i>. SQLPlayList contained a lot of duplicate code from DPL <b>2</b> especially for this purpose. I guess, this was rather unproblematic and manageable at the time, because the number of user-input parameters in DPL <b>2</b> was more limited and less complex (no multiple selections, no preselection etc.).<br>
+DPLC does not contain any code to play songs or handle parameters - which it would need to start dynamic playlists with <i>user-input parameters</i>. SQLPlayList contained a lot of duplicate code from DPL <b>2</b> especially for this purpose. I guess, this was rather unproblematic and manageable at the time, because the number of user-input parameters in DPL <b>2</b> was more limited and less complex (no multiple selections, no preselection etc.).<br>
 I decided to create DPLC more as a kind of dynamic playlist construction kit without duplicate code, which should make the plugin easier to maintain and update. That's why there's no play button in DPLC.
 </p></details><br>
 
