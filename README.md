@@ -53,9 +53,15 @@ If you want to use a custom dynamic playlist with DPL version <b>4</b>, you'll h
 </p></details><br>
 
 <details><summary>»<b>What are the files in the <i>DynamicPlaylistCreator</i> folder for? Can I edit them?</b>«</summary><br><p>
-When you create a custom dynamic playlist, DPLC will create two files: the file with the <b>customvalues.xml</b> extension contains the (template) values you selected for this dynamic playlist. It allows you to edit or update your custom dynamic playlist at a later time.<br>
+When you create/edit and then <i>save</i> a custom dynamic playlist, DPLC will create 2 files in the <i>DynamicPlaylistCreator</i> folder (default location in the LMS playlists folder, can be changed in the plugin settings):<br>
+the file with the <b>customvalues.xml</b> extension contains the (template) values you selected for this dynamic playlist. It allows you to edit or update your custom dynamic playlist at a later time.<br>
 In addition, DPLC will <b>always</b> save your custom dynamic playlist as an SQLite statement (file extension: <b>sql</b>) because <i>Dynamic Playlists</i> searches the DPLC custom folder for them.<br><br>
-<b>Do <i>not</i> manually edit any of these files!</b> DPLC will overwrite the changes. Or worse, your custom dynamic playlist will no longer work.
+<b>Do <i>not</i> manually move or edit any of these files!</b> DPLC will overwrite the changes. Or worse, your custom dynamic playlist will no longer work.
+</p></details><br>
+
+<details><summary>»<b>Why can't I <i>start</i> dynamic playlists from the list of created dynamic playlists in DPLC?</b>«</summary><br><p>
+DPLC does not contain any code to play songs or handle parameters - which it would need to handle dynamic playlists with <i>user-input parameters</i>. SQLPlayList contained a lot of duplicate code from DPL <b>2</b> especially for this purpose. I guess, this was rather unproblematic and manageable at the time, because the number of user-input parameters in DPL <b>2</b> was more limited and less complex (no multiple selections, no preselection etc.).<br>
+I decided to create DPLC more as a kind of dynamic playlist construction kit without duplicate code, which should make the plugin easier to maintain and update. That's why there's no play button in DPLC.
 </p></details><br>
 
 <details><summary>»<b>Which plugins does DPLC work with?</b>«</summary><br><p>
