@@ -68,6 +68,10 @@ I decided to create DPLC more as a kind of dynamic playlist construction kit wit
 It's compatible with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists 4</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a> and <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip 3</b></a>.<br><b>CustomScan</b>: could work, not tested. Compatibility not guaranteed, not supported by me.
 </p></details><br>
 
+<details><summary>»<b>There's no option to set a <i>track limit</i> in one of the DPLC templates.</b>«</summary><br><p>
+Dynamic playlists that use DPL <b>4</b>'s <b>cache option</b> cannot have a track limit because DPL 4 will load <b>all</b> tracks matching the dynamic playlist's search parameter into the cache. DPL 4 will then add small batches of tracks to the players's current playlist. The number of new unplayed tracks to be added per batch can be set in the DPL settings. It's a global setting for all dynamic playlists (except album dynamic playlists which should add complete albums).
+</p></details><br>
+
 <details><summary>»<b>Can I use <i>Dynamic Playlist Creator</i> and <i>SQLPlayList</i> at the same time?</b>«</summary><br><p>
 Yes. <i>Dynamic Playlists</i> version <b>4</b> will ignore SQLPlayList but there's no harm in keeping it installed.
 </p></details><br>
