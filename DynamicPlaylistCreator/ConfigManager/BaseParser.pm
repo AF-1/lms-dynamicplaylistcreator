@@ -242,9 +242,6 @@ sub parseTemplateContent {
 					}
 				}
 
-				# add dpltargetversion to localcontext
-				$localcontext->{'dpltargetversion'} = $templateParameters{'dpltargetversion'};
-
 				my $templateData = $self->loadTemplate($client, $template, \%templateParameters);
 				if (!defined($templateData)) {
 					$log->debug("Ignoring $item due to loadTemplate");

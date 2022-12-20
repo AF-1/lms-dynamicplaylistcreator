@@ -4,17 +4,9 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF dplversion %]
--- dplTargetVersion:[% dplversion %]
-[%- END %]
-[%- IF dplversion != 3 %]
 -- PlaylistUseCache: 1
-[%- END %]
-[%- IF nooftracks && dplversion == 3 %]
--- PlaylistLimitOption:[% nooftracks %]
-[%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
--- PlaylistParameter1:artist:PLUGIN_DYNAMICPLAYLISTS[% IF dplversion == 3 %]3[% ELSE %]4[% END %]_PARAMNAME_SELECTARTIST:
+-- PlaylistParameter1:artist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTARTIST:
 [%- # ----------- %]
 [%- IF customskipfilter %]
 -- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
@@ -22,7 +14,7 @@
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists similar_tracks;
-create temporary table similar_tracks as select [% IF dplversion == 3 %]tracks.url as url[% ELSE %]tracks.id as id, tracks.primary_artist as primary_artist[% END %][% IF toprated %],tracks_persistent.rating as rating[% END %] from tracks
+create temporary table similar_tracks as select tracks.id as id, tracks.primary_artist as primary_artist[% IF toprated %], tracks_persistent.rating as rating[% END %] from tracks
 	join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5)
 	join contributors on contributors.id = contributor_track.contributor
 	[%- IF toprated or notrated %]
@@ -56,7 +48,7 @@ group by tracks.id
 order by tracks_persistent.rating desc
 [%- END %];
 [%- # --------------------------------------------------------------------------------------------------------------- %]
-insert into similar_tracks ([% IF dplversion == 3 %]url[% ELSE %]id,primary_artist[% END %][%IF toprated %],rating[% END %]) select [% IF dplversion == 3 %]tracks.url as url[% ELSE %]tracks.id as id, tracks.primary_artist as primary_artist[% END %][% IF toprated %],tracks_persistent.rating as rating[% END %] from tracks
+insert into similar_tracks (id,primary_artist[% IF toprated %], rating[% END %]) select tracks.id as id, tracks.primary_artist as primary_artist[% IF toprated %], tracks_persistent.rating as rating[% END %] from tracks
 	join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5)
 	join contributors on contributors.id = contributor_track.contributor
 	[%- IF toprated or notrated %]
@@ -88,7 +80,7 @@ group by tracks.id
 order by tracks_persistent.rating desc
 [%- END %];
 [%- # --------------------------------------------------------------------------------------------------------------- %]
-insert into similar_tracks ([% IF dplversion == 3 %]url[% ELSE %]id,primary_artist[% END %][%IF toprated %],rating[% END %]) select [% IF dplversion == 3 %]tracks.url as url[% ELSE %]tracks.id as id, tracks.primary_artist as primary_artist[% END %][% IF toprated %],tracks_persistent.rating as rating[% END %] from tracks
+insert into similar_tracks (id,primary_artist[% IF toprated %], rating[% END %]) select tracks.id as id, tracks.primary_artist as primary_artist[% IF toprated %], tracks_persistent.rating as rating[% END %] from tracks
 	join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5)
 	join contributors on contributors.id = contributor_track.contributor
 	[%- IF toprated or notrated %]
@@ -112,8 +104,9 @@ insert into similar_tracks ([% IF dplversion == 3 %]url[% ELSE %]id,primary_arti
 order by tracks_persistent.rating desc
 [%- END %];
 [%- # --------------------------------------------------------------------------------------------------------------- %]
-select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
+select tracks.id, tracks.primary_artist from tracks
 	group by tracks.id
-	order by [% IF toprated %]rating desc[% END %][% IF dplversion == 3 %][% IF toprated %], [% END %]random()[% END %]
-	[% IF nooftracks && dplversion == 3 %]limit [% nooftracks %][% END %];
+	[%- IF toprated %]
+	order by rating desc
+	[%- END %]
 drop table if exists similar_tracks;

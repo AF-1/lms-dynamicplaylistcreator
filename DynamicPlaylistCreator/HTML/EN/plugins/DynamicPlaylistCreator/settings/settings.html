@@ -1,4 +1,4 @@
-<style>.faqlink{padding-left:22px;}</style>
+<style>.faqlink{padding-left:22px;}.advmode{visibility:[% IF advmode %]visible[% ELSE %]hidden[% END %];}</style>
 [% page = "PLUGIN_DYNAMICPLAYLISTCREATOR" %]
 [% PROCESS settings/header.html %]
 <span[% IF systemSkin != "material" %] class="faqlink"[% END %]><a href="[% "SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK" | string %]" target="_blank" rel="noopener noreferrer"><b>[% "SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT" | string %]</b></a></span>
@@ -13,8 +13,9 @@
 	[% END %]
 	<br>
 
+	<span class="advmode">
 	[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING_DESC" %]
 		<input name="pref_allowsqlcustomizing" id="allowsqlcustomizing" type="checkbox" [% IF prefs.allowsqlcustomizing %] checked [% END %]>
 	[% END %]
-
+	</span>
 [% PROCESS settings/footer.html %]

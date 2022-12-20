@@ -4,9 +4,6 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF dplversion %]
--- dplTargetVersion:[% dplversion %]
-[%- END %]
 [%- IF nooftracks %]
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
@@ -22,7 +19,7 @@
 drop table if exists randomweightedratingslow;
 drop table if exists randomweightedratingshigh;
 drop table if exists randomweightedratingscombined;
-create temporary table randomweightedratingslow as select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
+create temporary table randomweightedratingslow as select tracks.id, tracks.primary_artist from tracks
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 	join library_track on
 		library_track.track = tracks.id
@@ -68,7 +65,7 @@ create temporary table randomweightedratingslow as select [% IF dplversion == 3 
 	order by random()
 	limit [% percentage %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
-create temporary table randomweightedratingshigh as select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
+create temporary table randomweightedratingshigh as select tracks.id, tracks.primary_artist from tracks
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 	join library_track on
 		library_track.track = tracks.id

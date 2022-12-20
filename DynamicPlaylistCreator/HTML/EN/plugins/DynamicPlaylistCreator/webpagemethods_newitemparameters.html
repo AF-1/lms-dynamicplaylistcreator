@@ -19,7 +19,7 @@
 		<tr><td colspan="3">&nbsp;</td></tr>
 		[%- FOREACH parameter = pluginWebPageMethodsNewItemParameters %]
 			[% IF !(parameter.type.match('list') or parameter.type.match('checkboxes')) or (parameter.values.size != 0 and !(parameter.values.0.value == '' and parameter.values.size == 1))%]
-			[% UNLESS parameter.type == 'text' && parameter.id == 'nooftracks' && usecache && dplversion != 3 %]
+			[% UNLESS parameter.type == 'text' && parameter.id == 'nooftracks' && usecache %]
 			<tr>
 				<td>[% parameter.name %]</td>
 				<td id="warning_[% parameter.id %]" class="warningbgimg"></td>

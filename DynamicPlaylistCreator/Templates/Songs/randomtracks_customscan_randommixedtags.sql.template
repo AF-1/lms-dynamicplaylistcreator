@@ -4,22 +4,14 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF dplversion %]
--- dplTargetVersion:[% dplversion %]
-[%- END %]
-[%- IF dplversion != 3 %]
 -- PlaylistUseCache: 1
-[%- END %]
-[%- IF nooftracks && dplversion == 3 %]
--- PlaylistLimitOption:[% nooftracks %]
-[%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 [%- IF customskipfilter %]
 -- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
-select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
+select tracks.id, tracks.primary_artist from tracks
 	join albums on
 		albums.id = tracks.album
 	[%- IF notrepeat %]
@@ -148,7 +140,3 @@ select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_art
 		and excludedstyle.track is null
 		[%- END %]
 	group by tracks.id
-	[%- IF dplversion == 3 %]
-	order by random()
-	[%- END %]
-	[% IF nooftracks && dplversion == 3 %]limit [% nooftracks %][% END %]

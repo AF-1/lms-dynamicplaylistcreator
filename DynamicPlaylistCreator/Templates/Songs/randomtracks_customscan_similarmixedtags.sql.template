@@ -4,15 +4,7 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF dplversion %]
--- dplTargetVersion:[% dplversion %]
-[%- END %]
-[%- IF dplversion != 3 %]
 -- PlaylistUseCache: 1
-[%- END %]
-[%- IF nooftracks && dplversion == 3 %]
--- PlaylistLimitOption:[% nooftracks %]
-[%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 -- PlaylistParameter1:customtrack:Select song:select tracks.id,albums.title || ' ' || tracks.tracknum || '. ' || tracks.title,substr(tracks.titlesort,1,1) from tracks, albums where tracks.album = albums.id and tracks.audio = 1 group by tracks.id order by albums.titlesort,albums.disc,tracks.tracknum
 [%- IF customskipfilter %]
@@ -20,7 +12,7 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
-select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
+select tracks.id, tracks.primary_artist from tracks
 	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
@@ -55,7 +47,3 @@ select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_art
 		and dynamicplaylist_history.id is null
 		[%- END %]
 	group by tracks.id
-	[%- IF dplversion == 3 %]
-	order by random()
-	[%- END %]
-	[% IF nooftracks && dplversion == 3 %]limit [% nooftracks %][% END %]

@@ -45,11 +45,8 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM
 	EN	Create new dynamic playlist
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_VERSIONMISMATCH_DETAILS
-	EN	Custom dynamic playlists with names in red font are not compatible with your current major version of <i>Dynamic Playlists</i>.<br>You can update incompatible dynamic playlists by clicking on the <span class="emphbold">Edit</span> button and simply <span class="emphbold">saving</span> them again.
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_VERSIONMISMATCH_DETAILS_CUSTOMIZEDSQLITE
-	EN	Incompatible dynamic playlists saved in the <span class="emphbold">Customized SQLite</span> format have to be updated <span class="emphbold">manually</span> to make them compatible with your current major version of <i>Dynamic Playlists</i>.
+PLUGIN_DYNAMICPLAYLISTCREATOR_UNSUPPORTEDVERSION
+	EN	This plugin creates custom dynamic playlists compatible <span class="emphbold">only</span> with <i>Dynamic Playlists</i> version <span class="emphbold">4</span>.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_TYPES_TITLE
 	EN	Select a template on which to base your new dynamic playlist:

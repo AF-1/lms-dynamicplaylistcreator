@@ -7,9 +7,6 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF dplversion %]
--- dplTargetVersion:[% dplversion %]
-[%- END %]
 [% IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
 [% ELSIF sortorder == 2 %]
@@ -32,7 +29,7 @@ create temporary table tmp_preselection_albums as
 limit 1;
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
+select tracks.id, tracks.primary_artist from tracks
 	[%- IF source == 2 %]
 	join tmp_preselection_albums
 		on tmp_preselection_albums.album = tracks.album

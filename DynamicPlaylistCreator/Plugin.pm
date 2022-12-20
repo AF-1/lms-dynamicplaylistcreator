@@ -103,7 +103,6 @@ sub postinitPlugin {
 			$dplVersion = $version if $version > $dplVersion;
 		}
 	}
-	$dplVersion = 4 if !$dplVersion;
 }
 
 sub initPlayLists {
@@ -124,8 +123,7 @@ sub getConfigManager {
 	if (!defined($configManager)) {
 		my %parameters = (
 			'pluginVersion' => $pluginVersion,
-			'addSqlErrorCallback' => undef,
-			'dplVersion' => $dplVersion
+			'addSqlErrorCallback' => undef
 		);
 		$configManager = Plugins::DynamicPlaylistCreator::ConfigManager::Main->new(\%parameters);
 	}

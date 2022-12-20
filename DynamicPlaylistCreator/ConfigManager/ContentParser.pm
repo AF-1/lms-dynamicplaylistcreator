@@ -63,7 +63,6 @@ sub parseContentImplementation {
 		my $name = undef;
 		my $statement = '';
 		my $fulltext = '';
-		my $dplTargetVersion = 0;
 
 		for my $line (@playlistDataArray) {
 			# Add linefeed to make sure playlist looks ok when editing
@@ -74,12 +73,6 @@ sub parseContentImplementation {
 			chomp $line;
 
 			$line =~ s/^\s*--\s*PlaylistName\s*[:=]\s*//io;
-
-			# parse dplTargetVersion from adv/sqlite def
-			my $dplVersion = parseDPLtargetVersion($line);
-			if ($dplVersion) {
-				$dplTargetVersion = int($dplVersion);
-			}
 
 			# skip and strip comments & empty lines
 			$line =~ s/\s*--.*?$//o;
@@ -117,12 +110,6 @@ sub parseContentImplementation {
 
 			if (defined($localcontext) && defined($localcontext->{'simple'})) {
 				$playlist{'simple'} = 1;
-			} else {
-				$playlist{'dpltargetversion'} = $dplTargetVersion if $dplTargetVersion;
-			}
-
-			if (defined($localcontext) && defined($localcontext->{'dpltargetversion'})) {
-				$playlist{'dpltargetversion'} = $localcontext->{'dpltargetversion'};
 			}
 
 			#$log->debug('playlist = '.Dumper(\%playlist));
@@ -136,23 +123,6 @@ sub parseContentImplementation {
 		} else {
 			$errorMsg = "Incorrect information in playlist data";
 			$log->warn("Unable to to read playlist configuration");
-		}
-	}
-	return undef;
-}
-
-sub parseDPLtargetVersion {
-	my $line = shift;
-	if ($line =~ /^\s*--\s*dplTargetVersion\s*[:=]\s*/) {
-		$line =~ m/^\s*--\s*dplTargetVersion\s*[:=]\s*([^:]+)\s*(.*)$/;
-		my $dplversion = $1;
-		$dplversion =~ s/\s+$//;
-		$dplversion =~ s/^\s+//;
-		if ($dplversion) {
-			return $dplversion;
-		} else {
-			$log->debug("No value or error in dplversion: $line");
-			return undef;
 		}
 	}
 	return undef;

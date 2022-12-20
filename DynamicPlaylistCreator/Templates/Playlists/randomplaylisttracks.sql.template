@@ -4,15 +4,7 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF dplversion %]
--- dplTargetVersion:[% dplversion %]
-[%- END %]
-[%- IF dplversion != 3 %]
 -- PlaylistUseCache: 1
-[%- END %]
-[%- IF nooftracks && dplversion == 3 %]
--- PlaylistLimitOption:[% nooftracks %]
-[%- END %]
 [% IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
 [% ELSIF sortorder == 2 %]
@@ -22,15 +14,15 @@
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 [%- IF request1fromuser == 'genre' %]
--- PlaylistParameter1:genre:PLUGIN_DYNAMICPLAYLISTS[% IF dplversion == 3 %]3[% ELSE %]4[% END %]_PARAMNAME_SELECTGENRE:
+-- PlaylistParameter1:genre:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRE:
 [%- ELSIF request1fromuser == 'artist' %]
--- PlaylistParameter1:artist:PLUGIN_DYNAMICPLAYLISTS[% IF dplversion == 3 %]3[% ELSE %]4[% END %]_PARAMNAME_SELECTARTIST:
+-- PlaylistParameter1:artist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTARTIST:
 [%- ELSIF request1fromuser == 'album' %]
--- PlaylistParameter1:album:PLUGIN_DYNAMICPLAYLISTS[% IF dplversion == 3 %]3[% ELSE %]4[% END %]_PARAMNAME_SELECTALBUM:
+-- PlaylistParameter1:album:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTALBUM:
 [%- ELSIF request1fromuser == 'year' %]
--- PlaylistParameter1:year:PLUGIN_DYNAMICPLAYLISTS[% IF dplversion == 3 %]3[% ELSE %]4[% END %]_PARAMNAME_SELECTYEAR:
+-- PlaylistParameter1:year:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTYEAR:
 [%- ELSIF request1fromuser == 'decade' %]
--- PlaylistParameter1:customdecade:PLUGIN_DYNAMICPLAYLISTS[% IF dplversion == 3 %]3[% ELSE %]4[% END %]_PARAMNAME_SELECTDECADE:select cast(((tracks.year/10)*10) as int) as decade,case when tracks.year > 0 then cast(((tracks.year/10)*10) as int)||'s' else 'Unknown' end from tracks where tracks.audio = 1 group by decade order by decade desc
+-- PlaylistParameter1:customdecade:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTDECADE:select cast(((tracks.year/10)*10) as int) as decade,case when tracks.year > 0 then cast(((tracks.year/10)*10) as int)||'s' else 'Unknown' end from tracks where tracks.audio = 1 group by decade order by decade desc
 [%- END %]
 [%- # ----------- %]
 [%- IF customskipfilter %]
@@ -38,7 +30,7 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_artist[% END %] from tracks
+select tracks.id, tracks.primary_artist from tracks
 	join playlist_track on
 		playlist_track.track = tracks.url and
 		playlist_track.playlist in (select max(playlist) from playlist_track, tracks where
@@ -99,4 +91,3 @@ select [% IF dplversion == 3 %]tracks.url[% ELSE %]tracks.id, tracks.primary_art
 	[%- END %]
 	group by tracks.id
 	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]playlist_track.position asc[% END %]
-	[% IF nooftracks && dplversion != 3 %]limit [% nooftracks %][% END %]
