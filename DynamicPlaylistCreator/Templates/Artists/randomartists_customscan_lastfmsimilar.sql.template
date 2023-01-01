@@ -21,10 +21,8 @@ create temporary table similar_tracks as select tracks.id as id, tracks.primary_
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	left join customscan_contributor_attributes as attr1 on
 		attr1.contributor = contributors.id and
 		attr1.module = 'cslastfm' and
@@ -34,9 +32,7 @@ create temporary table similar_tracks as select tracks.id as id, tracks.primary_
 		[%- END %]
 	WHERE
 		tracks.audio = 1
-	[%- IF notrepeat %]
 		and dynamicplaylist_history.id is null
-	[%- END %]
 		and (attr1.id is not null and exists(select id from contributors
 							where attr1.value = contributors.name and
 							contributors.id = 'PlaylistParameter1'))
@@ -55,10 +51,8 @@ insert into similar_tracks (id,primary_artist[% IF toprated %], rating[% END %])
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	left join customscan_contributor_attributes as attr2 on
 		attr2.value = contributors.name and
 		attr2.module = 'cslastfm' and
@@ -68,9 +62,7 @@ insert into similar_tracks (id,primary_artist[% IF toprated %], rating[% END %])
 		[%- END %]
 	WHERE
 		tracks.audio = 1
-	[%- IF notrepeat %]
 		and dynamicplaylist_history.id is null
-	[%- END %]
 		and (attr2.id is not null and attr2.contributor = 'PlaylistParameter1')
 	[%- IF notrated %]
 		and ifnull(tracks_persistent.rating, 0) = 0
@@ -87,15 +79,11 @@ insert into similar_tracks (id,primary_artist[% IF toprated %], rating[% END %])
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	WHERE
 		tracks.audio = 1
-	[%- IF notrepeat %]
 		and dynamicplaylist_history.id is null
-	[%- END %]
 		and contributors.id = 'PlaylistParameter1'
 	[%- IF notrated %]
 		and tracks_persistent.rating is null

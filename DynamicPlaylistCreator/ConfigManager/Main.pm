@@ -114,9 +114,7 @@ sub initWebPageMethods {
 	my %webTemplates = (
 		'webList' => 'plugins/DynamicPlaylistCreator/list.html',
 		'webEditItem' => 'plugins/DynamicPlaylistCreator/webpagemethods_edititem.html',
-		'webEditSimpleItem' => 'plugins/DynamicPlaylistCreator/webpagemethods_editsimpleitem.html',
 		'webNewItem' => 'plugins/DynamicPlaylistCreator/webpagemethods_newitem.html',
-		'webNewSimpleItem' => 'plugins/DynamicPlaylistCreator/webpagemethods_newsimpleitem.html',
 		'webNewItemParameters' => 'plugins/DynamicPlaylistCreator/webpagemethods_newitemparameters.html',
 		'webNewItemTypes' => 'plugins/DynamicPlaylistCreator/webpagemethods_newitemtypes.html',
 	);
@@ -264,14 +262,24 @@ sub webNewItem {
 	return $self->webPageMethods->webNewItem($client, $params, $params->{'itemtemplate'}, $self->templates);
 }
 
-sub webSaveSimpleItem {
+sub webSaveNewItem {
 	my ($self, $client, $params) = @_;
 	if (!defined($self->templates)) {
 		$self->templates($self->readTemplateConfiguration($client));
 	}
 	$params->{'items'} = $self->items;
 
-	return $self->webPageMethods->webSaveSimpleItem($client, $params, $params->{'itemtemplate'}, $self->templates);
+	return $self->webPageMethods->webSaveNewItem($client, $params, $params->{'itemtemplate'}, $self->templates);
+}
+
+sub webSaveItem {
+	my ($self, $client, $params) = @_;
+	if (!defined($self->templates)) {
+		$self->templates($self->readTemplateConfiguration($client));
+	}
+	$params->{'items'} = $self->items;
+
+	return $self->webPageMethods->webSaveItem($client, $params, $params->{'itemtemplate'}, $self->templates);
 }
 
 sub webRemoveItem {
@@ -283,26 +291,22 @@ sub webRemoveItem {
 	return $self->webPageMethods->webDeleteItem($client, $params, $params->{'item'}, $self->items);
 }
 
-sub webSaveNewSimpleItem {
+sub webPlayItem {
 	my ($self, $client, $params) = @_;
-	if (!defined($self->templates)) {
-		$self->templates($self->readTemplateConfiguration($client));
+	if (!defined($self->items)) {
+		my $itemConfiguration = $self->readItemConfiguration($client);
+		$self->items($itemConfiguration->{'playlists'});
 	}
-	$params->{'items'} = $self->items;
-
-	return $self->webPageMethods->webSaveNewSimpleItem($client, $params, $params->{'itemtemplate'}, $self->templates);
+	return $self->webPageMethods->webPlayItem($client, $params, $params->{'item'}, $self->items);
 }
 
-sub webSaveNewItem {
+sub webExportItem {
 	my ($self, $client, $params) = @_;
-	$params->{'items'} = $self->items;
-	return $self->webPageMethods->webSaveNewItem($client, $params);
-}
-
-sub webSaveItem {
-	my ($self, $client, $params) = @_;
-	$params->{'items'} = $self->items;
-	return $self->webPageMethods->webSaveItem($client, $params);
+	if (!defined($self->items)) {
+		my $itemConfiguration = $self->readItemConfiguration($client);
+		$self->items($itemConfiguration->{'playlists'});
+	}
+	return $self->webPageMethods->webExportItem($client, $params, $params->{'item'}, $self->items);
 }
 
 1;

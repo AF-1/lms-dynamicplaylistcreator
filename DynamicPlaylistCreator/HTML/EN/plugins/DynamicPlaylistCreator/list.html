@@ -1,4 +1,4 @@
-<style>.inputbtn{padding:2px;}.unsupportedversion{color: red !important;}.emphbold{font-weight:600;}</style>
+<style>.inputbtn{padding:2px;}.error{color: red !important;}.emphbold{font-weight:600;}</style>
 [%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
 
 [%- pwd_list = BLOCK -%]/
@@ -11,7 +11,13 @@
 [% BLOCK RemoveDynamicPlaylistLink %]
 		[% link='cmdlink' cmdimage='dplc_delete.gif' cmdtitle='PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM' %]
 		[% WRAPPER $link noTarget=1 %]
-			href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id |uri %]" onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"
+			href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id | uri %]" onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"
+		[% END %]
+[% END %]
+[% BLOCK ExportDynamicPlaylistLink %]
+		[% link='cmdlink' cmdimage='dplc_export.gif' cmdtitle='PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM' %]
+		[% WRAPPER $link noTarget=1 %]
+			href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_exportitem.html?item=[% playlist.id | uri %]"[% IF systemSkin != "material" %] onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM_INFO" | string %]')"[% END %]
 		[% END %]
 [% END %]
 
@@ -28,15 +34,21 @@
 		[% ELSE %]
 			[% FOREACH playlist IN pluginDynamicPlaylistCreatorPlayLists %]
 				[% BLOCK controls %]
+					[%- IF playlist.nouserinput %]
+					[% WRAPPER playlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_playitem.html?item=[% playlist.id | uri %]"[% END %]
+					[%- END %]
+					[%- IF dplversion > 3 %]
+						[% PROCESS ExportDynamicPlaylistLink %]
+					[%- END %]
 					[%- IF systemSkin != "material" %]
 						[% PROCESS RemoveDynamicPlaylistLink %]
 					[%- ELSE %]
-						[% WRAPPER removelink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id |uri %]" onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %]
+						[% WRAPPER removelink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id | uri %]"[% IF systemSkin != "material" %] onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %][% END %]
 					[%- END %]
-						[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id |uri %]"[% END %]
+						[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]"[% END %]
 				[% END %]
 				[%- WRAPPER contentitem controls='controls' %]
-					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id |uri %]">[% playlist.name %]</a>
+					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]">[% playlist.name %]</a>
 				[% END %]
 			[% odd = (not odd) %]
 			[% END %]
@@ -52,20 +64,11 @@
 		<p>
 			<input class="inputbtn" type="button" onclick="window.location.href = '[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_newitemtypes.html';" value="[% "PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM" | string %]"/>
 		</p>
-		[% IF pluginDynamicPlaylistCreatorError %]
-			<p><br><br><strong>[% pluginDynamicPlaylistCreatorError %]</strong></p>
-		[% END %]
-		[% IF pluginDynamicPlaylistCreatorMessage %]
-			<p><br><br>[% pluginDynamicPlaylistCreatorMessage %]</p>
-		[% END %]
 		[% IF pluginWebPageMethodsError %]
-			<p><br><br><strong>[% pluginWebPageMethodsError %]</strong><br></p>
-		[% END %]
-		[% IF pluginWebPageMethodsMessage %]
-			<p><br><br>[% pluginWebPageMethodsMessage %]</p>
+			<p><br><br><span class="error">[% pluginWebPageMethodsError %]</span><br></p>
 		[% END %]
 		[% IF dplversion && dplversion < 4 %]
-			<p><br><br><span class="unsupportedversion">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_UNSUPPORTEDVERSION" | string %]</span></p>
+			<p><br><br><span class="error">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_UNSUPPORTEDVERSION" | string %]</span></p>
 		[% END %]
 [% END %]
 <br>

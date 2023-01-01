@@ -104,20 +104,7 @@ sub webEditItem {
 	$log->debug('Start webEditItem');
 
 	if (defined($itemId) && defined($itemHash->{$itemId})) {
-		# advanced
-		if (!defined($itemHash->{$itemId}->{'simple'})) {
-			my $data = $self->loadItemDataFromAnyDir($itemId);
-
-			if ($data) {
-				$data = encode_entities($data, "&<>\'\"");
-			}
-			$params->{'pluginWebPageMethodsEditItemData'} = $data;
-			$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
-			$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
-
-			return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
-		# simple
-		} else {
+		if (defined($itemHash->{$itemId}->{'simple'})) {
 			my $templateData = $self->loadTemplateValues($client, $itemId, $itemHash->{$itemId});
 			if (defined($templateData)) {
 				my $template = $templates->{lc($templateData->{'id'})};
@@ -195,9 +182,8 @@ sub webEditItem {
 					$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
 					$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
 					$params->{'usecache'} = $template->{'usecache'};
-					$params->{'allowsqlcustomizing'} = $prefs->get('allowsqlcustomizing');
 					$params->{'disableconflictcheck'} = $prefs->get('disableconflictcheck');
-					return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditSimpleItem'}, $params);
+					return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 				}
 			}
 		}
@@ -244,7 +230,6 @@ sub webNewItemParameters {
 
 		$params->{'pluginWebPageMethodsNewItemParameters'} = \@parametersToSelect;
 		$params->{'usecache'} = $template->{'usecache'};
-		$params->{'allowsqlcustomizing'} = $prefs->get('allowsqlcustomizing');
 		$params->{'templateName'} = $template->{'name'};
 		$params->{'disableconflictcheck'} = $prefs->get('disableconflictcheck');
 	}
@@ -317,16 +302,7 @@ sub webNewItem {
 
 	$params->{'sqltextdplonly'} = $itemData;
 
-
-	## adv
-	if ($menytype eq 'advanced') {
-		$itemFile .= ".".$self->extension;
-		$params->{'pluginWebPageMethodsEditItemData'} = $itemData;
-		$params->{'pluginWebPageMethodsEditItemFile'} = $itemFile;
-		$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($fileName);
-		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItem'}, $params);
-	} else {
-	## simple
+	if ($menytype eq 'simple') {
 		$itemFile .= ".".$self->simpleExtension;
 		my %templateParameters = ();
 		for my $p (keys %{$params}) {
@@ -339,7 +315,7 @@ sub webNewItem {
 		$params->{'pluginWebPageMethodsNewItemTemplate'} = $templateId;
 		$params->{'pluginWebPageMethodsEditItemFile'} = $itemFile;
 		$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($fileName);
-		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewSimpleItem'}, $params);
+		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItem'}, $params);
 	}
 }
 
@@ -373,9 +349,14 @@ sub webDeleteItem {
 	return $self->webCallbacks->webList($client, $params);
 }
 
-sub webSaveSimpleItem {
+sub webPlayItem {
+	my ($self, $client, $params, $itemId, $items) = @_;
+	return $self->webCallbacks->webList($client, $params);
+}
+
+sub webSaveItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
-	$log->debug('Start webSaveSimpleItem');
+	$log->debug('Start webSaveItem');
 
 	my $templateFile = $templateId;
 	my $regex1 = "\\.".$self->templateExtension."\$";
@@ -430,18 +411,7 @@ sub webSaveSimpleItem {
 	}
 	$params->{'sqltextdplonly'} = $itemData;
 
-	## advanced / sql
-	if ($itemtype eq 'advanced') {
-		$itemData = encode_entities($itemData, "&<>\'\"");
-		$params->{'text'} = $itemData;
-		$params->{'pluginWebPageMethodsEditItemData'} = $itemData;
-		$params->{'pluginWebPageMethodsEditItemDeleteSimple'} = $params->{'file'};
-		$params->{'pluginWebPageMethodsEditItemFile'} = $itemFile;
-		$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemFile);
-		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
-
-	} else {
-	## simple / xml
+	if ($itemtype eq 'simple') {
 		$params->{'pluginWebPageMethodsError'} = undef;
 		if (!$params->{'itemparameter_playlistname'}) {
 			$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLNAME');
@@ -450,6 +420,9 @@ sub webSaveSimpleItem {
 		if (!$params->{'file'}) {
 			$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME');
 		}
+
+		# check if dpl requires user input
+		$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_datasource'};
 
 		my $dir = $self->customItemDirectory;
 		if (!defined $dir || !-d $dir) {
@@ -460,7 +433,7 @@ sub webSaveSimpleItem {
 		my $customUrl = catfile($dir, $file.".".$self->extension);
 		if (!$self->saveSimpleItem($client, $params, $url, $templateId, $templates, $customUrl)) {
 			$log->debug('saveSimpleItem FAILED - return to edit mode');
-			return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditSimpleItem'}, $params);
+			return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 		} else {
 			$log->debug('saveSimpleItem succeeded');
 			return $self->webCallbacks->webList($client, $params);
@@ -468,9 +441,9 @@ sub webSaveSimpleItem {
 	}
 }
 
-sub webSaveNewSimpleItem {
+sub webSaveNewItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
-	$log->debug('Start webSaveNewSimpleItem');
+	$log->debug('Start webSaveNewItem');
 
 	$params->{'pluginWebPageMethodsError'} = undef;
 
@@ -491,6 +464,9 @@ sub webSaveNewSimpleItem {
 	my $url = catfile($dir, $file);
 	my $customUrl = catfile($dir, $customFile);
 
+	# check if dpl requires user input
+	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_datasource'};
+
 	if (!defined($params->{'pluginWebPageMethodsError'}) && -e $url && !$params->{'overwrite'}) {
 		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_ITEM_EXISTS');
 	}
@@ -499,79 +475,13 @@ sub webSaveNewSimpleItem {
 	}
 
 	if (!$self->saveSimpleItem($client, $params, $url, $templateId, $templates, $customUrl)) {
-		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewSimpleItem'}, $params);
+		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItem'}, $params);
 	} else {
 		if ($params->{'overwrite'}) {
 			if (-e $customUrl) {
 				$log->debug("Deleting $url");
 				unlink($customUrl) or do {
 					warn "Unable to delete file: ".$customUrl.": $!";
-				}
-			}
-		}
-		return $self->webCallbacks->webList($client, $params);
-	}
-}
-
-sub webSaveNewItem {
-	my ($self, $client, $params) = @_;
-	$log->debug('Start webSaveNewItem');
-
-	$params->{'pluginWebPageMethodsError'} = undef;
-
-	if (!$params->{'file'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME');
-	}
-	if (!$params->{'text'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_SQLITESTATEMENT');
-	}
-	my $dir = $self->customItemDirectory;
-	if (!defined $dir || !-d $dir) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR');
-	}
-	my $file = unescape($params->{'file'}).".".$self->extension;
-	my $url = catfile($dir, $file);
-
-	if (!defined($params->{'pluginWebPageMethodsError'}) && -e $url && !$params->{'overwrite'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_CUSTOMIZEDITEM_EXISTS');
-	}
-
-	if (!$self->saveItem($client, $params, $url)) {
-		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItem'}, $params);
-	} else {
-		return $self->webCallbacks->webList($client, $params);
-	}
-}
-
-sub webSaveItem {
-	my ($self, $client, $params) = @_;
-	$log->debug('Start webSaveItem');
-
-	$params->{'pluginWebPageMethodsError'} = undef;
-
-	if (!$params->{'file'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME');
-	}
-	if (!$params->{'text'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_SQLITESTATEMENT');
-	}
-
-	my $dir = $self->customItemDirectory;
-	if (!defined $dir || !-d $dir) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR');
-	}
-	my $file = unescape($params->{'file'});
-	my $url = catfile($dir, $file);
-
-	if (!$self->saveItem($client, $params, $url)) {
-		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
-	} else {
-		if (defined($params->{'deletesimple'})) {
-			my $file = unescape($params->{'deletesimple'}).'.'.$self->simpleExtension;
-			my $url = catfile($dir, $file);
-			if (-e $url) {
-				unlink($url) or do {
-					warn "Unable to delete file: ".$url.": $!";
 				}
 			}
 		}
@@ -601,6 +511,8 @@ sub saveSimpleItem {
 		my %templateParameters = ();
 		my $data = "";
 		$data .= "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<dynamicplaylistcreator>\n\t<template>\n\t\t<id>".$templateId."</id>";
+		# record if dpl requires user input
+		$data .= "\n\t\t<parameter type=\"text\" id=\"nouserinput\"><value>".($params->{'nouserinput'} || '')."</value></parameter>";
 
 		if (defined($template->{'parameter'})) {
 			my $parameters = $template->{'parameter'};
@@ -783,6 +695,46 @@ sub saveItem {
 		return undef;
 	} else {
 		return 1;
+	}
+}
+
+sub webExportItem {
+	my ($self, $client, $params, $itemId, $items) = @_;
+	my $data = $self->loadItemDataFromAnyDir($itemId);
+	$log->debug('itemId = '.$itemId.' -- data = '.Dumper($data));
+
+	# get DPL folder for custom dpls
+	my $dpl_customPLfolder = preferences('plugin.dynamicplaylists4')->get('customplaylistfolder');
+	if (!defined $dpl_customPLfolder || !-d $dpl_customPLfolder) {
+		$log->error(string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR'));
+		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLCUSTOMDIR');
+		return $self->webCallbacks->webList($client, $params);
+	}
+
+	my $url = catfile($dpl_customPLfolder, $itemId).'.sql';
+	$log->debug('url = '.Dumper($url));
+	if (-e $url) {
+		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_DPLFILENAMEALREADYEXISTS');
+		return $self->webCallbacks->webList($client, $params);
+	}
+
+	my $fh;
+	open($fh, ">:encoding(UTF-8)", $url) or do {
+		$params->{'pluginWebPageMethodsError'} = "Error saving $url: ".$!;
+		return $self->webCallbacks->webList($client, $params);
+	};
+
+	if (!($params->{'pluginWebPageMethodsError'})) {
+		$log->debug("Writing to file: $url");
+		my $encoding = Slim::Utils::Unicode::encodingFromString($data);
+		if ($encoding eq 'utf8') {
+			$data = Slim::Utils::Unicode::utf8toLatin1($data);
+		}
+		print $fh $data;
+		$log->debug('Writing to file succeeded');
+		close $fh;
+
+		webDeleteItem($self, $client, $params, $itemId, $items);
 	}
 }
 

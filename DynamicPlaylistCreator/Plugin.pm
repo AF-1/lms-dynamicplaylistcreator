@@ -149,11 +149,11 @@ sub webPages {
 		"DynamicPlaylistCreator/webpagemethods_deleteitemtype.html" => \&handleWebDeletePlaylistType,
 		"DynamicPlaylistCreator/webpagemethods_newitemparameters.html" => \&handleWebNewPlaylistParameters,
 		"DynamicPlaylistCreator/webpagemethods_newitem.html" => \&handleWebNewPlaylist,
-		"DynamicPlaylistCreator/webpagemethods_savenewsimpleitem.html" => \&handleWebSaveNewSimplePlaylist,
-		"DynamicPlaylistCreator/webpagemethods_savesimpleitem.html" => \&handleWebSaveSimplePlaylist,
-		"DynamicPlaylistCreator/webpagemethods_saveitem.html" => \&handleWebSavePlaylist,
 		"DynamicPlaylistCreator/webpagemethods_savenewitem.html" => \&handleWebSaveNewPlaylist,
+		"DynamicPlaylistCreator/webpagemethods_saveitem.html" => \&handleWebSavePlaylist,
 		"DynamicPlaylistCreator/webpagemethods_removeitem.html" => \&handleWebRemovePlaylist,
+		"DynamicPlaylistCreator/webpagemethods_playitem.html" => \&handleWebStartPlaylist,
+		"DynamicPlaylistCreator/webpagemethods_exportitem" => \&handleWebExportPlaylist,
 	);
 	for my $page (keys %pages) {
 		Slim::Web::Pages->addPageFunction($page, $pages{$page});
@@ -171,12 +171,12 @@ sub handleWebList {
 
 	my @webPlaylists = ();
 	for my $key (keys %{$playLists}) {
-		$playLists->{$key}->{'name'} = $playLists->{$key}->{'name'}.'&nbsp;&nbsp;[customized SQLite]' if !$playLists->{$key}->{'simple'};
-		push @webPlaylists, $playLists->{$key};
+		push @webPlaylists, $playLists->{$key} if $playLists->{$key}->{'simple'};
 	}
 	@webPlaylists = sort {uc($a->{'name'}) cmp uc($b->{'name'})} @webPlaylists;
 
 	$params->{'nocustomdynamicplaylists'} = 1 if (scalar @webPlaylists == 0);
+	$params->{'displayplaybtn'} = $prefs->get('displayplaybtn');
 	$params->{'dplversion'} = $dplVersion if $dplVersion;
 	$params->{'pluginDynamicPlaylistCreatorPlayLists'} = \@webPlaylists;
 	$log->debug('webPlaylists = '.Dumper(\@webPlaylists));
@@ -203,9 +203,14 @@ sub handleWebNewPlaylist {
 	return getConfigManager()->webNewItem($client, $params);
 }
 
-sub handleWebSaveSimplePlaylist {
+sub handleWebSaveNewPlaylist {
 	my ($client, $params) = @_;
-	return getConfigManager()->webSaveSimpleItem($client, $params);
+	return getConfigManager()->webSaveNewItem($client, $params);
+}
+
+sub handleWebSavePlaylist {
+	my ($client, $params) = @_;
+	return getConfigManager()->webSaveItem($client, $params);
 }
 
 sub handleWebRemovePlaylist {
@@ -213,29 +218,20 @@ sub handleWebRemovePlaylist {
 	return getConfigManager()->webRemoveItem($client, $params);
 }
 
-sub handleWebSaveNewSimplePlaylist {
+sub handleWebStartPlaylist {
 	my ($client, $params) = @_;
-	return getConfigManager()->webSaveNewSimpleItem($client, $params);
+	my $dpl = $params->{'item'};
+	return unless $client && $dpl;
+	$log->debug('Tell DPL to play dynamic playlist "'.$dpl.'"');
+	my $request = $client->execute(['dynamicplaylist', 'playlist', 'play', 'dplccustom_'.$dpl]);
+	$request->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
+	return getConfigManager()->webPlayItem($client, $params);
 }
 
-sub handleWebSaveNewPlaylist {
+sub handleWebExportPlaylist {
 	my ($client, $params) = @_;
-	if (!defined($params->{'pluginWebPageMethodsError'})) {
-		return getConfigManager()->webSaveNewItem($client, $params);
-	} else {
-		return Slim::Web::HTTP::filltemplatefile('plugins/DynamicPlaylistCreator/webpagemethods_newitem.html', $params);
-	}
+	return getConfigManager()->webExportItem($client, $params);
 }
-
-sub handleWebSavePlaylist {
-	my ($client, $params) = @_;
-	if (!defined($params->{'pluginWebPageMethodsError'})) {
-		return getConfigManager()->webSaveItem($client, $params);
-	} else {
-		return Slim::Web::HTTP::filltemplatefile('plugins/DynamicPlaylistCreator/webpagemethods_edititem.html', $params);
-	}
-}
-
 
 
 sub createCustomPlaylistFolder {

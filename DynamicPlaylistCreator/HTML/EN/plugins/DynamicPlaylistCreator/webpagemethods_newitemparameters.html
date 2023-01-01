@@ -8,7 +8,6 @@
 [%- pageHeaderInfo = BLOCK %]
 [% END -%]
 [% PROCESS pageheader.html %]
-[% PROCESS plugins/DynamicPlaylistCreator/html/js/catchtab.js %]
 [%- IF !disableconflictcheck %]
 [% PROCESS plugins/DynamicPlaylistCreator/html/js/conflictcheck.js %]
 [% END -%]
@@ -19,15 +18,12 @@
 		<tr><td colspan="3">&nbsp;</td></tr>
 		[%- FOREACH parameter = pluginWebPageMethodsNewItemParameters %]
 			[% IF !(parameter.type.match('list') or parameter.type.match('checkboxes')) or (parameter.values.size != 0 and !(parameter.values.0.value == '' and parameter.values.size == 1))%]
-			[% UNLESS parameter.type == 'text' && parameter.id == 'nooftracks' && usecache %]
 			<tr>
 				<td>[% parameter.name %]</td>
 				<td id="warning_[% parameter.id %]" class="warningbgimg"></td>
 				<td>
 				[% IF parameter.type == 'text' %]
 					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.id == 'playlistname' %] required[% END %]>
-				[% ELSIF parameter.type == 'multilinetext' %]
-					<textarea name="itemparameter_[% parameter.id %]" cols="60" rows="10" style="width:95%;height:100%;" wrap="off" onkeydown="return catchTab(this, event)">[% parameter.value | html %]</textarea>
 				[% ELSIF parameter.type.match('singlelist') %]
 					<table border="0">
 						<tr><td>
@@ -70,24 +66,10 @@
 				[% END %]
 				</td>
 			</tr>
-			[% END %]
 			<tr><td>&nbsp;</td></tr>
 			[% END %]
 		[%- END %]
-		[% IF allowsqlcustomizing %]
-		<tr>
-			<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE" | string %]</td>
-			<td>&nbsp;&nbsp;&nbsp;</td>
-			<td>
-				<select name="itemtype">
-					<option name="itemtype" value="simple" selected>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_SIMPLE" | string %]</option>
-					<option name="itemtype" value="advanced">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED" | string %]</option>
-				</select>
-			</td>
-		</tr>
-		[% ELSE %]
 		<input type="hidden" name="itemtype" value="simple">
-		[% END %]
 		<tr><td colspan="3">&nbsp;</td></tr>
 		<input type="hidden" name="itemtemplate" value="[% pluginWebPageMethodsNewItemTemplate %]">
 		<tr>

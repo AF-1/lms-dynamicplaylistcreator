@@ -242,6 +242,9 @@ sub parseTemplateContent {
 					}
 				}
 
+				# record in localcontext if user input required
+				$localcontext->{'nouserinput'} = $templateParameters{'nouserinput'};
+
 				my $templateData = $self->loadTemplate($client, $template, \%templateParameters);
 				if (!defined($templateData)) {
 					$log->debug("Ignoring $item due to loadTemplate");

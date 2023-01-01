@@ -63,6 +63,7 @@ sub parseContentImplementation {
 		my $name = undef;
 		my $statement = '';
 		my $fulltext = '';
+		my $noUserInput = undef;
 
 		for my $line (@playlistDataArray) {
 			# Add linefeed to make sure playlist looks ok when editing
@@ -73,6 +74,10 @@ sub parseContentImplementation {
 			chomp $line;
 
 			$line =~ s/^\s*--\s*PlaylistName\s*[:=]\s*//io;
+
+			# parse requiresuserinput from adv/sqlite def
+			my $userInput = parseRequiresUserInput($line);
+			$noUserInput = $userInput if $userInput;
 
 			# skip and strip comments & empty lines
 			$line =~ s/\s*--.*?$//o;
@@ -110,6 +115,12 @@ sub parseContentImplementation {
 
 			if (defined($localcontext) && defined($localcontext->{'simple'})) {
 				$playlist{'simple'} = 1;
+			} else {
+				$playlist{'nouserinput'} = $noUserInput if $noUserInput;
+			}
+
+			if (defined($localcontext) && defined($localcontext->{'nouserinput'})) {
+				$playlist{'nouserinput'} = $localcontext->{'nouserinput'};
 			}
 
 			#$log->debug('playlist = '.Dumper(\%playlist));
@@ -123,6 +134,23 @@ sub parseContentImplementation {
 		} else {
 			$errorMsg = "Incorrect information in playlist data";
 			$log->warn("Unable to to read playlist configuration");
+		}
+	}
+	return undef;
+}
+
+sub parseRequiresUserInput {
+	my $line = shift;
+	if ($line =~ /^\s*--\s*noUserInput\s*[:=]\s*/) {
+		$line =~ m/^\s*--\s*noUserInput\s*[:=]\s*([^:]+)\s*(.*)$/;
+		my $noUserInput = $1;
+		$noUserInput =~ s/\s+$//;
+		$noUserInput =~ s/^\s+//;
+		if ($noUserInput) {
+			return $noUserInput;
+		} else {
+			$log->debug("No value or error in noUserInput: $line");
+			return undef;
 		}
 	}
 	return undef;

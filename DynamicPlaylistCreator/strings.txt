@@ -9,11 +9,9 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_SETTINGS
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT
 	EN	Click here to read the FAQ.
-	FR	Cliquez ici pour lire la FAQ.
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK
 	EN	https://github.com/AF-1/lms-dynamicplaylistcreator#faq
-	FR	https://github.com/AF-1/lms-dynamicplaylistcreator#faq
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH
 	EN	<u>Parent</u> folder path for folder <wbr>with&nbsp;your&nbsp;dynamic&nbsp;playlist&nbsp;definition&nbsp;files
@@ -26,12 +24,6 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK_DESC
 	EN	Disable the display of warning icons that alert you to potential conflicts in your parameter selection.
-
-SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING
-	EN	Allow SQLite customizing
-
-SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_ALLOWQSQLCUSTOMIZING_DESC
-	EN	This will allow you to customize the SQLite statement of your dynamic playlist.<br><b>Recommended only for users who are familiar with SQLite.</b><br><br><b>Please note:</b> Once you have saved the file as <i>customized SQLite</i>, you can't convert it back to the default format (xml).<br><br>If you know how to customize SQLite, it might be easier for you to write your own customized SQLite statement and drop the file into <i>Dynamic Playlist</i>'s folder for custom dynamic playlists.<br>See <a href="https://github.com/AF-1/lms-dynamicplaylists#faq" target="_blank" rel="noopener noreferrer"><b>Dynamic Playlists FAQ</b></a>.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
 	EN	<b>Custom dynamic playlists created with this plugin:</b>
@@ -51,14 +43,17 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_UNSUPPORTEDVERSION
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_TYPES_TITLE
 	EN	Select a template on which to base your new dynamic playlist:
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_DATA
-	EN	SQLite Query
-
 PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_NAME
 	EN	Dynamic Playlist Name
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME
 	EN	File name (without extension)
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM
+	EN	Export to Dynamic Playlists and delete in DPLC
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM_INFO
+	EN	Do you want to export this dynamic playlist to the Dynamic Playlists folder for custom dynamic playlists called DPL-custom-lists and delete it from DPLC?
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM
 	EN	Delete
@@ -71,18 +66,6 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_SAVE
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEXT
 	EN	Next
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE
-	EN	Save as
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_SIMPLE
-	EN	Default format
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED
-	EN	Customized SQLite
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_ITEMTYPE_ADVANCED_INFO
-	EN	<b>Please note:</b> Once you have saved the file as <i>customized SQLite</i>, you can't convert it back to the default format.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_PARAMETERS_TITLE
 	EN	Please enter dynamic playlist parameters
@@ -108,11 +91,14 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLNAME
 	EN	Please enter a name for your dynamic playlist
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_SQLITESTATEMENT
-	EN	Empty SQLite statement!
-
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR
 	EN	No custom dir configured
 
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLCUSTOMDIR
+	EN	Could not find <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span> for custom dynamic playlists
+
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_PARAM_CONFLICT
 	EN	Possible conflict(s) detected: Does not prevent saving, but check your parameter selection as a precaution
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_DPLFILENAMEALREADYEXISTS
+	EN	A dynamic playlist file with this name already exists in the <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span>.<br>Please <span class="emphbold">edit</span> the dynamic playlist you want to export and <span class="emphbold">change its <i>file</i> name</span>.
