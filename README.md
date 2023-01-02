@@ -58,7 +58,7 @@ In addition, DPLC will <b>always</b> save your custom dynamic playlist as an SQL
 </p></details><br>
 
 <details><summary>»<b>Why is the <i>Play button</i> to <i>start</i> dynamic playlists directly from the list of created dynamic playlists in DPLC not displayed for <i>all</i> dynamic playlists?</b>«</summary><br><p>
-You can <b>only</b> start dynamic playlist directly in DPLC that do <b>not ask for user input when started</b>. DPLC does not contain code to handle user-input parameters. To make it easier to maintain and update the plugin, I decided to create DPLC as a sort of dynamic playlist construction kit without duplicating any code from the <i>Dynamic Playlists</i> plugin.
+You can <b>only</b> start dynamic playlists directly in DPLC that do <b>not ask for user input when started</b>. DPLC does not contain code to handle user-input parameters. To simplify the maintenance and updating of the plugin, I decided to create DPLC as a sort of dynamic playlist construction kit without duplicating any code from the <i>Dynamic Playlists</i> plugin.
 </p></details><br>
 
 <details><summary>»<b>Which plugins does DPLC work with?</b>«</summary><br><p>
@@ -66,11 +66,11 @@ It works with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dyna
 </p></details><br>
 
 <details><summary>»<b>In some DPLC templates there's no option to set a <i>track limit</i> and no “do not repeat” setting.</b>«</summary><br><p>
-Dynamic playlists that use DPL <b>4</b>'s <b>cache option</b> cannot have a track limit because DPL 4 will load <b>all</b> track IDs matching the dynamic playlist's search parameter into the cache. The cached track ID list should not have duplicates, hence no “do not repeat” option. DPL 4 will add small batches of tracks from this list to the players's current playlist. The number of new unplayed tracks to be added per batch can be set in the DPL settings. It's a global setting for all dynamic playlists (except album dynamic playlists which should add complete albums).
+Dynamic playlists that use the LMS cache cannot have a track limit because <i>Dynamic Playlists</i> <b>4</b> will load <b>all</b> track IDs matching the active dynamic playlist's search parameters into the cache. The cached track ID list should not have duplicates, hence no “do not repeat” option. DPL 4 will add small batches of tracks from this cached list to the players's current playlist. The number of new unplayed tracks to be added per batch can be set in the DPL settings. It's a global setting for all dynamic playlists (except album dynamic playlists which should add complete albums).
 </p></details><br>
 
 <details><summary>»<b>Can I use <i>Dynamic Playlist Creator</i> and <i>SQLPlayList</i> at the same time?</b>«</summary><br><p>
-Yes. <i>Dynamic Playlists</i> version <b>4</b> will ignore SQLPlayList. There's no benefit but no harm either in keeping it installed.
+<i>Dynamic Playlists</i> version <b>4</b> ignores SQLPlayList. There's no benefit but no harm either in keeping it installed.
 </p></details><br>
 
 <details><summary>»<b>Can you translate DPLC into my language?</b>«</summary><br><p>
