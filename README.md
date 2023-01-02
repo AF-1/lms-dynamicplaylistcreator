@@ -45,9 +45,11 @@ No, you <b>can't</b> import or migrate dynamic playlist definitions from the <i>
 </p></details><br>
 
 <details><summary>»<b>I cannot manually edit the SQLite statement of my dynamic playlists in DPLC.</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>What does the <i>export</i> button do?</b>«</summary><br><p>
-The target group for this plugin are users who want to create customized dynamic playlists quickly and easily using <b>only the templates</b> and <b>not</b> working directly with the SQLite statement. Accordingly, DPLC does <b>not include the possibility to manually edit the SQLite statement in the plugin</b>.<br><br>
-If you have to <b>manually edit the SQLite statement</b> of a dynamic playlist managed by DPLC, you can <b>use the <i>export</i> button</b> to move the dynamic playlist to the <i>Dynamic Playlists</i> (DPL) plugin, i.e. DPL's folder for custom dynamic playlists called <b>DPL-custom-lists</b>. There you can edit it like any other custom dynamic playlist using your favorite plain text editor.<br>
-The moved dynamic playlist will be deleted from DPLC. I's now managed directly by the <i>Dynamic Playlists</i> plugin. Before Dynamic Playlists version <b>3</b>, this was not possible. That's why the SQLPlayList plugin had to include the possibility to manually edit SQLite statements. DPLC doesn't have to.
+The target group for this plugin are users who want to create customized dynamic playlists quickly and easily using <b>only the templates</b> and <b>not</b> working directly with SQLite statements. Accordingly, DPLC does <b>not include the possibility to manually edit SQLite statements in the plugin</b>.<br><br>
+Before <i>Dynamic Playlists</i> version <b>3</b>, the SQLPlayList plugin was the <i>only</i> way to use <i>custom</i> dynamic playlists. So SQLPlayList had to include the option to manually edit SQLite statements.<br>
+Since version <b>3</b>, you can add <i>custom</i> dynamic playlists <b>directly</b> to <i>Dynamic Playlists</i>. This allows DPLC to focus on creating custom dynamic playlists using <b>only templates</b>.<br><br>
+If you have to <b>manually edit the SQLite statement</b> of a dynamic playlist managed by DPLC, you can <b>use the <i>export</i> button</b> to move the dynamic playlist to the <i>Dynamic Playlists</i> plugin, i.e. its folder for custom dynamic playlists called <b>DPL-custom-lists</b>. There you can edit it like any other custom dynamic playlist using your favorite plain text editor.<br>
+The moved dynamic playlist is deleted from DPLC and now managed directly by the <i>Dynamic Playlists</i> plugin.
 </p></details><br>
 
 <details><summary>»<b>What are the files in the <i>DynamicPlaylistCreator</i> folder for? Can I edit them?</b>«</summary><br><p>
