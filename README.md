@@ -1,7 +1,7 @@
 # Dynamic Playlist Creator
 
 **Dynamic Playlist Creator**[^1] (DPLC) allows you to create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
-The target group for this plugin are users who want to create customised dynamic playlists quickly and easily using **only** the templates and **not** working directly with the SQLite statement. Accordingly, DPLC does **not include the possibility to manually edit the SQLite statement in the plugin** (see FAQ).<br><br>
+The target group for this plugin are users who want to create customized dynamic playlists quickly and easily using **only** the templates and **not** working directly with SQLite statements. Accordingly, DPLC does **not include the possibility to manually edit SQLite statements in the plugin** (see FAQ).<br><br>
 Please note that this is and will remain a [**release candidate**](https://en.wiktionary.org/wiki/release_candidate) version for the foreseeable future until *enough* users have tested the templates **extensively** (thank you!). I simply don't have the time to test the templates against all possible parameter combinations. It's provided on an “as is” and “as available” basis without any warranty/liability on my part.
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
@@ -41,20 +41,11 @@ Add the repository URL below at the bottom of *LMS* > *Settings* > *Plugins* and
 ## FAQ
 
 <details><summary>»<b>Can I import my custom dynamic playlists from the <i>SQLPlayList</i> plugin?</b>«</summary><br><p>
-<b>No</b>, you <b>can't</b> import or migrate dynamic playlist definitions from the <i>SQLPlayList</i> plugin to <i>Dynamic Playlist <b>Creator</b></i>. They are based on templates which are different from the ones that DPLC uses.<br><br>
-However, if you've saved your dynamic playlist in SQLPlayList as <b>customized SQL</b>, you could try to <b>use it directly in Dynamic Playlists</b>:<br>
-
-- locate your dynamic playlist definition file <i>filename<b>.sql.xml</b></i><br>
-
-- change the file extension to <b>sql</b>, i.e. lose the <i>xml</i><br>
-
-- move the file to Dynamic Playlist's folder for custom dynamic playlists called <b>DPL-custom-lists</b>.<br><br>
-
-If you want to use a custom dynamic playlist with DPL version <b>4</b>, you'll have to make sure that it returns track <b>ids</b>, not track <b>urls</b>.<br>See <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>DPL upgrade FAQ</b></a>.
+No, you <b>can't</b> import or migrate dynamic playlist definitions from the <i>SQLPlayList</i> plugin to <i>Dynamic Playlist <b>Creator</b></i>. They are based on templates which are different from the ones that DPLC uses.
 </p></details><br>
 
-<details><summary>»<b>I can't manually edit the SQLite statement for my dynamic playlists in DPLC.</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>What does the <i>export</i> button do?</b>«</summary><br><p>
-The target group for this plugin are users who want to create customised dynamic playlists quickly and easily using <b>only the templates</b> and <b>not</b> working directly with the SQLite statement. Accordingly, DPLC does <b>not include the possibility to manually edit the SQLite statement in the plugin</b>.<br><br>
+<details><summary>»<b>I cannot manually edit the SQLite statement of my dynamic playlists in DPLC.</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>What does the <i>export</i> button do?</b>«</summary><br><p>
+The target group for this plugin are users who want to create customized dynamic playlists quickly and easily using <b>only the templates</b> and <b>not</b> working directly with the SQLite statement. Accordingly, DPLC does <b>not include the possibility to manually edit the SQLite statement in the plugin</b>.<br><br>
 If you have to <b>manually edit the SQLite statement</b> of a dynamic playlist managed by DPLC, you can <b>use the <i>export</i> button</b> to move the dynamic playlist to the <i>Dynamic Playlists</i> (DPL) plugin, i.e. DPL's folder for custom dynamic playlists called <b>DPL-custom-lists</b>. There you can edit it like any other custom dynamic playlist using your favorite plain text editor.<br>
 The moved dynamic playlist will be deleted from DPLC. I's now managed directly by the <i>Dynamic Playlists</i> plugin. Before Dynamic Playlists version <b>3</b>, this was not possible. That's why the SQLPlayList plugin had to include the possibility to manually edit SQLite statements. DPLC doesn't have to.
 </p></details><br>
@@ -71,7 +62,7 @@ You can <b>only</b> start dynamic playlist directly in DPLC that do <b>not ask f
 </p></details><br>
 
 <details><summary>»<b>Which plugins does DPLC work with?</b>«</summary><br><p>
-It's compatible with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists 4</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a> and <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip 3</b></a>.<br><b>CustomScan</b>: could work, not tested. Compatibility not guaranteed, not supported by me.
+It works with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists 4</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a> and <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip 3</b></a>.<br><b>CustomScan</b>: could work, not tested. Compatibility not guaranteed, not supported by me.
 </p></details><br>
 
 <details><summary>»<b>In some DPLC templates there's no option to set a <i>track limit</i> and no “do not repeat” setting.</b>«</summary><br><p>
@@ -79,7 +70,7 @@ Dynamic playlists that use DPL <b>4</b>'s <b>cache option</b> cannot have a trac
 </p></details><br>
 
 <details><summary>»<b>Can I use <i>Dynamic Playlist Creator</i> and <i>SQLPlayList</i> at the same time?</b>«</summary><br><p>
-Yes. <i>Dynamic Playlists</i> version <b>4</b> will ignore SQLPlayList but there's no harm in keeping it installed.
+Yes. <i>Dynamic Playlists</i> version <b>4</b> will ignore SQLPlayList. There's no benefit but no harm either in keeping it installed.
 </p></details><br>
 
 <details><summary>»<b>Can you translate DPLC into my language?</b>«</summary><br><p>
