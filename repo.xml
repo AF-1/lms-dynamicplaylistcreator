@@ -3,13 +3,13 @@
 		<title lang="EN">DPLC Repo (AF1)</title>
 	</details>
 	<plugins>
-		<plugin name="DynamicPlaylistCreator" version="0.5.0" minTarget="7.9" maxTarget="*">
+		<plugin name="DynamicPlaylistCreator" version="0.5.1" minTarget="7.9" maxTarget="*">
 			<title lang="EN">Dynamic Playlist Creator (RC)</title>
 			<desc lang="EN">RC versions of Dynamic Playlist Creator. Only supports version 4 of the Dynamic Playlists plugin. Please read the requirements on the GitHub page first.</desc>
-			<url>https://github.com/AF-1/lms-dynamicplaylistcreator/releases/download/0.5.0/lms-dynamicplaylistcreator-0.5.0.zip</url>
+			<url>https://github.com/AF-1/lms-dynamicplaylistcreator/releases/download/0.5.1/lms-dynamicplaylistcreator-0.5.1.zip</url>
 			<creator>AF</creator>
 			<link>https://github.com/AF-1/lms-dynamicplaylistcreator</link>
-			<sha>6f0b3d756a0507501291c856efce8c5a2370a768</sha>
+			<sha>3e0cb248547283434120f13230d32e7059ae427f</sha>
 		</plugin>
 	</plugins>
 </extensions>
