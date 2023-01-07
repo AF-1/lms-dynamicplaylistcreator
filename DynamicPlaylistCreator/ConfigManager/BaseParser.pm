@@ -350,7 +350,7 @@ sub fillTemplate {
 	$params->{'LOCALE'} = 'utf-8';
 	my $template = $self->getTemplate();
 	if (!$template->process($filename, $params, \$output)) {
-		$log->warn("ERROR parsing template: ".$template->error());
+		$log->error("ERROR parsing template: ".$template->error());
 	}
 	return $output;
 }

@@ -80,7 +80,7 @@ sub loadTemplate {
 		$log->debug("Reading template: $templateFile");
 		$templateFileData = eval { read_file($path) };
 		if ($@) {
-			$log->warn("Unable to open file: $path because of: $@");
+			$log->error("Unable to open file: $path because of: $@");
 		} else {
 			my $encoding = Slim::Utils::Unicode::encodingFromString($templateFileData);
 			if ($encoding ne 'utf8') {

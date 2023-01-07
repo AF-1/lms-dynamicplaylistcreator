@@ -81,7 +81,7 @@ sub initPrefs {
 			mkdir($customPlaylistFolder, 0755) unless (-d $customPlaylistFolder);
 			chdir($customPlaylistFolder);
 		} or do {
-			$log->warn("Could not create or access dynamic playlists folder in parent folder '$_[1]'!");
+			$log->error("Could not create or access dynamic playlists folder in parent folder '$_[1]'!");
 			return;
 		};
 		$prefs->set('customplaylistfolder', $customPlaylistFolder);

@@ -373,7 +373,7 @@ sub getSQLTemplateData {
 			my $sth = $dbh->prepare($sql);
 			$log->debug("Executing: $sql");
 			$sth->execute() or do {
-				$log->warn("Error executing: $sql");
+				$log->error("Error executing: $sql");
 				$sql = undef;
 			};
 

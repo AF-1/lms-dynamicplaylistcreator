@@ -150,14 +150,14 @@ sub readFromDir {
 				$log->debug("Parsing file: $path");
 				my $errorMsg = $self->parser->parse($client, $item, $content, $items, $globalcontext, \%localcontext);
 				if ($errorMsg) {
-					$log->warn("Unable to open file: $path\n$errorMsg");
+					$log->error("Unable to open file: $path\n$errorMsg");
 				}
 			}
 		} else {
 			if ($@) {
-				$log->warn("Unable to open file: $path\nBecause of: $@");
+				$log->error("Unable to open file: $path\nBecause of: $@");
 			} else {
-				$log->warn("Unable to open file: $path");
+				$log->error("Unable to open file: $path");
 			}
 		}
 	}
@@ -190,7 +190,7 @@ sub readDataFromDir {
 
 	my $content = eval { read_file($path) };
 	if ($@) {
-		$log->warn("Failed to load item data because: $@");
+		$log->error("Failed to load item data because: $@");
 	}
 	if (defined($content)) {
 		my $encoding = Slim::Utils::Unicode::encodingFromString($content);

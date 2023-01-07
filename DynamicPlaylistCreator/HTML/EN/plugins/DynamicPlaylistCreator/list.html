@@ -1,4 +1,4 @@
-<style>.inputbtn{padding:2px;}.error{color: red !important;}.emphbold{font-weight:600;}.materialcontrolicons > a > img{width:24px !important;height:24px !important;}</style>
+<style>.inputbtn{padding:2px;}.error{color: red !important;}.emphbold{font-weight:600;}</style>
 [%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
 
 [%- pwd_list = BLOCK -%]/
@@ -9,13 +9,13 @@
 [% PROCESS pageheader.html %]
 <br>
 [% BLOCK RemoveDynamicPlaylistLink %]
-		[% link='cmdlink'; IF systemSkin == "material"; cmdimage='/material/svg/cs-delete?c=edece7'; ELSE; cmdimage='dplc_delete.gif'; END; cmdtitle='PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM' %]
+		[% link='cmdlink' cmdimage='dplc_delete.gif?svg=DynamicPlaylistCreator' cmdtitle='PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM' %]
 		[% WRAPPER $link noTarget=1 %]
 			href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_removeitem.html?item=[% playlist.id | uri %]" [% IF systemSkin != "material" %] onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %]
 		[% END %]
 [% END %]
 [% BLOCK ExportDynamicPlaylistLink %]
-		[% link='cmdlink'; IF systemSkin == "material"; cmdimage='dplc-exportdpl.svg'; ELSE; cmdimage='dplc_export.gif'; END; cmdtitle='PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM' %]
+		[% link='cmdlink' cmdimage='dplc_export.gif?svg=DynamicPlaylistCreator' cmdtitle='PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM' %]
 		[% WRAPPER $link noTarget=1 %]
 			href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_exportitem.html?item=[% playlist.id | uri %]"[% IF systemSkin != "material" %] onClick="return confirm('[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM_INFO" | string %]')"[% END %]
 		[% END %]
@@ -37,8 +37,8 @@
 					[%- IF playlist.nouserinput %]
 					[% WRAPPER playlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_playitem.html?item=[% playlist.id | uri %]"[% END %]
 					[%- END %]
-					[% IF systemSkin == "material" %]<span class="materialcontrolicons">[% END %][% PROCESS ExportDynamicPlaylistLink %][% IF systemSkin == "material" %]</span>[% END %]
-					[% IF systemSkin == "material" %]<span class="materialcontrolicons">[% END %][% PROCESS RemoveDynamicPlaylistLink %][% IF systemSkin == "material" %]</span>[% END %]
+					[% PROCESS ExportDynamicPlaylistLink %]
+					[% PROCESS RemoveDynamicPlaylistLink %]
 					[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]"[% END %]
 				[% END %]
 				[%- WRAPPER contentitem controls='controls' %]

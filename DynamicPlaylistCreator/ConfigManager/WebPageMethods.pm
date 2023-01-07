@@ -800,7 +800,7 @@ sub loadTemplateValues {
 		if (defined($content)) {
 			my $xml = eval { XMLin($content, forcearray => ["parameter", "value"], keyattr => []) };
 			if ($@) {
-				$log->warn("Failed to parse configuration because: $@");
+				$log->error("Failed to parse configuration because: $@");
 			} else {
 				$templateData = $xml->{'template'};
 			}
@@ -861,7 +861,7 @@ sub fillTemplate {
 	$params->{'LOCALE'} = 'utf-8';
 	my $template = $self->getTemplate();
 	if (!$template->process($filename, $params, \$output)) {
-		$log->warn("ERROR parsing template: ".$template->error());
+		$log->error("ERROR parsing template: ".$template->error());
 	}
 	return $output;
 }
