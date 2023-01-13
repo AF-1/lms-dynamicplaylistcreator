@@ -153,7 +153,7 @@ sub webPages {
 		"DynamicPlaylistCreator/webpagemethods_saveitem.html" => \&handleWebSavePlaylist,
 		"DynamicPlaylistCreator/webpagemethods_removeitem.html" => \&handleWebRemovePlaylist,
 		"DynamicPlaylistCreator/webpagemethods_playitem.html" => \&handleWebStartPlaylist,
-		"DynamicPlaylistCreator/webpagemethods_exportitem" => \&handleWebExportPlaylist,
+		"DynamicPlaylistCreator/webpagemethods_exportitem.html" => \&handleWebExportPlaylist,
 	);
 	for my $page (keys %pages) {
 		Slim::Web::Pages->addPageFunction($page, $pages{$page});
