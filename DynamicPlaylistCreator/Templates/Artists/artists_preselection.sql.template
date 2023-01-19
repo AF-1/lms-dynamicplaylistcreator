@@ -57,7 +57,7 @@ select tracks.id, tracks.primary_artist from tracks
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF useapcvalues %]
+	[%- IF useapcvalues or maxdpsv or mindpsv %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -82,6 +82,12 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF minyear %]
 		and tracks.year >= [% minyear %]
+	[%- END %]
+	[%- IF maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %]
+	[%- END %]
+	[%- IF mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
 	[%- END %]
 	[%- IF request1fromuser == 'lastplayed' and playedbefore != 1 %]
 		and (strftime('%s', 'now') - ifnull(tracks_persistent.lastPlayed,0)) <= 'PlaylistParameter1'

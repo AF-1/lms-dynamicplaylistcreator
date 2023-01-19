@@ -201,7 +201,7 @@ select tracks.id, tracks.primary_artist from tracks
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF useapcvalues or maxskipcount or recentlyskipped %]
+	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv%]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -260,6 +260,12 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF lyrics %]
 		and tracks.lyrics is not null
+	[%- END %]
+	[%- IF maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %]
+	[%- END %]
+	[%- IF mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
 	[%- END %]
 	[%- IF includedartists %]
 		and contributors.name in ([% includedartists %])

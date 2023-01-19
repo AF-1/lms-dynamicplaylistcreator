@@ -302,6 +302,30 @@ document.addEventListener ("DOMContentLoaded", () => {
 		}
 	}
 
+	// conflict: MINdpsv + MAXdpsv
+	let minDpsvDOMElement = document.querySelector('[name="itemparameter_mindpsv"]');
+	let maxDpsvDOMElement = document.querySelector('[name="itemparameter_maxdpsv"]');
+	if (minDpsvDOMElement && maxDpsvDOMElement) {
+		minDpsvDOMElement.addEventListener('change', changeHandler, false);
+		maxDpsvDOMElement.addEventListener('change', changeHandler, false);
+		function changeHandler() {
+			if (minDpsvDOMElement.value != '' && maxDpsvDOMElement.value != '' && parseInt(maxDpsvDOMElement.value) <= parseInt(minDpsvDOMElement.value)) {
+				document.getElementById('warning_mindpsv').style = 'visibility:visible;';
+				warningmsgDOMElement.style = 'visibility:visible;';
+				document.getElementById('warning_maxdpsv').style = 'visibility:visible;';
+				potentialConflicts.dpsv = 1;
+			} else {
+				document.getElementById('warning_mindpsv').style = 'visibility:hidden;';
+				document.getElementById('warning_maxdpsv').style = 'visibility:hidden;';
+				delete potentialConflicts.dpsv;
+				if (Object.keys(potentialConflicts).length == 0) {
+					warningmsgDOMElement.style = 'visibility:hidden;';
+				}
+			}
+
+		}
+	}
+
 	// conflict: active client VL + permanently selected VL
 	if (permanentVLDOMElement && activeClientVLDOMElement) {
 		activeClientVLDOMElement.addEventListener('change', e => {

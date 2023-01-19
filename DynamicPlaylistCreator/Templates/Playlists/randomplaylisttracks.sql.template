@@ -53,7 +53,7 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- IF (useapcvalues and (recentlyplayed or sortorder or playedbefore)) or maxskipcount or recentlyskipped %]
+	[%- IF (useapcvalues and (recentlyplayed or sortorder or playedbefore)) or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -78,6 +78,12 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF recentlyskipped %]
 		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
+	[%- END %]
+	[%- IF maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %]
+	[%- END %]
+	[%- IF mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
 	[%- END %]
 	[%- IF playedbefore == 1 and !recentlyplayed %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0

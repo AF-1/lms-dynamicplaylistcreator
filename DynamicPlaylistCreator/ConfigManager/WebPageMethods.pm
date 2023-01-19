@@ -48,7 +48,7 @@ my $log = logger('plugin.dynamicplaylistcreator');
 
 my %largeFields = map {$_ => 50} qw(playlistname playlistgroups);
 my %mediumFields = map {$_ => 35} qw(includedcomment excludedcomment);
-my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minbpm maxbpm skipcount similaritypercent);
+my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minbpm maxbpm skipcount similaritypercent maxskipcount);
 
 sub new {
 	my ($class, $parameters) = @_;
