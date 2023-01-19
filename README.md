@@ -13,7 +13,7 @@ Please note that this is and will remain a [**release candidate**](https://en.wi
 
 - LMS version ≥ 7.9
 
-- LMS  database = SQLite. Preferably without major problems to avoid false positives.
+- LMS database = SQLite. Preferably without major problems to avoid false positives.
 
 - A GitHub account if you want to report a bug.
 <br><br><br>
