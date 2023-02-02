@@ -19,12 +19,6 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH_DESC
 	EN	Choose a location for the folder where to put the dynamic playlist definition files you've created.
 
-SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK
-	EN	Disable parameter conflict check
-
-SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK_DESC
-	EN	Disable the display of warning icons that alert you to potential conflicts in your parameter selection.
-
 PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
 	EN	<b>Custom dynamic playlists created with this plugin:</b>
 
@@ -96,9 +90,6 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLCUSTOMDIR
 	EN	Could not find <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span> for custom dynamic playlists
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_PARAM_CONFLICT
-	EN	Possible conflict(s) detected: Does not prevent saving, but check your parameter selection as a precaution
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_DPLFILENAMEALREADYEXISTS
 	EN	A dynamic playlist file with this name already exists in the <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span>.<br>Please <span class="emphbold">edit</span> the dynamic playlist you want to export and <span class="emphbold">change its <i>file</i> name</span>.

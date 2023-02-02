@@ -1,4 +1,4 @@
-<style>.inputbutton{padding:2px;}.warning{color:red !important;}#conflictwarning{visibility:hidden;}.warningbgimg{width:15px;background-image: url('[% webroot %]plugins/DynamicPlaylistCreator/html/images/warningicon.png');background-repeat:no-repeat;background-size:15px 13px;background-position:0px [% IF systemSkin == 'material' %]8[% ELSE %]2[% END %]px;background-origin:content-box;padding-right:3px;visibility:hidden;}</style>
+<style>.inputbutton{padding:2px;}</style>
 [%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
 [%- pwd_list = BLOCK -%]/
 	<a href="[% webroot %]plugins/DynamicPlaylistCreator/list.html">
@@ -8,9 +8,6 @@
 [%- pageHeaderInfo = BLOCK %]
 [% END -%]
 [% PROCESS pageheader.html %]
-[%- IF !disableconflictcheck %]
-[% PROCESS plugins/DynamicPlaylistCreator/html/js/conflictcheck.js %]
-[% END -%]
 <br>
 <form action="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_saveitem.html" name="editForm" method="post">
 	<table border="0">
@@ -20,7 +17,7 @@
 			[% IF !(parameter.type.match('list') or parameter.type.match('checkboxes')) or (parameter.values.size!=0 and !(parameter.values.0.value=='' and parameter.values.size==1))%]
 			<tr>
 				<td>[% parameter.name %]</td>
-				<td id="warning_[% parameter.id %]" class="warningbgimg"></td>
+				<td>&nbsp;</td>
 				<td>
 				[% IF parameter.type == 'text' %]
 					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.id == 'playlistname' %] required [% END %]>
@@ -88,9 +85,7 @@
 		<tr><td colspan="3">&nbsp;</td></tr>
 		<input type="hidden" name="itemtemplate" value="[% pluginWebPageMethodsEditItemTemplate %]">
 		<input type="hidden" name="sqltextdplonly" value="[% sqltextdplonly %]">
-		<tr><td>
-			<input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'></td><td id="conflictwarning" class="warning" colspan="2">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_PARAM_CONFLICT" | string %]
-		</td></tr>
+		<tr><td><input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'></td></tr>
 		[% IF pluginWebPageMethodsError %]
 		<tr><td colspan="3">
 			<br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br>

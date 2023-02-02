@@ -47,7 +47,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(customdirparentfolderpath disableconflictcheck));
+	return ($prefs, qw(customdirparentfolderpath));
 }
 
 sub handler {

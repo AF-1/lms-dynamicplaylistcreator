@@ -7,9 +7,4 @@
 		<input type="text" class="stdedit selectFolder" name="pref_customdirparentfolderpath" id="customdirparentfolderpath" value="[% prefs.customdirparentfolderpath %]" size="40">
 	[% END %]
 	<br>
-
-	[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISABLECONFLICTCHECK_DESC" %]
-		<input name="pref_disableconflictcheck" id="disableconflictcheck" type="checkbox" [% IF prefs.disableconflictcheck %] checked [% END %]>
-	[% END %]
-	<br>
 [% PROCESS settings/footer.html %]
