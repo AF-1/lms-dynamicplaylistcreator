@@ -23,7 +23,7 @@ You should be able to install **Dynamic Playlist Creator** from the LMS main rep
 
 If you want to test a new patch that hasn't made it into a release version yet or you need to install a previous version, you'll have to [install the plugin manually](https://github.com/AF-1/sobras/wiki/Manual-installation-of-LMS-plugins).
 
-*Previously released* versions are available here for a very *limited* time after the release of a new version. Usually it takes a couple of hours before new released versions are listed on the LMS plugins page.
+It usually takes a few hours for a *new* release to be listed on the LMS plugin page.
 <br><br><br><br>
 
 
