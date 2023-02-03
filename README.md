@@ -1,8 +1,7 @@
 # Dynamic Playlist Creator
 
 **Dynamic Playlist Creator**[^1] (DPLC) allows you to create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
-The target group for this plugin are users who want to create customized dynamic playlists quickly and easily using **only** the templates and **not** working directly with SQLite statements. Accordingly, DPLC does **not include the option to manually edit SQLite statements** (see FAQ).<br><br>
-Please note that this is and will remain a [**release candidate**](https://en.wiktionary.org/wiki/release_candidate) version for the foreseeable future until *enough* users have tested the templates **extensively** (thank you!). I simply don't have the time to test the templates against all possible parameter combinations. It's provided on an “as is” and “as available” basis without any warranty/liability on my part.
+The target group for this plugin are users who want to create customized dynamic playlists quickly and easily using **only** the templates and **not** working directly with SQLite statements. Accordingly, DPLC does not include the option to manually edit SQLite statements (see FAQ).
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
 <br><br><br>
@@ -13,23 +12,21 @@ Please note that this is and will remain a [**release candidate**](https://en.wi
 
 - LMS version ≥ 7.9
 
-- LMS database = SQLite. Preferably without major problems to avoid false positives.
-
-- A GitHub account if you want to report a bug.
+- LMS database = SQLite
 <br><br><br>
+
+
+## Installation
+⚠️ **Please read the [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq) *before* installing this plugin.**<br>
+
+Add the repository URL below at the bottom of *LMS* > *Settings* > *Plugins* and click *Apply*:<br><br>
+[**https://raw.githubusercontent.com/AF-1/lms-dynamicplaylistcreator/main/repo.xml**](https://raw.githubusercontent.com/AF-1/lms-dynamicplaylistcreator/main/repo.xml)
+<br><br><br><br>
 
 
 ## Report a bug
 If you think that you've found a bug, open an [**issue here on GitHub**](https://github.com/AF-1/lms-dynamicplaylistcreator/issues) and fill out the ***Bug report* issue template** including as much information as possible.<br>
-Please post bug reports on **GitHub only**, **not** the LMS forum.
-<br><br><br><br>
-
-
-## Installation
-⚠️ **Please browse through the [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq) questions *before* installing this plugin.**<br>
-
-Add the repository URL below at the bottom of *LMS* > *Settings* > *Plugins* and click *Apply*:<br><br>
-[**https://raw.githubusercontent.com/AF-1/lms-dynamicplaylistcreator/main/repo.xml**](https://raw.githubusercontent.com/AF-1/lms-dynamicplaylistcreator/main/repo.xml)
+Please post bug reports on **GitHub only**.
 <br><br><br><br>
 
 
