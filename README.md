@@ -53,8 +53,8 @@ In addition, DPLC will <b>always</b> save your custom dynamic playlist as an SQL
 <b>Do <u><i>not</i></u> manually move or edit any of these files!</b> DPLC will overwrite the changes. Or worse, your custom dynamic playlist will no longer work.
 </p></details><br>
 
-<details><summary>»<b>Why is the <i>Play button</i> to <i>start</i> dynamic playlists directly from the DPLC list of created dynamic playlists not displayed for <i>all</i> dynamic playlists?</b>«</summary><br><p>
-You can <b>only</b> start dynamic playlists directly in DPLC that do <b>not ask for user input when started</b>. DPLC does not contain code to handle user-input parameters. To simplify the maintenance and updating of the plugin, I decided to create DPLC as a sort of dynamic playlist construction kit without duplicating any code from the <i>Dynamic Playlists</i> plugin.
+<details><summary>»<b>Why is the <i>Play button</i> not displayed for <i>all</i> dynamic playlists?</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>The <i>Play</i> button is not working for new dynamic playlists.</b>«</summary><br><p>
+You can <b>only</b> start dynamic playlists directly in DPLC that do <b><u>not</u> ask for user input when started</b>. DPLC does not contain code to handle user-input parameters. To simplify the maintenance and updating of the plugin, I decided to create DPLC as a sort of dynamic playlist construction kit without duplicating any code from the <i>Dynamic Playlists</i> plugin.<br><br>After you have created a <b>new</b> dynamic playlist that does not ask for user input, please wait a few seconds before you try to start it with the <i>Play</i> button. <i>Dynamic Playlists</i> needs a moment to rescan all available dynamic playlists.
 </p></details><br>
 
 <details><summary>»<b>Which plugins does DPLC work with?</b>«</summary><br><p>
