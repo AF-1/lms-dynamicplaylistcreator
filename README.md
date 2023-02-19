@@ -53,8 +53,7 @@ It <b>takes a couple of seconds</b> for the <i>Dynamic Playlists</i> plugin to s
 The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using <b>only</b> templates and <b>not</b> working directly with SQLite statements. Accordingly, DPLC does <b>not include the option to manually edit SQLite statements</b> in a tiny text area.<br><br>
 
 Users familiar with SQLite can <b>use the <i>export</i> button</b> to <b>permanently move</b> a dynamic playlist <i>currently managed by DPLC</i> to the <i>Dynamic Playlists</i> plugin, i.e. its folder for custom dynamic playlists called <b>DPL-custom-lists</b>. There you can edit it like any other custom dynamic playlist with your favorite code editor.<br>
-Moved dynamic playlists are removed from and no longer managed by DPLC.
-</p></details><br>
+Moved dynamic playlists are removed from and no longer managed by DPLC.<br><br>Please note: the <b>export</b> button is <b>disabled by default</b> and can be enabled in DPLC's settings.</p></details><br>
 
 <details><summary>»<b>What are the files in the <i>DynamicPlaylistCreator</i> folder for? Can I edit them?</b>«</summary><br><p>
 When you create or edit and then <i>save</i> a custom dynamic playlist, DPLC will create 2 files in the <i>DynamicPlaylistCreator</i> folder (default location in the LMS playlists folder, can be changed in the plugin settings):<br>
@@ -64,7 +63,8 @@ In addition, DPLC will <b>always</b> save your custom dynamic playlist as an SQL
 </p></details><br>
 
 <details><summary>»<b>Why is the <i>Play button</i> not displayed for <i>all</i> dynamic playlists?</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>The <i>Play</i> button is not working for new dynamic playlists.</b>«</summary><br><p>
-You can <b>only</b> start dynamic playlists directly in DPLC that do <b><u>not</u> ask for user input when started</b>. DPLC does not contain code to handle user-input parameters. To simplify the maintenance and updating of the plugin, I decided to create DPLC as a sort of dynamic playlist construction kit without duplicating any code from the <i>Dynamic Playlists</i> plugin.<br><br>After you have created a <b>new</b> dynamic playlist that does not ask for user input, please wait a few seconds before you try to start it with the <i>Play</i> button. <i>Dynamic Playlists</i> needs a moment to rescan all available dynamic playlists.
+The <b>play</b> button is <b>disabled by default</b> and has to be enabled in DPLC's settings first.<br>
+You can <b>only</b> start dynamic playlists directly in DPLC that do <b><u>not</u> ask for user input when started</b>. DPLC does not contain code to handle user-input parameters. To simplify the maintenance and updating of the plugin, I decided to create DPLC as a sort of dynamic playlist construction kit without duplicating any code from the <i>Dynamic Playlists</i> plugin.<br><br>After you have created a <b>new</b> dynamic playlist that does not ask for user input, please wait a few seconds before you try to start it with the <i>Play</i> button. <i>Dynamic Playlists</i> needs a moment to update the list of available dynamic playlists.<br><br>Starting dynamic playlists without user-input parameters in DPLC is just a quick way to test a dynamic playlist. The <i>Dynamic Playlists</i> plugin is still where you start your mixes, not DPLC.
 </p></details><br>
 
 <details><summary>»<b>Can I import my custom dynamic playlists from the <i>SQLPlayList</i> plugin?</b>«</summary><br><p>
