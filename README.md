@@ -43,7 +43,7 @@ If you want to report a new issue, please fill out this [**issue report template
 
 - Enter a <b>name</b>, set the <b>parameters</b> you want to use and then <b>save</b> it. That's it.<br><br>
 
-It <b>takes a couple of seconds</b> before the <i>Dynamic Playlists</i> plugin starts updating the list of available dynamic playlists and your new dynamic playlist is listed in DPL. If you don't see your dynamic playlists listed, you can force a refresh of available dynamic playlists by (re)calling the <i>Dynamic Playlists</i> menu from the <i>LMS home</i> menu.
+It <b>takes a couple of seconds</b> for the <i>Dynamic Playlists</i> plugin to start updating the list of available dynamic playlists and your new dynamic playlist to show up there. If you don't see your dynamic playlists listed, you can force a refresh of available dynamic playlists by (re)calling the <i>Dynamic Playlists</i> menu from the <i>LMS home</i> menu.
 </p></details><br>
 
 <details><summary>»<b>How can I <i>edit</i> custom dynamic playlists I've created with this plugin?</b>«</summary><br><p>
