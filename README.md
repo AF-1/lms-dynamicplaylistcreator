@@ -47,13 +47,13 @@ It <b>takes a couple of seconds</b> for the <i>Dynamic Playlists</i> plugin to s
 </p></details><br>
 
 <details><summary>»<b>How can I <i>edit</i> custom dynamic playlists I've created with this plugin?</b>«</summary><br><p>
-<i>Dynamic Playlist Creator</i> (DPLC) displays a list of all dynamic playlists that you have created with this plugin.<br>If you want to change the name of your dynamic playlist or some parameters, click on the <b>Edit</b> button next to the playlist's name, make your changes and save it. After a couple of seconds, the Dynamic Playlist plugin will update its list of available dynamic playlists, incl. the changes you just made.</p></details><br>
+<i>Dynamic Playlist Creator</i> displays a list of all dynamic playlists that you have created with this plugin.<br>If you want to change the name of your dynamic playlist or some parameters, click on the <b>Edit</b> button next to the playlist's name, make your changes and save it. After a couple of seconds, the Dynamic Playlist plugin will update its list of available dynamic playlists and pick up the changes you just made.</p></details><br>
 
 <details><summary>»<b>Can I manually <i>edit the SQLite statement</i> of my dynamic playlists in DPLC?</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>What does the <i>export</i> button do?</b>«</summary><br><p>
 The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using <b>only</b> templates and <b>not</b> working directly with SQLite statements. Accordingly, DPLC does <b>not include the option to manually edit SQLite statements</b> in a tiny text area.<br><br>
 
 Users familiar with SQLite can <b>use the <i>export</i> button</b> to <b>permanently move</b> a dynamic playlist <i>currently managed by DPLC</i> to the <i>Dynamic Playlists</i> plugin, i.e. its folder for custom dynamic playlists called <b>DPL-custom-lists</b>. There you can edit it like any other custom dynamic playlist with your favorite code editor.<br>
-Moved dynamic playlists are removed from, i.e. no longer managed by DPLC.
+Moved dynamic playlists are removed from and no longer managed by DPLC.
 </p></details><br>
 
 <details><summary>»<b>What are the files in the <i>DynamicPlaylistCreator</i> folder for? Can I edit them?</b>«</summary><br><p>
