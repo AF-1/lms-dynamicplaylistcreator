@@ -177,6 +177,7 @@ sub handleWebList {
 
 	$params->{'nocustomdynamicplaylists'} = 1 if (scalar @webPlaylists == 0);
 	$params->{'displayplaybtn'} = $prefs->get('displayplaybtn');
+	$params->{'displayexportbtn'} = $prefs->get('displayexportbtn');
 	$params->{'dplversion'} = $dplVersion if $dplVersion;
 	$params->{'pluginDynamicPlaylistCreatorPlayLists'} = \@webPlaylists;
 	$log->debug('webPlaylists = '.Dumper(\@webPlaylists));

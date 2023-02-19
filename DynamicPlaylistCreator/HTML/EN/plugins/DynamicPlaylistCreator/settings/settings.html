@@ -1,10 +1,18 @@
 <style>.faqlink{padding-left:22px;}</style>
 [% page = "PLUGIN_DYNAMICPLAYLISTCREATOR" %]
 [% PROCESS settings/header.html %]
+<br>
 <span[% IF systemSkin != "material" %] class="faqlink"[% END %]><a href="[% "SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK" | string %]" target="_blank" rel="noopener noreferrer"><b>[% "SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT" | string %]</b></a></span>
 <br><br>
-	[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH_DESC" %]
-		<input type="text" class="stdedit selectFolder" name="pref_customdirparentfolderpath" id="customdirparentfolderpath" value="[% prefs.customdirparentfolderpath %]" size="40">
-	[% END %]
-	<br>
+
+[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH_DESC" %]
+	<input type="text" class="stdedit selectFolder" name="pref_customdirparentfolderpath" id="customdirparentfolderpath" value="[% prefs.customdirparentfolderpath %]" size="40">
+[% END %]
+<br>
+
+[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYEXPORTBTN" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYEXPORTBTN_DESC" %]
+	<input type="checkbox" name="pref_displayexportbtn" id="displayexportbtn" [% IF prefs.displayexportbtn %] checked [% END %]">
+[% END %]
+<br>
+
 [% PROCESS settings/footer.html %]

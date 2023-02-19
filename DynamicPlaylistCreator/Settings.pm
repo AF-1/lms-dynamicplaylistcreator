@@ -47,7 +47,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(customdirparentfolderpath));
+	return ($prefs, qw(customdirparentfolderpath displayexportbtn));
 }
 
 sub handler {
@@ -58,12 +58,6 @@ sub handler {
 		Plugins::DynamicPlaylistCreator::Plugin::getConfigManager()->initWebPageMethods();
 	}
 	return $result;
-}
-
-sub beforeRender {
-	my ($class, $paramRef) = @_;
-	my $advMode = $prefs->get('advmode');
-	$paramRef->{'advmode'} = 1 if $advMode;
 }
 
 1;

@@ -11,7 +11,7 @@
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;recently played&lt;/b&gt;" value="0"/>
 		<parameter type="text" id="minartisttracks" name="Ignore albums with &lt;b&gt;less&lt;/b&gt; tracks than" value="3"/>
-		<parameter type="text" id="noofartists" name="Number of artists from which to get new tracks &lt;b&gt;per batch&lt;/b&gt;" value=""/>
+		<parameter type="text" id="noofartists" name="Number of artists from which to get new tracks &lt;b&gt;per batch&lt;/b&gt;" value="1"/>
 		<parameter type="text" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value="10"/>
 		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
