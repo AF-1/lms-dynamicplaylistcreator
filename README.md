@@ -1,7 +1,7 @@
 # Dynamic Playlist Creator
 
 **Dynamic Playlist Creator**[^1] (DPLC) allows you to create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
-The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and **not** working directly with SQLite statements. Accordingly, DPLC does not include the option to manually edit SQLite statements (see FAQ).
+The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and **not** working directly with SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually (see FAQ).
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
 <br><br><br>
@@ -49,8 +49,8 @@ It <b>takes a couple of seconds</b> for the <i>Dynamic Playlists</i> plugin to s
 <details><summary>»<b>How can I <i>edit</i> custom dynamic playlists I've created with this plugin?</b>«</summary><br><p>
 <i>Dynamic Playlist Creator</i> displays a list of all dynamic playlists that you have created with this plugin.<br>If you want to change the name of your dynamic playlist or some parameters, click on the <b>Edit</b> button next to the playlist's name, make your changes and save it. After a couple of seconds, the Dynamic Playlist plugin will update its list of available dynamic playlists and pick up the changes you just made.</p></details><br>
 
-<details><summary>»<b>Can I manually <i>edit the SQLite statement</i> of my dynamic playlists in DPLC?</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>What does the <i>export</i> button do?</b>«</summary><br><p>
-The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using <b>only</b> templates and <b>not</b> working directly with SQLite statements. Accordingly, DPLC does <b>not include the option to manually edit SQLite statements</b> in a tiny text area.<br><br>
+<details><summary>»<b>Can I <i>edit the SQLite statement</i> of my dynamic playlists manually in DPLC?</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>What does the <i>export</i> button do?</b>«</summary><br><p>
+The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using <b>only</b> templates and <b>not</b> working directly with SQLite statements. Accordingly, DPLC does <b>not include the option to edit SQLite statements</b> manually in a tiny text area.<br><br>
 
 Users familiar with SQLite can <b>use the <i>export</i> button</b> to <b>permanently move</b> a dynamic playlist <i>currently managed by DPLC</i> to the <i>Dynamic Playlists</i> plugin, i.e. its folder for custom dynamic playlists called <b>DPL-custom-lists</b>. There you can edit it like any other custom dynamic playlist with your favorite code editor.<br>
 Moved dynamic playlists are removed from and no longer managed by DPLC.<br><br>Please note: the <b>export</b> button is <b>disabled by default</b> and can be enabled in DPLC's settings.</p></details><br>
@@ -59,7 +59,7 @@ Moved dynamic playlists are removed from and no longer managed by DPLC.<br><br>P
 When you create or edit and then <i>save</i> a custom dynamic playlist, DPLC will create 2 files in the <i>DynamicPlaylistCreator</i> folder (default location in the LMS playlists folder, can be changed in the plugin settings):<br>
 the file with the <b>customvalues.xml</b> extension contains the (template) values you selected for this dynamic playlist. It allows you to edit or update your custom dynamic playlist in DPLC at a later time.<br>
 In addition, DPLC will <b>always</b> save your custom dynamic playlist as an SQLite statement (file extension: <b>sql</b>) because <i>Dynamic Playlists</i> searches the DPLC custom folder for them.<br><br>
-<b>Do <u><i>not</i></u> manually move or edit any of these files!</b> DPLC will overwrite the changes. Or worse, your custom dynamic playlist will no longer work.
+<b>Do <u><i>not</i></u> move or edit any of these files manually!</b> DPLC will overwrite the changes. Or worse, your custom dynamic playlist will no longer work.
 </p></details><br>
 
 <details><summary>»<b>Why is the <i>Play button</i> not displayed for <i>all</i> dynamic playlists?</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>The <i>Play</i> button is not working for new dynamic playlists.</b>«</summary><br><p>
