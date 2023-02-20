@@ -25,6 +25,18 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYEXPORTBTN
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYEXPORTBTN_DESC
 	EN	Unless you want to <b>edit the SQLite statement of a dynamic playlist</b> created with DPLC <b>manually</b>, you don't need the <i>Export</i> button.<br><br>Users familiar with SQLite can use the <b>Export</b> button to permanently move a dynamic playlist, that's currently managed by DPLC, to the <i>Dynamic Playlists</i> plugin's folder for custom dynamic playlists called <i>DPL-custom-lists</i>. There you can edit it like any other custom dynamic playlist with your favorite code editor.<br><br>Moved dynamic playlists are now managed by <i>Dynamic Playlists</i> only, no longer by DPLC. They are no longer listed in DPLC.
 
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYPLAYBTN
+	EN	Display Play button
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYPLAYBTN_DESC
+	EN	You can <b>only</b> start dynamic playlists directly in DPLC that do <b><u>not</u> ask for user input when started</b>. DPLC does not contain code to handle user-input parameters.<br>After you have created a <b>new</b> dynamic playlist that does not ask for user input, please wait a few seconds before you try to start it with the <i>Play</i> button. <i>Dynamic Playlists</i> needs a moment to update the list of available dynamic playlists.<br><br>Starting dynamic playlists without user-input parameters in DPLC is just a quick way to test a dynamic playlist. The <i>Dynamic Playlists</i> plugin is still where you start your mixes, not DPLC.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG
+	EN	Hide refresh message
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG_DESC
+	EN	If you create, edit, save, delete or export a dynamic playlist in DPLC, the DPLC web page listing your dynamic playlists will display a message to remind you that the <b>Dynamic Playlists</b> plugin may need a few seconds to update the list of available dynamic playlists. You can disable this message with this setting.
+
 PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
 	EN	<b>Custom dynamic playlists created with this plugin:</b>
 
@@ -39,6 +51,9 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_UNSUPPORTEDVERSION
 	EN	This plugin creates custom dynamic playlists compatible <span class="emphbold">only</span> with <i>Dynamic Playlists</i> version <span class="emphbold">4</span>.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_DPLREFRESHMSG
+	EN	<span class="emphbold"><i>Dynamic Playlists</i> is updating the list of available dynamic playlists...</span>
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_TYPES_TITLE
 	EN	Select a template on which to base your new dynamic playlist:

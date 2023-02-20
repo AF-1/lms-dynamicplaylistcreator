@@ -1,4 +1,4 @@
-<style>.inputbtn{padding:2px;}.error{color: red !important;}.emphbold{font-weight:600;}</style>
+<style>.inputbtn{padding:2px;}.error{color: red !important;}.emphbold{font-weight:600;}.dplrefreshmsg{color:[% IF systemSkin == "material" || systemSkin == "DarkDefault" %]#81d477[% ELSE %]#0e9300[% END %] !important;background-color:[% IF systemSkin == "material" || systemSkin == "DarkDefault" %]#404040[% ELSE %]#c1c1c1[% END %];border-radius:10px;padding:10px;transition: opacity 3s ease 0s;}</style>
 [%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
 
 [%- pwd_list = BLOCK -%]/
@@ -34,7 +34,7 @@
 		[% ELSE %]
 			[% FOREACH playlist IN pluginDynamicPlaylistCreatorPlayLists %]
 				[% BLOCK controls %]
-					[%- IF playlist.nouserinput %]
+					[%- IF displayplaybtn && playlist.nouserinput %]
 					[% WRAPPER playlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_playitem.html?item=[% playlist.id | uri %]"[% END %]
 					[%- END %]
 					[%- IF displayexportbtn %]
@@ -65,6 +65,21 @@
 		[% END %]
 		[% IF dplversion && dplversion < 4 %]
 			<p><br><br><span class="error">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_UNSUPPORTEDVERSION" | string %]</span></p>
+		[% END %]
+		[% IF !hidedplrefreshmsg && dplrefresh %]
+			<p><br><br><span id="dplrefreshmsg" class="dplrefreshmsg">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_DPLREFRESHMSG" | string %]</span></p>
+
+		<script type="text/javascript">
+			setTimeout(
+				function() {
+					let dplrefreshmsg = document.getElementById("dplrefreshmsg");
+					dplrefreshmsg.style.opacity = 0;
+					dplrefreshmsg.addEventListener("transitionend", function() {
+						dplrefreshmsg.style.display = "none";
+					});
+				}, 4000
+			);
+		</script>
 		[% END %]
 [% END %]
 <br>

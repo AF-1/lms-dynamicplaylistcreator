@@ -15,4 +15,14 @@
 [% END %]
 <br>
 
+[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYPLAYBTN" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYPLAYBTN_DESC" %]
+	<input type="checkbox" name="pref_displayplaybtn" id="displayplaybtn" [% IF prefs.displayplaybtn %] checked [% END %]">
+[% END %]
+<br>
+
+[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG_DESC" %]
+	<input type="checkbox" name="pref_hidedplrefreshmsg" id="hidedplrefreshmsg" [% IF prefs.hidedplrefreshmsg %] checked [% END %]">
+[% END %]
+<br>
+
 [% PROCESS settings/footer.html %]

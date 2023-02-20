@@ -346,6 +346,7 @@ sub webDeleteItem {
 			}
 		}
 	}
+	$params->{'dplrefresh'} = 1;
 	return $self->webCallbacks->webList($client, $params);
 }
 
@@ -436,6 +437,7 @@ sub webSaveItem {
 			return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 		} else {
 			$log->debug('saveSimpleItem succeeded');
+			$params->{'dplrefresh'} = 1;
 			return $self->webCallbacks->webList($client, $params);
 		}
 	}
@@ -485,6 +487,7 @@ sub webSaveNewItem {
 				}
 			}
 		}
+		$params->{'dplrefresh'} = 1;
 		return $self->webCallbacks->webList($client, $params);
 	}
 }
