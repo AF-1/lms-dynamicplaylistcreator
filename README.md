@@ -16,6 +16,11 @@ The target group for this plugin is users who want to quickly and easily create 
 <br><br><br>
 
 
+## Screenshots
+<img src="screenshots/dplc.gif" width="100%">
+<br><br><br>
+
+
 ## Installation
 ⚠️ **Please read the [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq) *before* installing this plugin.**<br>
 
