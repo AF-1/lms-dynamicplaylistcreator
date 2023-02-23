@@ -26,7 +26,7 @@ The target group for this plugin is users who want to quickly and easily create 
 
 You should be able to install **Dynamic Playlist Creator** from the LMS main repository (LMS plugin library):<br>**LMS > Settings > Plugins**.<br>
 
-If you want to test a new patch that hasn't made it into a release version yet or you need to install a previous version, you'll have to [install the plugin manually](https://github.com/AF-1/sobras/wiki/Manual-installation-of-LMS-plugins).
+If you want to test a new patch that hasn't made it into a release version yet, you'll have to [install the plugin manually](https://github.com/AF-1/sobras/wiki/Manual-installation-of-LMS-plugins).
 
 It usually takes a few hours for a *new* release to be listed on the LMS plugin page.
 <br><br><br><br>
