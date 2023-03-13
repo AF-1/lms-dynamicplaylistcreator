@@ -174,7 +174,7 @@ create temporary table tmp_random_albums as
 		join albums on
 			albums.id = tracks.album
 		[%- END %]
-		[%- IF recentlyplayed or playedbefore or sortorder or recentlyplayed or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
+		[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder)) or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
 		left join tracks_persistent on
 			tracks_persistent.urlmd5 = tracks.urlmd5
 		[%- END %]
@@ -291,7 +291,7 @@ select tracks.id, tracks.primary_artist from tracks
 		[%- END %]
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF playedbefore or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]

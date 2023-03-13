@@ -3,6 +3,7 @@
 	<requireplugins>CustomScan::Plugin</requireplugins>
 	<template>
 		<name>Random for Specified Mixed Tags</name>
+		<templateversion>1</templateversion>
 		<description>Random tracks for specified tags from the Mixed Tag scanning module in Custom Scan with values from specified selection.</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>51</listweight>

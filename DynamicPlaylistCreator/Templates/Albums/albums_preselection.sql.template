@@ -34,7 +34,7 @@ select tracks.id, tracks.primary_artist from tracks
 	join tmp_preselection_albums
 		on tmp_preselection_albums.album = tracks.album
 	[%- END %]
-	[%- IF useapcvalues and (recentlyplayed or playedbeforeor or sortorder) or maxdpsv or mindpsv %]
+	[%- IF (useapcvalues and (recentlyplayed or playedbefore or sortorder)) or maxdpsv or mindpsv %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]

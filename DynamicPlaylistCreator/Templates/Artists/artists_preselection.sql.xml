@@ -2,6 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Preselected Artists</name>
+		<templateversion>1</templateversion>
 		<description>Tracks by preselected artists. Use the LMS artist context menu to preselect artists.</description>
 		<playlistcategory>artists</playlistcategory>
 		<listweight>3</listweight>

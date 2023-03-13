@@ -112,6 +112,7 @@ sub webEditItem {
 				if (defined($template)) {
 					my %currentParameterValues = ();
 					my $templateDataParameters = $templateData->{'parameter'};
+					my $dplTemplateVersion = $templateData->{'templateversion'} || 0;
 					for my $p (@{$templateDataParameters}) {
 						my $values = $p->{'value'};
 						if (!defined($values)) {
@@ -156,6 +157,10 @@ sub webEditItem {
 								# add the name of template on which the dynamic playlist is based
 								if ($p->{'id'} eq 'playlistname') {
 									$p->{'basetemplate'} = $template->{'name'};
+									$p->{'templateversion'} = $template->{'templateversion'};
+									$log->debug('new template version: '.Dumper($p->{'templateversion'}));
+									$p->{'dpltemplateversion'} = $dplTemplateVersion;
+									$log->debug('template version of dynamic playlist: '.Dumper($p->{'dpltemplateversion'}));
 								}
 
 								# add size for input element if specified
@@ -182,7 +187,6 @@ sub webEditItem {
 					$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
 					$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
 					$params->{'usecache'} = $template->{'usecache'};
-					$params->{'disableconflictcheck'} = $prefs->get('disableconflictcheck');
 					return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 				}
 			}
@@ -231,7 +235,6 @@ sub webNewItemParameters {
 		$params->{'pluginWebPageMethodsNewItemParameters'} = \@parametersToSelect;
 		$params->{'usecache'} = $template->{'usecache'};
 		$params->{'templateName'} = $template->{'name'};
-		$params->{'disableconflictcheck'} = $prefs->get('disableconflictcheck');
 	}
 	return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItemParameters'}, $params);
 }
@@ -515,6 +518,8 @@ sub saveSimpleItem {
 		my %templateParameters = ();
 		my $data = "";
 		$data .= "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<dynamicplaylistcreator>\n\t<template>\n\t\t<id>".$templateId."</id>";
+		# include template version
+		$data .= "\n\t\t<templateversion>".$template->{'templateversion'}."</templateversion>" if $template->{'templateversion'};
 		# record if dpl requires user input
 		$data .= "\n\t\t<parameter type=\"text\" id=\"nouserinput\"><value>".($params->{'nouserinput'} || '')."</value></parameter>";
 

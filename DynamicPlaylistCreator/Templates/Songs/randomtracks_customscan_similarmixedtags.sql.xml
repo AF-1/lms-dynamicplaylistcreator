@@ -3,6 +3,7 @@
 	<requireplugins>CustomScan::Plugin</requireplugins>
 	<template>
 		<name>Random for Similar Mixed Tags</name>
+		<templateversion>1</templateversion>
 		<description>Random tracks for tracks with similar tags as the user selectable track. Uses tags from the Mixed Tag scanning module in Custom Scan.</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>50</listweight>

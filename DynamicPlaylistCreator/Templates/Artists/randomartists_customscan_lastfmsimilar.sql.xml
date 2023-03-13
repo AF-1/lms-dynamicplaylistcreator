@@ -3,6 +3,7 @@
 	<requireplugins>CustomScan</requireplugins>
 	<template>
 		<name>Random for LastFM Similar Artists</name>
+		<templateversion>1</templateversion>
 		<description>Random tracks with artist similar to user selectable artist according to LastFM.</description>
 		<playlistcategory>artists</playlistcategory>
 		<listweight>4</listweight>

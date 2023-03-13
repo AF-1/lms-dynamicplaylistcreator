@@ -2,6 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Top Rated Albums</name>
+		<templateversion>1</templateversion>
 		<description>Focus on top rated albums</description>
 		<playlistcategory>albums</playlistcategory>
 		<listweight>2</listweight>

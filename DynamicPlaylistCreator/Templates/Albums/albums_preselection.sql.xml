@@ -2,6 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Preselected Albums</name>
+		<templateversion>1</templateversion>
 		<description>Tracks from preselected albums. Use the LMS album context menu to preselect albums.</description>
 		<playlistcategory>albums</playlistcategory>
 		<listweight>3</listweight>

@@ -87,7 +87,7 @@
 			<tr>
 				<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE" | string %]</td>
 				<td>&nbsp;&nbsp;&nbsp;</td>
-				<td>[% parameter.basetemplate %]
+				<td>[% parameter.basetemplate %][% IF parameter.dpltemplateversion %] ([% IF parameter.dpltemplateversion != parameter.templateversion %][% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_SAVED" | string %] [% END %][% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_VERSION" | string %]: [% parameter.dpltemplateversion %][% IF parameter.dpltemplateversion != parameter.templateversion %] -- [% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_NEWVERSION" | string %]: [% parameter.templateversion %][% END %])[% END %]</td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>
 			[% END %]

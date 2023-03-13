@@ -2,6 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Artists</name>
+		<templateversion>1</templateversion>
 		<description>Artist template with options</description>
 		<playlistcategory>artists</playlistcategory>
 		<listweight>1</listweight>
