@@ -41,6 +41,14 @@
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="contributorlistcached" id="includedartists" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks for selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>
 		<parameter type="contributorlistcached" id="excludedartists" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks for selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="searchtype" id="albumsearchtitle1_searchtype" name="albumsearchtitle1 search type" value=""/>
+		<parameter type="searchtext" id="albumsearchtitle1" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="albumsearchtitle1_logop" name="" value=""/>
+		<parameter type="searchtype" id="albumsearchtitle2_searchtype" name="albumsearchtitle2 search type" value=""/>
+		<parameter type="searchtext" id="albumsearchtitle2" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="albumsearchtitle2_logop" name="" value=""/>
+		<parameter type="searchtype" id="albumsearchtitle3_searchtype" name="albumsearchtitle3 search type" value=""/>
+		<parameter type="searchtext" id="albumsearchtitle3" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="sqlmultiplelist" id="excludedstaticplaylists" name="&lt;b&gt;Ignore&lt;/b&gt; tracks in these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="checkbox" id="lossless" name="Only lossless formats" value="0"/>
 		<parameter type="contenttypelistcached" id="includedcontenttypes" name="Only include tracks with this &lt;b&gt;file format&lt;/b&gt;" value="0" quotevalue="1"/>

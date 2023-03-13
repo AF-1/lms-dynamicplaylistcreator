@@ -37,6 +37,12 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG_DESC
 	EN	If you create, edit, save, delete or export a dynamic playlist in DPLC, the DPLC web page listing your dynamic playlists will display a message to remind you that the <b>Dynamic Playlists</b> plugin may need a few seconds to update the list of available dynamic playlists. You can disable this message with this setting.
 
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH
+	EN	Use exact title search
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH_DESC
+	EN	By default, certain unicode and pattern matching characters are stripped from title search terms to avoid problems with SQLite and XML. However, it may lead to false positives.<br><i>Example:</i> if you're searching for album titles that contain <i>[ENG]</i>, the square brackets are removed and the result set will include all album containing <i>ENG</i> or <i>eng</i>, e.g. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>You can disable this here if you're certain that your search terms do not contain any problematic characters and you want the search to adhere more strictly to the search terms.
+
 PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
 	EN	<b>Custom dynamic playlists created with this plugin:</b>
 
@@ -75,6 +81,24 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION
 	EN	Are you sure you want to delete this dynamic playlist?
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_AND
+	EN	and
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_OR
+	EN	or
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_CONTAINS
+	EN	contains
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_CONTAIN
+	EN	does not contain
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_STARTS_WITH
+	EN	starts with
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_START_WITH
+	EN	does not start with
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_SAVE
 	EN	Save

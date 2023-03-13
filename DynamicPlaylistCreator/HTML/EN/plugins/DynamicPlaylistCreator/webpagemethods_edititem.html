@@ -14,13 +14,32 @@
 		<tr><td colspan="3"><b>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE" | string %]</b></td></tr>
 		<tr><td colspan="3">&nbsp;</td></tr>
 		[%- FOREACH parameter = pluginWebPageMethodsEditItemParameters %]
-			[% IF !(parameter.type.match('list') or parameter.type.match('checkboxes')) or (parameter.values.size!=0 and !(parameter.values.0.value=='' and parameter.values.size==1))%]
+			[% NEXT IF parameter.values.size == 0 %]
+			[% NEXT IF parameter.values.0.value == '' and parameter.values.size == 1 %]
+			[% IF parameter.type == 'searchtype' %] [% searchtype = parameter.value %] [% NEXT %] [% END %]
 			<tr>
 				<td>[% parameter.name %]</td>
 				<td>&nbsp;</td>
 				<td>
 				[% IF parameter.type == 'text' %]
-					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.id == 'playlistname' %] required [% END %]>
+					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.id == 'playlistname' %] required[% END %]>
+				[% ELSIF parameter.type == 'searchtext' %]
+					<select class="rmargin" name="itemparameter_[% parameter.id %]_searchtype">
+						<option [% IF searchtype == "LIKE" %]selected[% END %] value="LIKE" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_CONTAINS" | string %]</option>
+						<option [% IF searchtype == "NOT LIKE" %]selected[% END %] value="NOT LIKE" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_CONTAIN" | string %]</option>
+						<option [% IF searchtype == "STARTS WITH" %]selected[% END %] value="STARTS WITH" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_STARTS_WITH" | string %]</option>
+						<option [% IF searchtype == "STARTS NOT WITH" %]selected[% END %] value="STARTS NOT WITH" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_START_WITH" | string %]</option>
+					</select>
+					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %]>
+				[% ELSIF parameter.type == 'logop' %]
+					<select name="itemparameter_[% parameter.id %]">
+						[% FOREACH option = {
+							'and' => 'PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_AND',
+							'or' => 'PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_OR',
+						} %]
+							<option [% IF parameter.value == option.key %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						[%- END -%]
+					</select>
 				[% ELSIF parameter.type.match('singlelist') %]
 					<table border="0">
 						<tr><td>
@@ -71,7 +90,6 @@
 				<td>[% parameter.basetemplate %]
 			</tr>
 			<tr><td>&nbsp;</td></tr>
-			[% END %]
 			[% END %]
 		[%- END %]
 		<tr>

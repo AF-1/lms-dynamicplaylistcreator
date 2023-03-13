@@ -47,7 +47,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(customdirparentfolderpath displayplaybtn displayexportbtn hidedplrefreshmsg));
+	return ($prefs, qw(customdirparentfolderpath displayplaybtn displayexportbtn hidedplrefreshmsg exacttitlesearch));
 }
 
 sub handler {

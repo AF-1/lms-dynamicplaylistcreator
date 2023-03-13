@@ -46,7 +46,7 @@ my $serverPrefs = preferences('server');
 my $prefs = preferences('plugin.dynamicplaylistcreator');
 my $log = logger('plugin.dynamicplaylistcreator');
 
-my %largeFields = map {$_ => 50} qw(playlistname playlistgroups);
+my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3);
 my %mediumFields = map {$_ => 35} qw(includedcomment excludedcomment);
 my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minbpm maxbpm skipcount similaritypercent maxskipcount);
 
@@ -159,7 +159,7 @@ sub webEditItem {
 								}
 
 								# add size for input element if specified
-								if ($p->{'type'} eq 'text') {
+								if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext') {
 									$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
 									$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 									$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
@@ -210,7 +210,7 @@ sub webNewItemParameters {
 		for my $p (@{$parameters}) {
 			if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
 				# add size for input element if specified
-				if ($p->{'type'} eq 'text') {
+				if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext') {
 					$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
 					$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 					$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
@@ -401,6 +401,7 @@ sub webSaveItem {
 
 	# add the name of template on which the dynamic playlist is based
 	$templateParameters{'basetemplate'} = $template->{'name'};
+	$templateParameters{'exacttitlesearch'} = $prefs->get('exacttitlesearch');
 
 	my $doParsing = 1;
 	my $templateFileData = $templateFile;

@@ -25,4 +25,9 @@
 [% END %]
 <br>
 
+[% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH_DESC" %]
+	<input type="checkbox" name="pref_exacttitlesearch" id="exacttitlesearch" [% IF prefs.exacttitlesearch %] checked [% END %]">
+[% END %]
+<br>
+
 [% PROCESS settings/footer.html %]

@@ -181,6 +181,11 @@ select tracks.id, tracks.primary_artist from tracks
 		playlist_track.playlist = 'PlaylistParameter[% IF request1fromuser == 'playlist' %]1[% ELSE %]2[% END %]'
 		[%- END %]
 	[%- END %]
+	[%- # ------- ALBUM TITLE SEARCH ------- %]
+	[%- IF albumsearchtitle1 %]
+	join albums on
+		albums.id = tracks.album
+	[%- END %]
 	[%- # ------- ARTISTS ------- %]
 	[%- IF includedartists or request1fromuser == 'artist' or request2fromuser == 'artist' %]
 	join contributor_track on
@@ -227,6 +232,15 @@ select tracks.id, tracks.primary_artist from tracks
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	WHERE
 		tracks.audio = 1
+	[%- IF albumsearchtitle1 %]
+		and [% IF albumsearchtitle2 or albumsearchtitle3 %]([% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle1_searchtype.match('LIKE') %]%[% END %][% albumsearchtitle1 %]%'
+		[%- IF albumsearchtitle2 %]
+		[% IF albumsearchtitle2_searchtype.match('NOT') %]and [% ELSE %][% albumsearchtitle1_logop %] [% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'and' && albumsearchtitle2_logop == 'or' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle2_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle2_searchtype.match('LIKE') %]%[% END %][% albumsearchtitle2 %]%'[% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %])[% END %]
+		[%- IF albumsearchtitle3 %]
+		[% IF albumsearchtitle3_searchtype.match('NOT') %]and [% ELSE %][% albumsearchtitle2_logop %] [% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle3_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle3_searchtype.match('LIKE') %]%[% END %][% albumsearchtitle3 %]%'[% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'and' && albumsearchtitle2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF albumsearchtitle2 or albumsearchtitle3 %])[% END %]
+	[%- END %]
 	[%- IF request1fromuser == 'album' or request2fromuser == 'album' %]
 		and tracks.album = 'PlaylistParameter[% IF request1fromuser == 'album' %]1[% ELSE %]2[% END %]'
 	[%- ELSIF request1fromuser == 'year' or request2fromuser == 'year' %]

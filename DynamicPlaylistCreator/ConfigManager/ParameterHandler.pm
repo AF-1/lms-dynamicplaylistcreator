@@ -29,6 +29,7 @@ use utf8;
 use base qw(Slim::Utils::Accessor);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 use HTML::Entities;
 use Data::Dumper;
@@ -39,6 +40,7 @@ my $newUnicodeHandling = 0;
 
 my $log = logger('plugin.dynamicplaylistcreator');
 my $cache = Slim::Utils::Cache->new();
+my $prefs = preferences('plugin.dynamicplaylistcreator');
 
 sub new {
 	my ($class, $parameters) = @_;
@@ -251,6 +253,9 @@ sub getValueOfTemplateParameter {
 			if (!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) {
 				$thisvalue = quoteValue($thisvalue);
 			}
+
+			$thisvalue = handleSearchText($thisvalue) if $parameter->{'type'} eq 'searchtext';
+
 			if ($parameter->{'quotevalue'}) {
 				return "'".encode_entities($thisvalue, "&<>\'\"")."'";
 			} else {
@@ -306,7 +311,8 @@ sub getXMLValueOfTemplateParameter {
 	} else {
 		if (defined($params->{$self->parameterPrefix.'_'.$parameter->{'id'}}) && $params->{$self->parameterPrefix.'_'.$parameter->{'id'}} ne '') {
 			my $value = Slim::Utils::Unicode::utf8decode_locale($params->{$self->parameterPrefix.'_'.$parameter->{'id'}});
-			$result = '<value>'.encode_entities($value, "&<>\'\"").'</value>';
+			$value = handleSearchText($value) if $parameter->{'type'} eq 'searchtext';
+			$result = '<value>'.encode_entities($value, "%_&<>\'\"").'</value>';
 			$log->debug("Got ".$parameter->{'id'}." = ".$value);
 		} else {
 			if ($parameter->{'type'} =~ /.*checkbox$/) {
@@ -436,6 +442,23 @@ sub getFunctionTemplateData {
 		$log->warn("Error getting values for: $data, incorrect number of parameters ".scalar(@params));
 	}
 	return \@result;
+}
+
+sub handleSearchText {
+	my $searchString = shift;
+	$searchString =~ s/^\s*//;
+	$searchString =~ s/\s+$//;
+
+	if ($searchString =~ /%/ || $searchString =~ /_/) {
+		$searchString =~ s/%/\\%/ if $searchString =~ /%/;
+		$searchString =~ s/_/\\_/ if $searchString =~ /_/;
+	}
+	if (!$prefs->get('exacttitlesearch')) {
+		$log->debug('Not using exact title search');
+		$searchString = Slim::Utils::Unicode::utf8decode_locale($searchString);
+		$searchString = Slim::Utils::Text::ignoreCaseArticles($searchString, 1);
+	}
+	return $searchString;
 }
 
 sub getCurrentDBH {
