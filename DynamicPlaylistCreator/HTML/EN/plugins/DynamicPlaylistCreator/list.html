@@ -44,7 +44,7 @@
 					[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]"[% END %]
 				[% END %]
 				[%- WRAPPER contentitem controls='controls' %]
-					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]">[% playlist.name %]</a> [% playlist.templateversion %]
+					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]">[% playlist.name %]</a>
 				[% END %]
 			[% odd = (not odd) %]
 			[% END %]
