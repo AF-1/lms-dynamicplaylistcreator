@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Genres</name>
-		<templateversion>1</templateversion>
+		<templateversion>2</templateversion>
 		<description>Genre template with options (incl. top rated)</description>
 		<playlistcategory>genres</playlistcategory>
 		<listweight>1</listweight>

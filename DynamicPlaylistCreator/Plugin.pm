@@ -91,7 +91,7 @@ sub initPrefs {
 
 sub postinitPlugin {
 	my $class = shift;
-	unless ($cache->get('dplc_contributorlist') && $cache->get('dplc_genrelist') && $cache->get('dplc_contenttypes')) {
+	unless ($cache->get('dplc_contributorlist_all') && $cache->get('dplc_contributorlist_albumartists') && $cache->get('dplc_contributorlist_composers') && $cache->get('dplc_genrelist') && $cache->get('dplc_contenttypes')) {
 		$log->debug('Refreshing caches for contributors, genres and content types');
 		refreshSQLCache();
 	}
@@ -283,22 +283,37 @@ sub getVirtualLibraries {
 
 sub refreshSQLCache {
 	$log->debug('Deleting old caches and creating new ones');
-	$cache->remove('dplc_contributorlist');
+	$cache->remove('dplc_contributorlist_all');
+	$cache->remove('dplc_contributorlist_albumartists');
+	$cache->remove('dplc_contributorlist_composers');
 	$cache->remove('dplc_genrelist');
 	$cache->remove('dplc_contenttypes');
 
-	my $contributorSQL = "select contributors.id,contributors.name,contributors.name from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc";
-	my $genreSQL = "select id,name,name from genres order by namesort asc";
+	my $contributorSQL_all = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5,6) group by contributors.id order by contributors.namesort asc";
+	my $contributorSQL_albumartists = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc";
+	my $contributorSQL_composers = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role = 2 group by contributors.id order by contributors.namesort asc";
+	my $genreSQL = "select genres.id,genres.name,genres.namesearch from genres order by namesort asc";
 	my $contentTypesSQL = "select distinct tracks.content_type,tracks.content_type,tracks.content_type from tracks where tracks.content_type is not null and tracks.content_type != 'cpl' and tracks.content_type != 'src' and tracks.content_type != 'ssp' and tracks.content_type != 'dir' order by tracks.content_type asc";
 
-	my $contributorList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL);
-	$cache->set('dplc_contributorlist', $contributorList, 'never') if scalar($contributorList) > 0;
+	my $contributorList_all = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_all);
+	$cache->set('dplc_contributorlist_all', $contributorList_all, 'never');
+	$log->debug('contributorList_all count = '.scalar(@{$contributorList_all}));
+
+	my $contributorList_albumartists = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_albumartists);
+	$cache->set('dplc_contributorlist_albumartists', $contributorList_albumartists, 'never');
+	$log->debug('contributorList_albumartists count = '.scalar(@{$contributorList_albumartists}));
+
+	my $contributorList_composers = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_composers);
+	$cache->set('dplc_contributorlist_composers', $contributorList_composers, 'never');
+	$log->debug('contributorList_composers count = '.scalar(@{$contributorList_composers}));
 
 	my $genreList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $genreSQL);
-	$cache->set('dplc_genrelist', $genreList, 'never') if scalar($genreList) > 0;
+	$cache->set('dplc_genrelist', $genreList, 'never');
+	$log->debug('genreList count = '.scalar(@{$genreList}));
 
 	my $contentTypesList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contentTypesSQL);
-	$cache->set('dplc_contenttypes', $contentTypesList, 'never') if scalar($contentTypesList) > 0;
+	$cache->set('dplc_contenttypes', $contentTypesList, 'never');
+	$log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
 }
 
 sub clearCache {

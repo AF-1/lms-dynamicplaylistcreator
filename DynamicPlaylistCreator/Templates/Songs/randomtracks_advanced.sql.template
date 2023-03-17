@@ -187,15 +187,13 @@ select tracks.id, tracks.primary_artist from tracks
 		albums.id = tracks.album
 	[%- END %]
 	[%- # ------- ARTISTS ------- %]
-	[%- IF includedartists or request1fromuser == 'artist' or request2fromuser == 'artist' %]
+	[%- IF includedartists or includedcomposers or request1fromuser == 'artist' or request2fromuser == 'artist' %]
 	join contributor_track on
 		contributor_track.track = tracks.id
 	join contributors on
 		contributors.id = contributor_track.contributor
 		[%- IF request1fromuser == 'artist' or request2fromuser == 'artist' %]
 		and contributor_track.contributor = 'PlaylistParameter[% IF request1fromuser == 'artist' %]1[% ELSE %]2[% END %]'
-		[%- ELSE %]
-		and contributor_track.role in (1,5)
 		[%- END %]
 	[%- END %]
 	[%- # ------- (MULTIPLE) GENRES ------- %]
@@ -312,10 +310,13 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
 	[%- END %]
 	[%- IF includedartists %]
-		and contributors.name in ([% includedartists %])
+		and (contributors.namesearch in ([% includedartists %]) and contributor_track.role in (1,5,6))
+	[%- END %]
+	[%- IF includedcomposers %]
+		and (contributors.namesearch in ([% includedcomposers %]) and contributor_track.role = 2)
 	[%- END %]
 	[%- IF includedgenres %]
-		and genres.name in ([% includedgenres %])
+		and genres.namesearch in ([% includedgenres %])
 	[%- END %]
 	[%- IF excludedartists %]
 		and not exists (select * from tracks t2,contributor_track,contributors
@@ -323,8 +324,17 @@ select tracks.id, tracks.primary_artist from tracks
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
 							contributors.id = contributor_track.contributor and
-							contributor_track.role in (1,5) and
-							contributors.name in ([% excludedartists %]))
+							contributor_track.role in (1,5,6) and
+							contributors.namesearch in ([% excludedartists %]))
+	[%- END %]
+	[%- IF excludedcomposers %]
+		and not exists (select * from tracks t2,contributor_track,contributors
+						where
+							t2.id = tracks.id and
+							tracks.id = contributor_track.track and
+							contributors.id = contributor_track.contributor and
+							contributor_track.role = 2 and
+							contributors.namesearch in ([% excludedcomposers %]))
 	[%- END %]
 	[%- IF excludedgenres %]
 		and not exists (select * from tracks t2,genre_track,genres
@@ -332,7 +342,7 @@ select tracks.id, tracks.primary_artist from tracks
 							t2.id = tracks.id and
 							genre_track.track = tracks.id and
 							genre_track.genre = genres.id and
-							genres.name in ([% excludedgenres %]))
+							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
 	[%- IF excludedstaticplaylists %]
 		and not exists (select * from tracks t2,playlist_track

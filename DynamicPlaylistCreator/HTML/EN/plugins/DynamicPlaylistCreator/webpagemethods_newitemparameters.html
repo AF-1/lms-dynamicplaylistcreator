@@ -47,7 +47,7 @@
 							</select>
 						</td></tr>
 					</table>
-				[% ELSIF parameter.type.match('multiplelist') || parameter.type == 'contributorlistcached' %]
+				[% ELSIF parameter.type.match('multiplelist') || parameter.type == 'contributorlistcachedall' || parameter.type == 'contributorlistcachedalbumartists' || parameter.type == 'contributorlistcachedcomposers' %]
 					<table border="0">
 						<tr><td>
 							<select name="itemparameter_[% parameter.id %]" multiple size="10">

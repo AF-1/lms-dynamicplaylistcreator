@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Top Rated Albums</name>
-		<templateversion>1</templateversion>
+		<templateversion>2</templateversion>
 		<description>Focus on top rated albums</description>
 		<playlistcategory>albums</playlistcategory>
 		<listweight>2</listweight>
@@ -18,6 +18,10 @@
 		<parameter type="optionalsinglelist" id="compis" name="Limit to or exclude &lt;b&gt;compilations&lt;/b&gt;" value="" data="1=Only compilations,2=No compilations"/>
 		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
+		<parameter type="contributorlistcachedalbumartists" id="includedartists" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;album artists&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="contributorlistcachedalbumartists" id="excludedartists" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;album artists&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="contributorlistcachedcomposers" id="includedcomposers" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;composers&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="contributorlistcachedcomposers" id="excludedcomposers" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;composers&lt;/b&gt;" value="" quotevalue="1"/>
 		<parameter type="checkbox" id="activevirtuallibrary" name="Limit to &lt;b&gt;currently selected&lt;/b&gt; virtual library on &lt;b&gt;player&lt;/b&gt;" value=""/>
 		<parameter type="functionoptionalsinglelist" id="virtuallibrary" name="&lt;b&gt;Always&lt;/b&gt; limit to &lt;b&gt;this&lt;/b&gt; virtual library" value="" data="Plugins::DynamicPlaylistCreator::Plugin,getVirtualLibraries"/>
 		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>

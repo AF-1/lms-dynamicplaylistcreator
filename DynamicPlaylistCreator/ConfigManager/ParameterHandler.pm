@@ -104,8 +104,14 @@ sub addValuesToTemplateParameter {
 			}
 		}
 		$p->{'values'} = $listValues;
-	} elsif ($p->{'type'} =~ 'contributorlistcached') {
-		my $listValues = $cache->get('dplc_contributorlist') || [];
+	} elsif ($p->{'type'} =~ 'contributorlistcachedall') {
+		my $listValues = $cache->get('dplc_contributorlist_all') || [];
+		$p->{'values'} = $listValues;
+	} elsif ($p->{'type'} =~ 'contributorlistcachedalbumartists') {
+		my $listValues = $cache->get('dplc_contributorlist_albumartists') || [];
+		$p->{'values'} = $listValues;
+	} elsif ($p->{'type'} =~ 'contributorlistcachedcomposers') {
+		my $listValues = $cache->get('dplc_contributorlist_composers') || [];
 		$p->{'values'} = $listValues;
 	} elsif ($p->{'type'} =~ 'genrelistcached') {
 		my $genreList = $cache->get('dplc_genrelist') || [];
@@ -171,7 +177,7 @@ sub parameterIsSpecified {
 
 	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ '.*cached$') {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcached') {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcachedall' || $parameter->{'type'} =~ 'contributorlistcachedalbumartists' || $parameter->{'type'} =~ 'contributorlistcachedcomposers') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
@@ -199,7 +205,7 @@ sub getValueOfTemplateParameter {
 	my $dbh = getCurrentDBH();
 	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ '.*cached$') {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcached') {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcachedall' || $parameter->{'type'} =~ 'contributorlistcachedalbumartists' || $parameter->{'type'} =~ 'contributorlistcachedcomposers') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
@@ -278,7 +284,7 @@ sub getXMLValueOfTemplateParameter {
 	my $result = '';
 	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ '.*cached$') {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcached') {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ 'contributorlistcachedall' || $parameter->{'type'} =~ 'contributorlistcachedalbumartists' || $parameter->{'type'} =~ 'contributorlistcachedcomposers') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
