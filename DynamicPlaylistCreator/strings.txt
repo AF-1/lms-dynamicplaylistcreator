@@ -131,7 +131,7 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_ITEM_EXISTS
 	EN	Invalid file name - a file with this name already exists
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_CUSTOMIZEDITEM_EXISTS
-	EN	Invalid file name - a customized item with this file name already exists
+	EN	Invalid file name - an sql file with this file name already exists
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME
 	EN	Please enter a file name
