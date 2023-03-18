@@ -167,6 +167,15 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF includedgenres %]
 		and genres.namesearch in ([% includedgenres %])
 	[%- END %]
+	[%- IF excludedartists %]
+		and not exists (select * from tracks t2,contributor_track,contributors
+						where
+							t2.id = tracks.id and
+							tracks.id = contributor_track.track and
+							contributors.id = contributor_track.contributor and
+							contributor_track.role in (1,5,6) and
+							contributors.namesearch in ([% excludedartists %]))
+	[%- END %]
 	[%- IF excludedgenres %]
 		and not exists (select * from tracks t2, genre_track, genres
 						where
