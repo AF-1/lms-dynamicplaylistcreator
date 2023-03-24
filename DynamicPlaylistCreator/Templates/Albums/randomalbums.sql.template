@@ -159,16 +159,18 @@ create temporary table tmp_random_albums as
 		[%- IF includedgenres or request1fromuser == 'genre' or request2fromuser == 'genre' or request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
 		join genre_track on
 			genre_track.track = tracks.id
-		join genres on
-			genres.id = genre_track.genre
 			[%- IF request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
 			and genre_track.genre in ('PlaylistParameter[% IF request1fromuser == 'multiplegenres' %]1[% ELSE %]2[% END %]')
 			[%- ELSIF request1fromuser == 'genre' or request2fromuser == 'genre' %]
 			and genre_track.genre = 'PlaylistParameter[% IF request1fromuser == 'genre' %]1[% ELSE %]2[% END %]'
 			[%- END %]
+		[%- IF includedgenres %]
+		join genres on
+			genres.id = genre_track.genre
+		[%- END %]
 		[%- END %]
 		[%- # ------- MISC ------- %]
-		[%- IF compis %]
+		[%- IF compis or albumsearchtitle1 %]
 		join albums on
 			albums.id = tracks.album
 		[%- END %]
@@ -186,6 +188,15 @@ create temporary table tmp_random_albums as
 		[%- END %]
 		WHERE
 			tracks.audio = 1
+		[%- IF albumsearchtitle1 %]
+			and [% IF albumsearchtitle2 or albumsearchtitle3 %]([% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle1_searchtype.match('LIKE') %]%[% END %][% albumsearchtitle1 %]%'
+			[%- IF albumsearchtitle2 %]
+			[% IF albumsearchtitle2_searchtype.match('NOT') %]and [% ELSE %][% albumsearchtitle1_logop %] [% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'and' && albumsearchtitle2_logop == 'or' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle2_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle2_searchtype.match('LIKE') %]%[% END %][% albumsearchtitle2 %]%'[% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %])[% END %]
+			[%- IF albumsearchtitle3 %]
+			[% IF albumsearchtitle3_searchtype.match('NOT') %]and [% ELSE %][% albumsearchtitle2_logop %] [% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle3_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle3_searchtype.match('LIKE') %]%[% END %][% albumsearchtitle3 %]%'[% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'and' && albumsearchtitle2_logop == 'or' %])[% END %]
+			[%- END %]
+			[%- END %][% IF albumsearchtitle2 or albumsearchtitle3 %])[% END %]
+		[%- END %]
 		[%- IF includedartists %]
 			and contributors.namesearch in ([% includedartists %])
 		[%- END %]
@@ -310,13 +321,15 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF includedgenres or request1fromuser == 'genre' or request2fromuser == 'genre' or request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
 	join genre_track on
 		genre_track.track = tracks.id
-	join genres on
-		genres.id = genre_track.genre
 		[%- IF request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
 		and genre_track.genre in ('PlaylistParameter[% IF request1fromuser == 'multiplegenres' %]1[% ELSE %]2[% END %]')
 		[%- ELSIF request1fromuser == 'genre' or request2fromuser == 'genre' %]
 		and genre_track.genre = 'PlaylistParameter[% IF request1fromuser == 'genre' %]1[% ELSE %]2[% END %]'
 		[%- END %]
+	[%- IF includedgenres %]
+	join genres on
+		genres.id = genre_track.genre
+	[%- END %]
 	[%- END %]
 	[%- # ------- MISC ------- %]
 	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]

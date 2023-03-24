@@ -186,7 +186,6 @@ sub webEditItem {
 					$params->{'pluginWebPageMethodsEditItemTemplate'} = lc($templateData->{'id'});
 					$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
 					$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
-					$params->{'usecache'} = $template->{'usecache'};
 					return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 				}
 			}
@@ -233,7 +232,6 @@ sub webNewItemParameters {
 		}
 
 		$params->{'pluginWebPageMethodsNewItemParameters'} = \@parametersToSelect;
-		$params->{'usecache'} = $template->{'usecache'};
 		$params->{'templateName'} = $template->{'name'};
 	}
 	return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItemParameters'}, $params);

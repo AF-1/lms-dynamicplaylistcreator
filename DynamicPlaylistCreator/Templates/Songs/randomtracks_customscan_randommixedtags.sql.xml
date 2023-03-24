@@ -7,7 +7,6 @@
 		<description>Random tracks for specified tags from the Mixed Tag scanning module in Custom Scan.</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>52</listweight>
-		<usecache>1</usecache>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="Random for Mixed Tags"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="sqlmultiplelist" id="includedgenre" name="Include tracks for selected GENRE tags" data="select extravalue,value,value from customscan_track_attributes where module='mixedtag' and attr='GENRE' group by extravalue order by valuesort asc" quotevalue="1"/>

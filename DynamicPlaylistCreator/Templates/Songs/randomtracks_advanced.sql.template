@@ -200,13 +200,15 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF includedgenres or request1fromuser == 'genre' or request2fromuser == 'genre' or request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
 	join genre_track on
 		genre_track.track = tracks.id
-	join genres on
-		genres.id = genre_track.genre
 		[%- IF request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
 		and genre_track.genre in ('PlaylistParameter[% IF request1fromuser == 'multiplegenres' %]1[% ELSE %]2[% END %]')
 		[%- ELSIF request1fromuser == 'genre' or request2fromuser == 'genre' %]
 		and genre_track.genre = 'PlaylistParameter[% IF request1fromuser == 'genre' %]1[% ELSE %]2[% END %]'
 		[%- END %]
+	[%- IF includedgenres %]
+	join genres on
+		genres.id = genre_track.genre
+	[%- END %]
 	[%- END %]
 	[%- # ------- COMMENTS ------- %]
 	[%- IF includedcomment %]
@@ -222,7 +224,7 @@ select tracks.id, tracks.primary_artist from tracks
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv%]
+	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]

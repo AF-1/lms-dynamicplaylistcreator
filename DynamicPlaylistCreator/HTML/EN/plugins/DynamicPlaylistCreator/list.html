@@ -32,9 +32,9 @@
 			<tr><td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_NODPLSFOUND" | string %]</td></tr>
 			<br><br>
 		[% ELSE %]
-			[% FOREACH playlist IN pluginDynamicPlaylistCreatorPlayLists %]
+			[% FOREACH playlist IN pluginDynamicPlaylistCreatorPlayLists.nsort('contextmenu') %]
 				[% BLOCK controls %]
-					[%- IF displayplaybtn && playlist.nouserinput %]
+					[%- IF displayplaybtn && playlist.nouserinput && !playlist.contextmenu %]
 					[% WRAPPER playlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_playitem.html?item=[% playlist.id | uri %]"[% END %]
 					[%- END %]
 					[%- IF displayexportbtn %]
@@ -44,7 +44,7 @@
 					[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]"[% END %]
 				[% END %]
 				[%- WRAPPER contentitem controls='controls' %]
-					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]">[% playlist.name %]</a>
+					<a href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]">[% playlist.name %][% IF playlist.contextmenu %]&nbsp;&nbsp;<span class="emphbold">[[% "PLUGIN_DYNAMICPLAYLISTCREATOR_CONTEXTMENULIST" | string %]]</span>[% END %]</a>
 				[% END %]
 			[% odd = (not odd) %]
 			[% END %]

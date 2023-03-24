@@ -7,7 +7,6 @@
 		<description>Random tracks for tracks with similar tags as the user selectable track. Uses tags from the Mixed Tag scanning module in Custom Scan.</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>50</listweight>
-		<usecache>1</usecache>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="Random for Similar Mixed Tags"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="sqloptionalsinglelist" id="includetag1" name="Tag &lt;b&gt;1&lt;/b&gt; to include in similarity check" value="" data="select distinct attr,attr,attr from customscan_track_attributes where module='mixedtag'"/>

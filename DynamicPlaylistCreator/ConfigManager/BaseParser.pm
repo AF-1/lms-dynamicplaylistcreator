@@ -174,6 +174,12 @@ sub parseTemplateContent {
 
 			} else {
 				my %templateParameters = ();
+
+				# check if dpl is context menu list
+				my $isContextMenuList = $template->{'contextmenu'};
+				$templateParameters{'contextmenu'} = $isContextMenuList;
+
+				# params
 				my $parameters = $valuesXml->{'template'}->{'parameter'};
 
 				for my $p (@{$parameters}) {
@@ -242,8 +248,9 @@ sub parseTemplateContent {
 					}
 				}
 
-				# record in localcontext if user input required
+				# store selected params in localcontext
 				$localcontext->{'nouserinput'} = $templateParameters{'nouserinput'};
+				$localcontext->{'contextmenu'} = $templateParameters{'contextmenu'};
 
 				my $templateData = $self->loadTemplate($client, $template, \%templateParameters);
 				if (!defined($templateData)) {

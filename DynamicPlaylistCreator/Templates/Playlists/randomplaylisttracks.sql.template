@@ -40,16 +40,27 @@ select tracks.id, tracks.primary_artist from tracks
 						playlist_track.playlist = tracks.id and
 						tracks.titlesearch in ([% includedstaticplaylists %])
 					group by playlist_track.playlist)
-	[%- IF request1fromuser == 'artist' %]
+	[%- # ------- ARTISTS ------- %]
+	[%- IF request1fromuser == 'artist' or request2fromuser == 'artist' %]
 	join contributor_track on
-		contributor_track.track = tracks.id and
-		contributor_track.contributor = 'PlaylistParameter1'
+		contributor_track.track = tracks.id and contributor_track.role in (1,5,6)
+	join contributors on
+		contributors.id = contributor_track.contributor
+		and contributor_track.contributor = 'PlaylistParameter[% IF request1fromuser == 'artist' %]1[% ELSE %]2[% END %]'
 	[%- END %]
-	[%- IF request1fromuser == 'genre' %]
+	[%- # ------- (MULTIPLE) GENRES ------- %]
+	[%- IF includedgenres or request1fromuser == 'genre' or request2fromuser == 'genre' or request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
 	join genre_track on
 		genre_track.track = tracks.id
+		[%- IF request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
+		and genre_track.genre in ('PlaylistParameter[% IF request1fromuser == 'multiplegenres' %]1[% ELSE %]2[% END %]')
+		[%- ELSIF request1fromuser == 'genre' or request2fromuser == 'genre' %]
+		and genre_track.genre = 'PlaylistParameter[% IF request1fromuser == 'genre' %]1[% ELSE %]2[% END %]'
+		[%- END %]
+	[%- IF includedgenres %]
 	join genres on
 		genres.id = genre_track.genre
+	[%- END %]
 	[%- END %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
@@ -63,16 +74,25 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	WHERE
 		tracks.audio = 1
-	[%- IF request1fromuser == 'album' %]
-		and tracks.album = 'PlaylistParameter1'
-	[%- ELSIF request1fromuser == 'year' %]
-		and ifnull(tracks.year, 0) = 'PlaylistParameter1'
-	[%- ELSIF request1fromuser == 'decade' %]
-		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
-	[%- ELSIF request1fromuser == 'genre' %]
-		and genre_track.genre = 'PlaylistParameter1'
+	[%- IF request1fromuser == 'album' or request2fromuser == 'album' %]
+		and tracks.album = 'PlaylistParameter[% IF request1fromuser == 'album' %]1[% ELSE %]2[% END %]'
+	[%- ELSIF request1fromuser == 'year' or request2fromuser == 'year' %]
+		and ifnull(tracks.year, 0) = 'PlaylistParameter[% IF request1fromuser == 'year' %]1[% ELSE %]2[% END %]'
+	[%- ELSIF request1fromuser == 'decade' or request2fromuser == 'decade' %]
+		and ifnull(tracks.year, 0) >= 'PlaylistParameter[% IF request1fromuser == 'decade' %]1[% ELSE %]2[% END %]' and ifnull(tracks.year, 0) < ('PlaylistParameter[% IF request1fromuser == 'decade' %]1[% ELSE %]2[% END %]' + 10)
+	[%- ELSIF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' or request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' %]
+		and ifnull(tracks.year, 0) in ('PlaylistParameter[% IF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]1[% ELSE %]2[% END %]')
 	[%- END %]
 		and dynamicplaylist_history.id is null
+	[%- IF request1fromuser == 'minRating' or request2fromuser == 'minRating' %]
+		and ifnull(tracks_persistent.rating, 0) >= 'PlaylistParameter[% IF request1fromuser == 'minRating' %]1[% ELSE %]2[% END %]'
+	[%- END %]
+	[%- IF request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
+		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request1fromuser == 'maxRating' %]1[% ELSE %]2[% END %]'
+	[%- END %]
+	[%- IF request1fromuser == 'exactRating' or request2fromuser == 'exactRating' %]
+		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request1fromuser == 'exactRating' %]1[% ELSE %]2[% END %]'
+	[%- END %]
 	[%- IF maxskipcount %]
 		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
 	[%- END %]
@@ -93,6 +113,30 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF recentlyplayed and playedbefore != 1 %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF (request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed') and playedbefore != 1 %]
+		[%- IF useapcvalues %]
+		and (strftime('%s', 'now')-ifnull(alternativeplaycount.lastPlayed,0)) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
+		[%- ELSE %]
+		and (strftime('%s', 'now')-ifnull(tracks_persistent.lastPlayed,0)) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
+		[%- END %]
+	[%- END %]
+	[%- IF (request1fromuser == 'addedtime' or request2fromuser == 'addedtime') && !addedtime %]
+	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
+	[%- END %]
+	[%- IF addedtime && request1fromuser != 'addedtime' && request2fromuser != 'addedtime' %]
+	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %]
+	[%- END %]
+	[%- IF includedgenres %]
+		and genres.namesearch in ([% includedgenres %])
+	[%- END %]
+	[%- IF excludedgenres %]
+		and not exists (select * from tracks t2,genre_track,genres
+						where
+							t2.id = tracks.id and
+							genre_track.track = tracks.id and
+							genre_track.genre = genres.id and
+							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
 	group by tracks.id
 	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]playlist_track.position asc[% END %]

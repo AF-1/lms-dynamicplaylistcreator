@@ -77,12 +77,17 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF includedgenres or request1fromuser == 'genre' %]
 	join genre_track on
 		genre_track.track = tracks.id
+	[%- IF request1fromuser == 'genre' %]
+		and genre_track.genre = 'PlaylistParameter1'
+	[%- END %]
+	[%- IF includedgenres %]
 	join genres on
 		genres.id = genre_track.genre
 	[%- END %]
+	[%- END %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- IF recentlyplayed %]
+	[%- IF recentlyplayed or playedbefore %]
 		[%- IF useapcvalues %]
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
@@ -99,8 +104,6 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks.year, 0) = 'PlaylistParameter1'
 	[%- ELSIF request1fromuser == 'decade' %]
 		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
-	[%- ELSIF request1fromuser == 'genre' %]
-		and genre_track.genre = 'PlaylistParameter1'
 	[%- END %]
 		and dynamicplaylist_history.id is null
 	[%- IF includedgenres %]
@@ -114,7 +117,13 @@ select tracks.id, tracks.primary_artist from tracks
 							genre_track.genre = genres.id and
 							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
-	[%- IF recentlyplayed %]
+	[%- IF playedbefore == 1 and !recentlyplayed %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
+	[%- END %]
+	[%- IF playedbefore == 2 %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
+	[%- END %]
+	[%- IF recentlyplayed and playedbefore != 1 %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
 	group by tracks.id

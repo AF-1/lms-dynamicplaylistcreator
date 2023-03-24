@@ -68,13 +68,15 @@ create temporary table tmp_random_staticplaylists as
 		[%- IF includedgenres or request1fromuser == 'genre' or request1fromuser == 'multiplegenres' %]
 		join genre_track on
 			genre_track.track = tracks.id
-		join genres on
-			genres.id = genre_track.genre
 			[%- IF request1fromuser == 'multiplegenres' %]
 			and genre_track.genre in ('PlaylistParameter1')
 			[%- ELSIF request1fromuser == 'genre' %]
 			and genre_track.genre = 'PlaylistParameter1'
 			[%- END %]
+		[%- IF includedgenres %]
+		join genres on
+			genres.id = genre_track.genre
+		[%- END %]
 		[%- END %]
 		[%- # ------- MISC ------- %]
 		[%- IF notrepeat %]
@@ -126,13 +128,15 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF includedgenres or request1fromuser == 'genre' or request1fromuser == 'multiplegenres' %]
 	join genre_track on
 		genre_track.track = tracks.id
-	join genres on
-		genres.id = genre_track.genre
 		[%- IF request1fromuser == 'multiplegenres' %]
 		and genre_track.genre in ('PlaylistParameter1')
 		[%- ELSIF request1fromuser == 'genre' %]
 		and genre_track.genre = 'PlaylistParameter1'
 		[%- END %]
+	[%- IF includedgenres %]
+	join genres on
+		genres.id = genre_track.genre
+	[%- END %]
 	[%- END %]
 	[%- # ------- MISC ------- %]
 	[%- IF (useapcvalues and (recentlyplayed or playedbefore)) or maxskipcount or recentlyskipped %]

@@ -123,6 +123,11 @@ sub parseContentImplementation {
 				$playlist{'nouserinput'} = $localcontext->{'nouserinput'};
 			}
 
+			if (defined($localcontext) && defined($localcontext->{'contextmenu'})) {
+				$playlist{'contextmenu'} = 1;
+			} else {
+				$playlist{'contextmenu'} = 0;
+			}
 			#$log->debug('playlist = '.Dumper(\%playlist));
 			return \%playlist;
 		}
