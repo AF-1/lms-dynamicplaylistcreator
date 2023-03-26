@@ -47,12 +47,7 @@ sub new {
 sub parse {
 	my ($self, $client, $item, $content, $items, $globalcontext, $localcontext) = @_;
 
-	if ($globalcontext->{'source'} ne 'plugin') {
-		return $self->parseContent($client, $item, $content, $items, $globalcontext, $localcontext);
-	} else {
-		$items->{lc($item)} = $content;
-		return undef;
-	}
+	return $self->parseContent($client, $item, $content, $items, $globalcontext, $localcontext);
 }
 
 1;

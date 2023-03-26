@@ -5,7 +5,6 @@
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
 -- PlaylistUseCache: 1
--- noUserInput: 1
 [%- IF virtuallibrary %]
 -- PlaylistVirtualLibraryID1:[% virtuallibrary %]
 [%- END %]

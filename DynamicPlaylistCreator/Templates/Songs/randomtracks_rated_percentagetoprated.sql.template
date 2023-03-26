@@ -4,8 +4,10 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
--- noUserInput: 1
-[%- IF nooftracks %]
+[%- IF percentage == 'zero' %]
+-- PlaylistUseCache: 1
+[%- END %]
+[%- IF nooftracks && percentage != 'zero' %]
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
 [%- IF virtuallibrary %]
@@ -17,6 +19,7 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
+[%- IF percentage != 'zero' %]
 drop table if exists randomweightedratingslow;
 drop table if exists randomweightedratingshigh;
 drop table if exists randomweightedratingscombined;
@@ -66,7 +69,7 @@ create temporary table randomweightedratingslow as select tracks.id, tracks.prim
 	order by random()
 	limit [% percentage %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
-create temporary table randomweightedratingshigh as select tracks.id, tracks.primary_artist from tracks
+create temporary table randomweightedratingshigh as [% END %]select tracks.id, tracks.primary_artist from tracks
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 	join library_track on
 		library_track.track = tracks.id
@@ -113,6 +116,7 @@ create temporary table randomweightedratingshigh as select tracks.id, tracks.pri
 		[%- END %]
 	[%- END %]
 	group by tracks.id
+[%- IF percentage != 'zero' %]
 	order by random()
 	limit [% 100 - percentage %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
@@ -126,3 +130,4 @@ SELECT distinct * from randomweightedratingscombined
 drop table randomweightedratingshigh;
 drop table randomweightedratingslow;
 drop table randomweightedratingscombined;
+[%- END %]

@@ -36,8 +36,8 @@ use File::Slurp;
 use FindBin qw($Bin);
 use Data::Dumper;
 
-use Plugins::DynamicPlaylistCreator::ConfigManager::ContentParser;
-our @ISA = qw(Plugins::DynamicPlaylistCreator::ConfigManager::ContentParser);
+use Plugins::DynamicPlaylistCreator::ConfigManager::BaseParser;
+our @ISA = qw(Plugins::DynamicPlaylistCreator::ConfigManager::BaseParser);
 
 __PACKAGE__->mk_accessor(rw => qw(templatePluginHandler));
 
@@ -106,7 +106,6 @@ sub loadTemplate {
 
 sub parse {
 	my ($self, $client, $item, $content, $items, $globalcontext, $localcontext) = @_;
-	$localcontext->{'simple'} = 1;
 	return $self->parseTemplateContent($client, $item, $content, $items, $globalcontext->{'templates'}, $globalcontext, $localcontext);
 }
 

@@ -30,7 +30,6 @@ use base qw(Slim::Utils::Accessor);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Plugins::DynamicPlaylistCreator::ConfigManager::TemplateParser;
-use Plugins::DynamicPlaylistCreator::ConfigManager::ContentParser;
 use Plugins::DynamicPlaylistCreator::ConfigManager::TemplateContentParser;
 use Plugins::DynamicPlaylistCreator::ConfigManager::DirectoryLoader;
 use Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler;
@@ -59,14 +58,7 @@ sub new {
 
 sub init {
 	my $self = shift;
-	my %parserParameters = (
-		'pluginVersion' => $self->pluginVersion,
-		'cacheName' => "PluginCache/DynamicPlaylistCreator",
-	);
-	$parserParameters{'cachePrefix'} = "PluginCache/DynamicPlaylistCreator/Templates";
-	$self->templateParser(Plugins::DynamicPlaylistCreator::ConfigManager::TemplateParser->new(\%parserParameters));
-	$parserParameters{'cachePrefix'} = "PluginCache/DynamicPlaylistCreator/Playlists";
-	$self->contentParser(Plugins::DynamicPlaylistCreator::ConfigManager::ContentParser->new(\%parserParameters));
+	$self->templateParser(Plugins::DynamicPlaylistCreator::ConfigManager::TemplateParser->new());
 
 	my %parameters = (
 		'criticalErrorCallback' => $self->addSqlErrorCallback,
@@ -76,14 +68,7 @@ sub init {
 
 	my %directoryHandlerParameters = (
 		'pluginVersion' => $self->pluginVersion,
-		'cacheName' => "PluginCache/DynamicPlaylistCreator",
-		'cachePrefix' => "PluginCache/DynamicPlaylistCreator/Files",
 	);
-
-	$directoryHandlerParameters{'extension'} = "sql";
-	$directoryHandlerParameters{'parser'} = $self->contentParser;
-	$directoryHandlerParameters{'includeExtensionInIdentifier'} = undef;
-	$self->contentDirectoryHandler(Plugins::DynamicPlaylistCreator::ConfigManager::DirectoryLoader->new(\%directoryHandlerParameters));
 
 	$directoryHandlerParameters{'extension'} = "sql.xml";
 	$directoryHandlerParameters{'identifierExtension'} = "sql.xml";
@@ -97,8 +82,7 @@ sub init {
 	$directoryHandlerParameters{'includeExtensionInIdentifier'} = 1;
 	$self->templateDataDirectoryHandler(Plugins::DynamicPlaylistCreator::ConfigManager::DirectoryLoader->new(\%directoryHandlerParameters));
 
-	$parserParameters{'cachePrefix'} = "PluginCache/DynamicPlaylistCreator/Playlists";
-	$self->templateContentParser(Plugins::DynamicPlaylistCreator::ConfigManager::TemplateContentParser->new(\%parserParameters));
+	$self->templateContentParser(Plugins::DynamicPlaylistCreator::ConfigManager::TemplateContentParser->new());
 
 	$directoryHandlerParameters{'extension'} = "customvalues.xml";
 	$directoryHandlerParameters{'parser'} = $self->templateContentParser;
@@ -167,7 +151,6 @@ sub readTemplateConfiguration {
 	for my $plugindir (@pluginDirs) {
 		$log->debug("Checking for dir: ".catdir($plugindir, "DynamicPlaylistCreator", "Templates"));
 		next unless -d catdir($plugindir, "DynamicPlaylistCreator", "Templates");
-		$globalcontext{'source'} = 'builtin';
 		$self->templateDirectoryHandler()->readFromDir($client, catdir($plugindir, "DynamicPlaylistCreator", "Templates"), \%templates, \%globalcontext);
 	}
 	return \%templates;
@@ -183,23 +166,21 @@ sub readItemConfiguration {
 	my %globalcontext = ();
 	$self->templates($self->readTemplateConfiguration());
 
-	$globalcontext{'source'} = 'plugin';
 	$globalcontext{'templates'} = $self->templates;
 
 	$log->debug("Checking for dir: $dir");
 	if (!defined $dir || !-d $dir) {
 		$log->debug("Skipping custom configuration scan - directory is undefined");
 	} else {
-		$globalcontext{'source'} = 'custom';
-		$self->contentDirectoryHandler()->readFromDir($client, $dir, \%customItems, \%globalcontext);
 		$self->templateContentDirectoryHandler()->readFromDir($client, $dir, \%customItems, \%globalcontext);
 	}
 
 	my %localItems = ();
 	for my $itemId (keys %customItems) {
 		my $item = $customItems{$itemId};
-		$localItems{$item->{'id'}} = $item unless ($item->{'scope'} && $item->{'scope'} eq 'dplonly');
+		$localItems{$item->{'id'}} = $item;
 	}
+
 	for my $key (keys %localItems) {
 		postProcessItem($localItems{$key});
 	}

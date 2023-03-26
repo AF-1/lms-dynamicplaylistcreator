@@ -5,9 +5,6 @@
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
 -- PlaylistUseCache: 1
-[%- IF !request1fromuser && !request2fromuser && !datasource %]
--- noUserInput: 1
-[%- END %]
 [% IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
 [% ELSIF sortorder == 2 %]
@@ -279,7 +276,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request1fromuser == 'maxRating' %]1[% ELSE %]2[% END %]'
 	[%- END %]
 	[%- IF exactrating && !minrating && !maxrating %]
-		and ifnull(tracks_persistent.rating, 0) = [% exactrating %]
+		and ifnull(tracks_persistent.rating, 0) = [% IF exactrating == 'zero' %]0[% ELSE %][% exactrating %][% END %]
 	[%- END %]
 	[%- IF request1fromuser == 'exactRating' or request2fromuser == 'exactRating' %]
 		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request1fromuser == 'exactRating' %]1[% ELSE %]2[% END %]'
@@ -306,10 +303,10 @@ select tracks.id, tracks.primary_artist from tracks
 		and tracks.lyrics is not null
 	[%- END %]
 	[%- IF maxdpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
 	[%- END %]
 	[%- IF mindpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	[%- IF includedartists %]
 		and contributors.namesearch in ([% includedartists %])

@@ -48,7 +48,7 @@ my $prefs = preferences('plugin.dynamicplaylistcreator');
 my $serverPrefs = preferences('server');
 my $log = Slim::Utils::Log->addLogCategory({
 	'category' => 'plugin.dynamicplaylistcreator',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description' => 'PLUGIN_DYNAMICPLAYLISTCREATOR',
 });
 my $cache = Slim::Utils::Cache->new();
@@ -166,12 +166,11 @@ sub handleWebList {
 	my ($client, $params) = @_;
 	my $playlist = undef;
 
-	clearCache();
 	initPlayLists($client);
 
 	my @webPlaylists = ();
 	for my $key (keys %{$playLists}) {
-		push @webPlaylists, $playLists->{$key} if $playLists->{$key}->{'simple'};
+		push @webPlaylists, $playLists->{$key};
 	}
 	@webPlaylists = sort {uc($a->{'name'}) cmp uc($b->{'name'})} @webPlaylists;
 
@@ -314,13 +313,6 @@ sub refreshSQLCache {
 	my $contentTypesList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contentTypesSQL);
 	$cache->set('dplc_contenttypes', $contentTypesList, 'never');
 	$log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
-}
-
-sub clearCache {
-	my $cacheVersion = $pluginVersion;
-	$cacheVersion =~ s/^.*\.([^\.]+)$/$1/;
-	my $cache = Slim::Utils::Cache->new("PluginCache/DynamicPlaylistCreator", $cacheVersion);
-	$cache->clear();
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;

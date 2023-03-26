@@ -104,90 +104,88 @@ sub webEditItem {
 	$log->debug('Start webEditItem');
 
 	if (defined($itemId) && defined($itemHash->{$itemId})) {
-		if (defined($itemHash->{$itemId}->{'simple'})) {
-			my $templateData = $self->loadTemplateValues($client, $itemId, $itemHash->{$itemId});
-			if (defined($templateData)) {
-				my $template = $templates->{lc($templateData->{'id'})};
+		my $templateData = $self->loadTemplateValues($client, $itemId, $itemHash->{$itemId});
+		if (defined($templateData)) {
+			my $template = $templates->{lc($templateData->{'id'})};
 
-				if (defined($template)) {
-					my %currentParameterValues = ();
-					my $templateDataParameters = $templateData->{'parameter'};
-					my $dplTemplateVersion = $templateData->{'templateversion'} || 0;
-					for my $p (@{$templateDataParameters}) {
-						my $values = $p->{'value'};
-						if (!defined($values)) {
-							my $tmp = $p->{'content'};
-							if (defined($tmp)) {
-								my @tmpArray = ($tmp);
-								$values = \@tmpArray;
-							}
+			if (defined($template)) {
+				my %currentParameterValues = ();
+				my $templateDataParameters = $templateData->{'parameter'};
+				my $dplTemplateVersion = $templateData->{'templateversion'} || 0;
+				for my $p (@{$templateDataParameters}) {
+					my $values = $p->{'value'};
+					if (!defined($values)) {
+						my $tmp = $p->{'content'};
+						if (defined($tmp)) {
+							my @tmpArray = ($tmp);
+							$values = \@tmpArray;
 						}
-						my %valuesHash = ();
-						for my $v (@{$values}) {
-							if (ref($v) ne 'HASH') {
-								$valuesHash{$v} = $v;
-							}
-						}
-						if (!%valuesHash) {
-							$valuesHash{''} = '';
-						}
-						$currentParameterValues{$p->{'id'}} = \%valuesHash;
 					}
-					if (defined($template->{'parameter'})) {
-						my $parameters = $template->{'parameter'};
-						if (ref($parameters) ne 'ARRAY') {
-							my @parameterArray = ();
-							if (defined($parameters)) {
-								push @parameterArray, $parameters;
-							}
-							$parameters = \@parameterArray;
+					my %valuesHash = ();
+					for my $v (@{$values}) {
+						if (ref($v) ne 'HASH') {
+							$valuesHash{$v} = $v;
 						}
-						my @parametersToSelect = ();
-						for my $p (@{$parameters}) {
-							if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
-								if (!defined($currentParameterValues{$p->{'id'}})) {
-									my $value = $p->{'value'};
-									if (defined($value) || ref($value) ne 'HASH') {
-										my %valuesHash = ();
-										$valuesHash{$value} = $value;
-										$currentParameterValues{$p->{'id'}} = \%valuesHash;
-									}
-								}
-
-								# add the name of template on which the dynamic playlist is based
-								if ($p->{'id'} eq 'playlistname') {
-									$p->{'basetemplate'} = $template->{'name'};
-									$p->{'templateversion'} = $template->{'templateversion'};
-									$log->debug('new template version: '.Dumper($p->{'templateversion'}));
-									$p->{'dpltemplateversion'} = $dplTemplateVersion;
-									$log->debug('template version of dynamic playlist: '.Dumper($p->{'dpltemplateversion'}));
-								}
-
-								# add size for input element if specified
-								if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext') {
-									$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
-									$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
-									$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
-								}
-
-								# use params unless required plugin is not enabled
-								my $useParameter = 1;
-								if (defined($p->{'requireplugins'})) {
-									$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
-								}
-								if ($useParameter) {
-									$self->parameterHandler->addValuesToTemplateParameter($p, $currentParameterValues{$p->{'id'}});
-									push @parametersToSelect, $p;
-								}
-							}
-						}
-						$params->{'pluginWebPageMethodsEditItemParameters'} = \@parametersToSelect;
 					}
-					$params->{'pluginWebPageMethodsEditItemTemplate'} = lc($templateData->{'id'});
-					$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
-					$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
-					return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
+					if (!%valuesHash) {
+						$valuesHash{''} = '';
+					}
+					$currentParameterValues{$p->{'id'}} = \%valuesHash;
 				}
+				if (defined($template->{'parameter'})) {
+					my $parameters = $template->{'parameter'};
+					if (ref($parameters) ne 'ARRAY') {
+						my @parameterArray = ();
+						if (defined($parameters)) {
+							push @parameterArray, $parameters;
+						}
+						$parameters = \@parameterArray;
+					}
+					my @parametersToSelect = ();
+					for my $p (@{$parameters}) {
+						if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
+							if (!defined($currentParameterValues{$p->{'id'}})) {
+								my $value = $p->{'value'};
+								if (defined($value) || ref($value) ne 'HASH') {
+									my %valuesHash = ();
+									$valuesHash{$value} = $value;
+									$currentParameterValues{$p->{'id'}} = \%valuesHash;
+								}
+							}
+
+							# add the name of template on which the dynamic playlist is based
+							if ($p->{'id'} eq 'playlistname') {
+								$p->{'basetemplate'} = $template->{'name'};
+								$p->{'templateversion'} = $template->{'templateversion'};
+								$log->debug('new template version: '.Dumper($p->{'templateversion'}));
+								$p->{'dpltemplateversion'} = $dplTemplateVersion;
+								$log->debug('template version of dynamic playlist: '.Dumper($p->{'dpltemplateversion'}));
+							}
+
+							# add size for input element if specified
+							if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext') {
+								$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
+								$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
+								$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
+							}
+
+							# use params unless required plugin is not enabled
+							my $useParameter = 1;
+							if (defined($p->{'requireplugins'})) {
+								$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
+							}
+							if ($useParameter) {
+								$self->parameterHandler->addValuesToTemplateParameter($p, $currentParameterValues{$p->{'id'}});
+								push @parametersToSelect, $p;
+							}
+						}
+					}
+					$params->{'pluginWebPageMethodsEditItemParameters'} = \@parametersToSelect;
+				}
+				$params->{'pluginWebPageMethodsEditItemTemplate'} = lc($templateData->{'id'});
+				$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
+				$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
+				return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 			}
 		}
 	}
@@ -320,29 +318,27 @@ sub webDeleteItem {
 	my ($self, $client, $params, $itemId, $items) = @_;
 
 	my $dir = $self->customItemDirectory;
-	my $file = unescape($itemId);
-	my $dplfile = $file.".".$self->extension;
-	if (defined($items->{$itemId}->{'simple'})) {
-		$file .= ".".$self->simpleExtension;
-	} else {
-		$file .= ".".$self->extension;
-	}
 
-	my $url = catfile($dir, $file);
+	# delete XML file
+	my $xmlFile = unescape($itemId).".".$self->simpleExtension;
+	my $xmlUrl = catfile($dir, $xmlFile);
 
-	if (defined($dir) && -d $dir && $file && -e $url) {
-		unlink($url) or do {
-			warn "Unable to delete file: ".$url.": $!";
+	if (defined($dir) && -d $dir && $xmlFile && -e $xmlUrl) {
+		unlink($xmlUrl) or do {
+			warn "Unable to delete file: ".$xmlUrl.": $!";
 		}
 	}
-	if (defined($items->{$itemId}->{'simple'})) {
-		my $dplfileurl = catfile($dir, $dplfile);
-		if (defined($dir) && -d $dir && $dplfile && -e $dplfileurl) {
-			unlink($dplfileurl) or do {
-				warn "Unable to delete dpl sql file: ".$dplfileurl.": $!";
-			}
+
+	# delete SQLite file
+	my $sqlFile = unescape($itemId).".".$self->extension;
+	my $sqlFileUrl = catfile($dir, $sqlFile);
+
+	if (defined($dir) && -d $dir && $sqlFile && -e $sqlFileUrl) {
+		unlink($sqlFileUrl) or do {
+			warn "Unable to delete dpl sql file: ".$sqlFileUrl.": $!";
 		}
 	}
+
 	$params->{'dplrefresh'} = 1;
 	return $self->webCallbacks->webList($client, $params);
 }
@@ -371,6 +367,7 @@ sub webSaveItem {
 	my %templateParameters = ();
 	if (defined($template->{'parameter'})) {
 		my $parameters = $template->{'parameter'};
+
 		if (ref($parameters) ne 'ARRAY') {
 			my @parameterArray = ();
 			if (defined($parameters)) {
@@ -395,18 +392,14 @@ sub webSaveItem {
 		}
 	}
 
+	$log->debug('templateParameters = '.Dumper(\%templateParameters));
+
 	# add the name of template on which the dynamic playlist is based
 	$templateParameters{'basetemplate'} = $template->{'name'};
 	$templateParameters{'exacttitlesearch'} = $prefs->get('exacttitlesearch');
 
-	my $doParsing = 1;
 	my $templateFileData = $templateFile;
-	my $itemData = undef;
-	if ($doParsing) {
-		$itemData = $self->fillTemplate($templateFileData, \%templateParameters);
-	} else {
-		$itemData = $templateFileData;
-	}
+	my $itemData = $self->fillTemplate($templateFileData, \%templateParameters);
 	$params->{'sqltextdplonly'} = $itemData;
 
 	$params->{'pluginWebPageMethodsError'} = undef;
@@ -418,8 +411,11 @@ sub webSaveItem {
 		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME');
 	}
 
+
 	# check if dpl requires user input
-	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_datasource'};
+	my $isPreselectionTemplate = $templateId;
+	$isPreselectionTemplate =~ s/\.sql\.xml//g;
+	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_datasource'} && $isPreselectionTemplate !~ m/.*_preselection.*$/;
 
 	my $dir = $self->customItemDirectory;
 	if (!defined $dir || !-d $dir) {
@@ -462,7 +458,9 @@ sub webSaveNewItem {
 	my $customUrl = catfile($dir, $customFile);
 
 	# check if dpl requires user input
-	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_datasource'};
+	my $isPreselectionTemplate = $templateId;
+	$isPreselectionTemplate =~ s/\.sql\.xml//g;
+	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_datasource'} && $isPreselectionTemplate !~ m/.*_preselection.*$/;
 
 	if (!defined($params->{'pluginWebPageMethodsError'}) && -e $url && !$params->{'overwrite'}) {
 		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_ITEM_EXISTS');
@@ -506,7 +504,7 @@ sub saveSimpleItem {
 		# include template version
 		$data .= "\n\t\t<templateversion>".$template->{'templateversion'}."</templateversion>" if $template->{'templateversion'};
 		# record if dpl requires user input
-		$data .= "\n\t\t<parameter type=\"text\" id=\"nouserinput\"><value>".($params->{'nouserinput'} || '')."</value></parameter>";
+		$data .= "\n\t\t<nouserinput>".$params->{'nouserinput'}."</nouserinput>" if $params->{'nouserinput'};
 
 		if (defined($template->{'parameter'})) {
 			my $parameters = $template->{'parameter'};
@@ -652,17 +650,6 @@ sub saveItem {
 
 	$data = $dplonly ? Slim::Utils::Unicode::utf8decode_locale($params->{'sqltextdplonly'}) : Slim::Utils::Unicode::utf8decode_locale($params->{'text'});
 	$data =~ s/\r+\n/\n/g; # Remove any extra \r character, will create duplicate linefeeds on Windows if not removed
-	if (!($params->{'pluginWebPageMethodsError'}) && defined($self->contentParser)) {
-		my %items = ();
-		my %globalcontext = (
-			'source' => 'custom'
-		);
-		my $error = $self->contentParser->parse($client, 'test', $data, \%items, \%globalcontext);
-
-		if ($error) {
-			$params->{'pluginWebPageMethodsError'} = "Reading configuration: <br>".$error;
-		}
-	}
 
 	if (!($params->{'pluginWebPageMethodsError'})) {
 		$log->debug("Opening configuration file: $url");

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dynamicplaylistcreator>
-	<requireplugins>CustomScan</requireplugins>
+	<requireplugins>CustomScan::Plugin</requireplugins>
 	<template>
 		<name>Random for LastFM Similar Artists</name>
 		<templateversion>1</templateversion>

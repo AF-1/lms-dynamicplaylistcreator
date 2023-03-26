@@ -35,9 +35,8 @@ use File::Spec::Functions qw(:ALL);
 use XML::Simple;
 use Data::Dumper;
 use HTML::Entities;
-use Cache::Cache qw($EXPIRES_NEVER);
 
-__PACKAGE__->mk_accessor(rw => qw(pluginVersion contentType templateHandler cache cacheName cachePrefix cacheItems));
+__PACKAGE__->mk_accessor(rw => qw(pluginVersion contentType templateHandler));
 
 my $utf8filenames = 1;
 my $serverPrefs = preferences('server');
@@ -50,13 +49,6 @@ sub new {
 	my $self = $class->SUPER::new($parameters);
 	$self->pluginVersion($parameters->{'pluginVersion'});
 	$self->contentType($parameters->{'contentType'});
-	$self->cacheName($parameters->{'cacheName'});
-	$self->cachePrefix($parameters->{'cachePrefix'});
-	my $cacheVersion = $parameters->{'pluginVersion'};
-	$cacheVersion =~ s/^.*\.([^\.]+)$/$1/;
-	if (defined($self->cacheName)) {
-		$self->cache(Slim::Utils::Cache->new($self->cacheName, $cacheVersion));
-	}
 	if (defined($parameters->{'utf8filenames'})) {
 		$utf8filenames = $parameters->{'utf8filenames'};
 	}
@@ -64,48 +56,14 @@ sub new {
 	return $self;
 }
 
-sub readFromCache {
-	my $self = shift;
-
-	if (defined($self->cacheName) && defined($self->cache)) {
-		$self->cacheItems($self->cache->get($self->cachePrefix));
-		if (!defined($self->cacheItems)) {
-			my %noItems = ();
-			my %empty = (
-				'items' => \%noItems,
-				'timestamp' => undef,
-			);
-			$self->cacheItems(\%empty);
-		}
-	}
-}
-
-sub writeToCache {
-	my $self = shift;
-
-	if (defined($self->cacheName) && defined($self->cache) && defined($self->cacheItems)) {
-		$self->cacheItems->{'timestamp'} = time();
-		$self->cache->set($self->cachePrefix, $self->cacheItems, $EXPIRES_NEVER);
-	}
-}
-
 sub parseContent {
 	my ($self, $client, $item, $content, $items, $globalcontext, $localcontext) = @_;
-
 	my $errorMsg = undef;
-		if ($content) {
+	if ($content) {
 		my $result = eval { $self->parseContentImplementation($client, $item, $content, $items, $globalcontext, $localcontext) };
+
 		if (!$@ && defined($result)) {
-			my $timestamp = undef;
-			if (defined($localcontext->{'timestamp'})) {
-				$timestamp = $localcontext->{'timestamp'};
-			}
-			if (!defined($items->{$item}) || !defined($timestamp) || !defined($items->{$item}->{'timestamp'}) || $items->{$item}->{'timestamp'}<=$timestamp) {
-				$log->debug("Storing parsed result for $item");
-				$items->{$item} = $result;
-			} else {
-				$log->debug("Skipping $item, newer entry already loaded");
-			}
+			$items->{$item} = $result;
 		} else {
 			$log->debug("Skipping $item: $@");
 			$errorMsg = "$@";
@@ -127,31 +85,13 @@ sub parseContent {
 sub parseTemplateContent {
 	my ($self, $client, $item, $content, $items, $templates, $globalcontext, $localcontext) = @_;
 
-	my $cacheName = $item;
-	if (defined($localcontext->{'cacheNamePrefix'})) {
-		$cacheName = $localcontext->{'cacheNamePrefix'}.$cacheName;
-	}
-
 	my $errorMsg = undef;
 	if ($content) {
 		my $timestamp = undef;
 		if (defined($localcontext->{'timestamp'})) {
 			$timestamp = $localcontext->{'timestamp'};
 		}
-		my $valuesXml = undef;
-		if (defined($timestamp) && defined($self->cacheItems) && defined($self->cacheItems->{'items'}->{'values_'.$cacheName}) && $self->cacheItems->{'items'}->{'values_'.$cacheName}->{'timestamp'}>=$timestamp) {
-			$valuesXml = $self->cacheItems->{'items'}->{'values_'.$cacheName}->{'data'};
-		} else {
-			$valuesXml = eval { XMLin($content, forcearray => ["parameter", "value"], keyattr => []) };
-			if (defined($timestamp) && defined($self->cacheItems)) {
-				my %entry = (
-					'data' => $valuesXml,
-					'timestamp' => $timestamp,
-				);
-				delete $self->cacheItems->{'items'}->{'values_'.$cacheName};
-				$self->cacheItems->{'items'}->{'values_'.$cacheName} = \%entry;
-			}
-		}
+		my $valuesXml = eval { XMLin($content, forcearray => ["parameter", "value"], keyattr => []) };
 
 		if ($@) {
 			$errorMsg = "$@";
@@ -164,142 +104,100 @@ sub parseTemplateContent {
 				undef $content;
 				return undef;
 			}
-			if (defined($template->{'timestamp'}) && defined($timestamp) && $template->{'timestamp'}>$timestamp) {
-				$timestamp = $template->{'timestamp'};
-				$localcontext->{'timestamp'} = $timestamp;
-			}
-			my $itemData = undef;
-			if (defined($timestamp) && defined($self->cacheItems) && defined($self->cacheItems->{'items'}->{'templatecontent_'.$cacheName}) && $self->cacheItems->{'items'}->{'templatecontent_'.$cacheName}->{'timestamp'}>=$timestamp) {
-				$itemData = $self->cacheItems->{'items'}->{'templatecontent_'.$cacheName}->{'data'};
 
-			} else {
-				my %templateParameters = ();
+			my %templateParameters = ();
 
-				# check if dpl is context menu list
-				my $isContextMenuList = $template->{'contextmenu'};
-				$templateParameters{'contextmenu'} = $isContextMenuList;
+			# check if dpl is context menu list
+			my $isContextMenuList = $template->{'contextmenu'};
+			$templateParameters{'contextmenu'} = $isContextMenuList;
 
-				# params
-				my $parameters = $valuesXml->{'template'}->{'parameter'};
-
-				for my $p (@{$parameters}) {
-					my $values = $p->{'value'};
-					if (!defined($values)) {
-						my $tmp = $p->{'content'};
-						if (defined($tmp)) {
-							my @tmpArray = ($tmp);
-							$values = \@tmpArray;
-						}
+			# params
+			my $parameters = $valuesXml->{'template'}->{'parameter'};
+			for my $p (@{$parameters}) {
+				my $values = $p->{'value'};
+				if (!defined($values)) {
+					my $tmp = $p->{'content'};
+					if (defined($tmp)) {
+						my @tmpArray = ($tmp);
+						$values = \@tmpArray;
 					}
-					my $value = '';
-					for my $v (@{$values}) {
-						if (ref($v) ne 'HASH') {
-							if ($value ne '') {
-								$value .= ',';
-							}
-							if (!defined($p->{'rawvalue'}) || !$p->{'rawvalue'}) {
-								$v =~ s/\'/\'\'/g;
-							}
-							if ($p->{'quotevalue'}) {
-								$value .= "'".encode_entities($v, "&<>")."'";
-							} else {
-								$value .= encode_entities($v, "&<>");
-							}
-						}
-					}
-					$templateParameters{$p->{'id'}} = $value;
 				}
-
-				if (defined($template->{'parameter'})) {
-					my $parameters = $template->{'parameter'};
-					if (ref($parameters) ne 'ARRAY') {
-						my @parameterArray = ();
-						if (defined($parameters)) {
-							push @parameterArray, $parameters;
+				my $value = '';
+				for my $v (@{$values}) {
+					if (ref($v) ne 'HASH') {
+						if ($value ne '') {
+							$value .= ',';
 						}
-						$parameters = \@parameterArray;
+						if (!defined($p->{'rawvalue'}) || !$p->{'rawvalue'}) {
+							$v =~ s/\'/\'\'/g;
+						}
+						if ($p->{'quotevalue'}) {
+							$value .= "'".encode_entities($v, "&<>")."'";
+						} else {
+							$value .= encode_entities($v, "&<>");
+						}
 					}
-					for my $p (@{$parameters}) {
-						if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
-							if (!defined($templateParameters{$p->{'id'}})) {
-								my $value = $p->{'value'};
-								if (!defined($value) || ref($value) eq 'HASH') {
-									my $tmp = $p->{'content'};
-									if (defined($tmp)) {
-										my @tmpArray = ($tmp);
-										$value = \@tmpArray;
-									} else {
-										$value = '';
-									}
+				}
+				$templateParameters{$p->{'id'}} = $value;
+			}
+
+			if (defined($template->{'parameter'})) {
+				my $parameters = $template->{'parameter'};
+				if (ref($parameters) ne 'ARRAY') {
+					my @parameterArray = ();
+					if (defined($parameters)) {
+						push @parameterArray, $parameters;
+					}
+					$parameters = \@parameterArray;
+				}
+				for my $p (@{$parameters}) {
+					if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
+						if (!defined($templateParameters{$p->{'id'}})) {
+							my $value = $p->{'value'};
+							if (!defined($value) || ref($value) eq 'HASH') {
+								my $tmp = $p->{'content'};
+								if (defined($tmp)) {
+									my @tmpArray = ($tmp);
+									$value = \@tmpArray;
+								} else {
+									$value = '';
 								}
-								$templateParameters{$p->{'id'}} = $value;
 							}
-							if (defined($p->{'requireplugins'})) {
-								if (!(Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'}))) {
-									$templateParameters{$p->{'id'}} = undef;
-								}
+							$templateParameters{$p->{'id'}} = $value;
+						}
+						if (defined($p->{'requireplugins'})) {
+							if (!(Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'}))) {
+								$templateParameters{$p->{'id'}} = undef;
 							}
-							if (defined($templateParameters{$p->{'id'}})) {
-								if (Slim::Utils::Unicode::encodingFromString($templateParameters{$p->{'id'}}) ne 'utf8') {
-									$templateParameters{$p->{'id'}} = Slim::Utils::Unicode::latin1toUTF8($templateParameters{$p->{'id'}});
-								}
+						}
+						if (defined($templateParameters{$p->{'id'}})) {
+							if (Slim::Utils::Unicode::encodingFromString($templateParameters{$p->{'id'}}) ne 'utf8') {
+								$templateParameters{$p->{'id'}} = Slim::Utils::Unicode::latin1toUTF8($templateParameters{$p->{'id'}});
 							}
 						}
 					}
 				}
 
 				# store selected params in localcontext
-				$localcontext->{'nouserinput'} = $templateParameters{'nouserinput'};
-				$localcontext->{'contextmenu'} = $templateParameters{'contextmenu'};
-
-				my $templateData = $self->loadTemplate($client, $template, \%templateParameters);
-				if (!defined($templateData)) {
-					$log->debug("Ignoring $item due to loadTemplate");
-					undef $content;
-					return undef;
-				}
-				my $templateFileData = $templateData->{'data'};
-
-				my $doParsing = 1;
-				if (!defined($templateData->{'parse'})) {
-					$doParsing = 0;
-				}
-
-				if ($doParsing) {
-					$itemData = $self->fillTemplate($templateFileData, \%templateParameters);
-				} else {
-					$itemData = $templateFileData;
-				}
-
-				if (defined($timestamp) && defined($self->cacheItems)) {
-					my %entry = (
-						'data' => $itemData,
-						'timestamp' => $timestamp,
-					);
-					delete $self->cacheItems->{'items'}->{'templatecontent_'.$cacheName};
-					$self->cacheItems->{'items'}->{'templatecontent_'.$cacheName} = \%entry;
-				}
+				$localcontext->{'nouserinput'} = $valuesXml->{'template'}->{'nouserinput'};
+				$localcontext->{'contextmenu'} = $templateParameters{'contextmenu'} || 0;
+				$localcontext->{'playlistname'} = $templateParameters{'playlistname'};
 			}
 
-			my $result = eval {$self->parseContentImplementation($client, $item, $itemData, $items, $globalcontext, $localcontext) };
-			if (!$@ && defined($result)) {
-			my $timestamp = undef;
-				if (defined($localcontext->{'timestamp'})) {
-					$timestamp = $localcontext->{'timestamp'};
-				}
-				if (!defined($items->{$item}) || !defined($timestamp) || !defined($items->{$item}->{'timestamp'}) || $items->{$item}->{'timestamp'} <= $timestamp) {
-					$log->debug("Storing parsed result for $item");
-					$items->{$item} = $result;
-				} else {
-					$log->debug("Skipping $item, newer entry already loaded");
-				}
-			} else {
-				$log->debug("Skipping $item: $@");
-				$errorMsg = "$@";
-			}
+			my $playlistid = $item;
+			my $file = $item;
+
+			my %playlist = (
+				'id' => $playlistid,
+				'file' => $file,
+				'name' => $localcontext->{'playlistname'},
+				'contextmenu' => $localcontext->{'contextmenu'},
+				'nouserinput' => $localcontext->{'nouserinput'}
+			);
+
+			$items->{$item} = \%playlist;
 
 			# Release content
-			undef $itemData;
 			undef $content;
 		}
 	} else {
@@ -393,43 +291,16 @@ sub isEnabled {
 sub parseContentImplementation {
 	my ($self, $client, $item, $content, $items, $globalcontext, $localcontext) = @_;
 
-	my $timestamp = undef;
-	if (defined($localcontext->{'timestamp'})) {
-		$timestamp = $localcontext->{'timestamp'};
-	}
-	my $cacheName = $item;
-	if (defined($localcontext->{'cacheNamePrefix'})) {
-		$cacheName = $localcontext->{'cacheNamePrefix'}.$cacheName;
-	}
-
-	my $xml = undef;
-	if (defined($timestamp) && defined($self->cacheItems) && defined($self->cacheItems->{'items'}->{'content_'.$cacheName}) && $self->cacheItems->{'items'}->{'content_'.$cacheName}->{'timestamp'}>=$timestamp) {
-		$xml = $self->cacheItems->{'items'}->{'content_'.$cacheName}->{'data'};
-	} else {
-		$log->debug('XMLin part');
-		$xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
-	}
+	$log->debug('XMLin part');
+	my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
 
 	if ($@) {
 		$log->warn("Failed to parse configuration ($item) because: $@");
 	} else {
-		if (defined($timestamp) && defined($self->cacheItems)) {
-			my %entry = (
-				'data' => $xml,
-				'timestamp' => $timestamp,
-			);
-			delete $self->cacheItems->{'items'}->{'content_'.$cacheName};
-			$self->cacheItems->{'items'}->{'content_'.$cacheName} = \%entry;
-		}
-
 		my $include = $self->isEnabled($client, $xml);
 		if (defined($xml->{$self->contentType})) {
 			$xml->{$self->contentType}->{'id'} = escape($item);
-			if (defined($timestamp)) {
-				$xml->{$self->contentType}->{'timestamp'} = $timestamp;
-			}
 		}
-
 		return $xml->{$self->contentType} if $include;
 	}
 	return undef;

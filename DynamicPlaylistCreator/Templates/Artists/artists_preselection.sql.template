@@ -84,10 +84,10 @@ select tracks.id, tracks.primary_artist from tracks
 		and tracks.year >= [% minyear %]
 	[%- END %]
 	[%- IF maxdpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
 	[%- END %]
 	[%- IF mindpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	[%- IF request1fromuser == 'lastplayed' and playedbefore != 1 %]
 		and (strftime('%s', 'now') - ifnull(tracks_persistent.lastPlayed,0)) <= 'PlaylistParameter1'

@@ -166,13 +166,13 @@ create temporary table tmp_years_albums as
 		[%- END %]
 		group by tracks.album
 		[%- IF recentlyplayed and playedbefore != 1 %]
-		having [% IF useapcvalues %]max(ifnull(alternativeplaycount.lastPlayed,0))[% ELSE %]max(ifnull(tracks_persistent.lastPlayed,0))[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %][% IF compis %] and ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %][% END %]
+		having [% IF useapcvalues %]max(ifnull(alternativeplaycount.lastPlayed,0))[% ELSE %]max(ifnull(tracks_persistent.lastPlayed,0))[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %][% IF compis %] and ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %]
 		[%- ELSIF (request2fromuser == 'lastplayed' or request3fromuser == 'lastplayed') and playedbefore != 1 %]
-		having (strftime('%s', 'now') - [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %]) <= [% IF request2fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %][% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %][% IF compis %] and ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %][% END %]
+		having (strftime('%s', 'now') - [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %]) <= [% IF request2fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %][% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %][% IF compis %] and ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %]
 		[%- ELSIF compis %]
-		having ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %][% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %][% END %]
+		having ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %][% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %]
 		[%- ELSIF maxdpsv or mindspv %]
-		having [% IF maxdpsv %]ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %][% IF mindpsv %] and [% END %][% END %][% IF mindpsv %]ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %][% END %][% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %]
+		having [% IF maxdpsv %]ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% IF mindpsv %] and [% END %][% END %][% IF mindpsv %]ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %][% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %]
 		[%- ELSIF minalbumtracks %]
 		having count(tracks.id) >= [% minalbumtracks %]
 		[%- END %]
@@ -255,7 +255,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request2fromuser == 'maxRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
 	[%- IF exactrating && !minrating && !maxrating %]
-		and ifnull(tracks_persistent.rating, 0) = [% exactrating %]
+		and ifnull(tracks_persistent.rating, 0) = [% IF exactrating == 'zero' %]0[% ELSE %][% exactrating %][% END %]
 	[%- END %]
 	[%- IF request2fromuser == 'exactRating' or request3fromuser == 'exactRating' %]
 		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request2fromuser == 'exactRating' %]2[% ELSE %]3[% END %]'
@@ -299,10 +299,10 @@ select tracks.id, tracks.primary_artist from tracks
 							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
 	[%- IF maxdpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
 	[%- END %]
 	[%- IF mindpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	[%- IF (request2fromuser == 'addedtime' or request3fromuser == 'addedtime') && !addedtime %]
 	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - 'PlaylistParameter[% IF request2fromuser == 'addedtime' %]2[% ELSE %]3[% END %]')
@@ -311,6 +311,5 @@ select tracks.id, tracks.primary_artist from tracks
 	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %]
 	[%- END %]
 	group by tracks.id
-	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]tmp_years_albums.album, tracks.disc, tracks.tracknum[% END %]
-;
+	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]tmp_years_albums.album, tracks.disc, tracks.tracknum[% END %];
 drop table tmp_years_albums;

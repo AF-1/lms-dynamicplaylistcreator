@@ -26,8 +26,6 @@ use strict;
 use Plugins::DynamicPlaylistCreator::ConfigManager::WebPageMethods;
 our @ISA = qw(Plugins::DynamicPlaylistCreator::ConfigManager::WebPageMethods);
 
-use Slim::Buttons::Home;
-use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 sub new {

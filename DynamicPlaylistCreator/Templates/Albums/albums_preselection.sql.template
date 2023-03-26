@@ -64,13 +64,13 @@ select tracks.id, tracks.primary_artist from tracks
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
 	[%- END %]
 	[%- IF maxdpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
 	[%- END %]
 	[%- IF mindpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	group by tracks.id
-	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %][% IF source == 2 %]tmp_preselection_albums.album, tracks.disc, tracks.tracknum[% ELSE %]tracks.album, tracks.disc, tracks.tracknum[% END %][% END %]
+	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %][% IF source == 2 %]tmp_preselection_albums.album, tracks.disc, tracks.tracknum[% ELSE %]tracks.album, tracks.disc, tracks.tracknum[% END %][% END %];
 [%- IF source == 2 %]
 drop table tmp_preselection_albums;
 [%- END %]

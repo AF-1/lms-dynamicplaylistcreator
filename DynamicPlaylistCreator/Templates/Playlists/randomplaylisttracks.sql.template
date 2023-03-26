@@ -5,9 +5,6 @@
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
 -- PlaylistUseCache: 1
-[%- IF !request1fromuser %]
--- noUserInput: 1
-[%- END %]
 [% IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
 [% ELSIF sortorder == 2 %]
@@ -100,10 +97,10 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
 	[%- END %]
 	[%- IF maxdpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) <= [% maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
 	[%- END %]
 	[%- IF mindpsv %]
-		and ifnull(alternativeplaycount.dynPSval, 0) >= [% mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	[%- IF playedbefore == 1 and !recentlyplayed %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
