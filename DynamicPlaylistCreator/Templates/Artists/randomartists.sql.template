@@ -181,7 +181,7 @@ create temporary table tmp_random_contributors as
 			and (strftime('%s', 'now') - [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %]) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
 		[%- END %]
 		[%- IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]
-		and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
+		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 		[%- END %]
 		[%- IF includedgenres %]
 			and genres.namesearch in ([% includedgenres %])
@@ -288,7 +288,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
 	[%- END %]
 	[%- IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]
-	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 	[%- END %]
 	[%- IF maxdpsv %]
 		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]

@@ -151,7 +151,7 @@ create temporary table tmp_artist_albums as
 			and (strftime('%s', 'now') - [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %]) <= 'PlaylistParameter[% IF request2fromuser == 'lastplayed' %]2[% ELSE %]3[% END %]'
 		[%- END %]
 		[%- IF request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %]
-		and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - 'PlaylistParameter[% IF request2fromuser == 'addedtime' %]2[% ELSE %]3[% END %]')
+		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - 'PlaylistParameter[% IF request2fromuser == 'addedtime' %]2[% ELSE %]3[% END %]')
 		[%- END %]
 		[%- IF excludedgenres %]
 			and not exists (select * from tracks t2, genre_track, genres
@@ -172,7 +172,7 @@ create temporary table tmp_artist_albums as
 		having count(tracks.id) >= [% minalbumtracks %]
 		[%- END %]
 		[%- IF addedtime %]
-		and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %]
+		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 		[%- END %]
 		order by [% IF request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 %]avgcount desc, [% ELSIF sortorder == 2 %]avgcount asc, [% END %]random()
 		[% IF sortorder or request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %]limit 30) as subselection
@@ -279,10 +279,10 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	[%- IF (request2fromuser == 'addedtime' or request3fromuser == 'addedtime') && !addedtime %]
-	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - 'PlaylistParameter[% IF request2fromuser == 'addedtime' %]2[% ELSE %]3[% END %]')
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - 'PlaylistParameter[% IF request2fromuser == 'addedtime' %]2[% ELSE %]3[% END %]')
 	[%- END %]
 	[%- IF addedtime && request2fromuser != 'addedtime' && request3fromuser != 'addedtime' %]
-	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %]
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 	[%- END %]
 	group by tracks.id
 	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]tmp_artist_albums.album, tracks.disc, tracks.tracknum[% END %];

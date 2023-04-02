@@ -395,10 +395,10 @@ select tracks.id, tracks.primary_artist from tracks
 		[%- END %]
 	[%- END %]
 	[%- IF (request1fromuser == 'addedtime' or request2fromuser == 'addedtime') && !addedtime %]
-	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 	[%- END %]
 	[%- IF addedtime && request1fromuser != 'addedtime' && request2fromuser != 'addedtime' %]
-	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %]
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 	[%- END %]
 	group by tracks.id
 	[%- IF sortorder %]

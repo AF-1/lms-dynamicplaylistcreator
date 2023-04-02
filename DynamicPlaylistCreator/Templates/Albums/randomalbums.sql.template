@@ -250,7 +250,7 @@ create temporary table tmp_random_albums as
 			and (strftime('%s', 'now') - [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %]) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
 		[%- END %]
 		[%- IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]
-		and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
+		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 		[%- END %]
 		[%- IF includedgenres %]
 			and genres.namesearch in ([% includedgenres %])
@@ -276,7 +276,7 @@ create temporary table tmp_random_albums as
 		having count(tracks.id) >= [% minalbumtracks %]
 		[%- END %]
 		[%- IF addedtime %]
-		and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %]
+		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 		[%- END %]
 		order by [% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 %]avgcount desc, [% ELSIF sortorder == 2 %]avgcount asc, [% END %]random()
 		[% IF sortorder or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]limit 30) as subselection
@@ -372,7 +372,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks.year, 0) in ('PlaylistParameter[% IF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]1[% ELSE %]2[% END %]')
 	[%- END %]
 	[%- IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]
-	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 	[%- END %]
 	[%- IF includedgenres %]
 		and genres.namesearch in ([% includedgenres %])

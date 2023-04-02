@@ -169,10 +169,10 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	[%- IF (request2fromuser == 'addedtime' or request3fromuser == 'addedtime') && !addedtime %]
-	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - 'PlaylistParameter[% IF request2fromuser == 'addedtime' %]2[% ELSE %]3[% END %]')
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - 'PlaylistParameter[% IF request2fromuser == 'addedtime' %]2[% ELSE %]3[% END %]')
 	[%- END %]
 	[%- IF addedtime && request2fromuser != 'addedtime' && request3fromuser != 'addedtime' %]
-	and tracks_persistent.added >= (select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %]
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 	[%- END %]
 	group by tracks.id
 	[%- IF sortorder %]
