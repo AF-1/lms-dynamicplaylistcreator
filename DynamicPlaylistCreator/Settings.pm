@@ -52,10 +52,20 @@ sub prefs {
 
 sub handler {
 	my ($class, $client, $paramRef) = @_;
-
-	my $result = $class->SUPER::handler($client, $paramRef);
+	my $result = undef;
+	my $callHandler = 1;
 	if ($paramRef->{'saveSettings'}) {
+		$result = $class->SUPER::handler($client, $paramRef);
 		Plugins::DynamicPlaylistCreator::Plugin::getConfigManager()->initWebPageMethods();
+		$callHandler = 0;
+	}
+	if ($paramRef->{'refreshcachesnow'}) {
+		if ($callHandler) {
+			$result = $class->SUPER::handler($client, $paramRef);
+		}
+		Plugins::DynamicPlaylistCreator::Plugin::refreshSQLCache();
+	} elsif ($callHandler) {
+		$result = $class->SUPER::handler($client, $paramRef);
 	}
 	return $result;
 }

@@ -38,10 +38,22 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG_DESC
 	EN	If you create, edit, save, delete or export a dynamic playlist in DPLC, the DPLC web page listing your dynamic playlists will display a message to remind you that the <b>Dynamic Playlists</b> plugin may need a few seconds to update the list of available dynamic playlists. You can disable this message with this setting.
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH
-	EN	Use exact title search
+	EN	Use exact album title search
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH_DESC
-	EN	By default, certain unicode and pattern matching characters are stripped from title search terms to avoid problems with SQLite and XML. However, it may lead to false positives.<br><i>Example:</i> if you're searching for album titles that contain <i>[ENG]</i>, the square brackets are removed and the result set will include all album containing <i>ENG</i> or <i>eng</i>, e.g. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>You can disable this here if you're certain that your search terms do not contain any problematic characters and you want the search to adhere more strictly to the search terms.
+	EN	By default, certain unicode and pattern matching characters are stripped from album title search terms to avoid problems with SQLite and XML. However, it may lead to false positives.<br><i>Example:</i> if you're searching for album titles that contain <i>[ENG]</i>, the square brackets are removed and the result set will include all albums containing <i>ENG</i> or <i>eng</i>, e.g. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>You can disable this here if you're certain that your search terms do not contain any problematic characters and you want the search to adhere more strictly to the search terms.<br><br><b>This setting only applies to <i>album title</i> searches in a few selected templates</b>. For names of artists, composers and genres, the plugin will always use the less strict but safer search option.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES
+	EN	Refresh plugin caches
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_DESC
+	EN	The <i>Dynamic Playlist Creator</i> plugin caches lists of artists, genres, composers and audio file types. They are automatically refreshed after an LMS rescan or a plugin update.<br><br>If you think there's a problem with the DPLC plugin caches (e.g. missing artists or genre lists in templates), this button allows you to force a refresh of all plugin caches.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_BUTTON
+	EN	Refresh now
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_INPROGRESS
+	EN	Refreshing caches...
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
 	EN	<b>Custom dynamic playlists created with this plugin:</b>

@@ -91,7 +91,10 @@ sub initPrefs {
 
 sub postinitPlugin {
 	my $class = shift;
-	unless ($cache->get('dplc_contributorlist_all') && $cache->get('dplc_contributorlist_albumartists') && $cache->get('dplc_contributorlist_composers') && $cache->get('dplc_genrelist') && $cache->get('dplc_contenttypes')) {
+	my $cachePluginVersion = $cache->get('dplc_pluginversion');
+	$log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Dumper($cachePluginVersion));
+
+	unless ($cachePluginVersion && $cachePluginVersion eq $pluginVersion && $cache->get('dplc_contributorlist_all') && $cache->get('dplc_contributorlist_albumartists') && $cache->get('dplc_contributorlist_composers') && $cache->get('dplc_genrelist') && $cache->get('dplc_contenttypes')) {
 		$log->debug('Refreshing caches for contributors, genres and content types');
 		refreshSQLCache();
 	}
@@ -282,6 +285,7 @@ sub getVirtualLibraries {
 
 sub refreshSQLCache {
 	$log->debug('Deleting old caches and creating new ones');
+	$cache->remove('dplc_pluginversion');
 	$cache->remove('dplc_contributorlist_all');
 	$cache->remove('dplc_contributorlist_albumartists');
 	$cache->remove('dplc_contributorlist_composers');
@@ -313,6 +317,8 @@ sub refreshSQLCache {
 	my $contentTypesList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contentTypesSQL);
 	$cache->set('dplc_contenttypes', $contentTypesList, 'never');
 	$log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
+
+	$cache->set('dplc_pluginversion', $pluginVersion);
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;
