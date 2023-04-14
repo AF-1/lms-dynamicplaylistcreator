@@ -257,13 +257,14 @@ sub getVirtualLibraries {
 	$log->debug('ALL virtual libraries: '.Dumper($libraries));
 
 	while (my ($key, $values) = each %{$libraries}) {
-		my $count = Slim::Utils::Misc::delimitThousands(Slim::Music::VirtualLibraries->getTrackCount($key));
+		my $count = Slim::Music::VirtualLibraries->getTrackCount($key);
 		my $name = $values->{'name'};
+		my $displayName = Slim::Utils::Unicode::utf8decode($name, 'utf8').' ('.Slim::Utils::Misc::delimitThousands($count).($count == 1 ? ' track' : ' tracks').')';
+		$log->debug("VL: ".$displayName);
 		my $persistentVLID = $values->{'id'};
-		$log->debug('VL: '.$name.' ('.$count.')');
 
 		push @items, {
-			name => Slim::Utils::Unicode::utf8decode($name, 'utf8').sprintf(" ($count %s)", $count == 1 ? 'track' : 'tracks'),
+			name => $displayName,
 			sortName => Slim::Utils::Unicode::utf8decode($name, 'utf8'),
 			value => $persistentVLID,
 			id => $persistentVLID,
