@@ -415,7 +415,7 @@ sub webSaveItem {
 	# check if dpl requires user input
 	my $isPreselectionTemplate = $templateId;
 	$isPreselectionTemplate =~ s/\.sql\.xml//g;
-	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_datasource'} && $isPreselectionTemplate !~ m/.*_preselection.*$/;
+	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_requestcustomtag'} && $isPreselectionTemplate !~ m/.*_preselection.*$/;
 
 	my $dir = $self->customItemDirectory;
 	if (!defined $dir || !-d $dir) {
@@ -460,7 +460,7 @@ sub webSaveNewItem {
 	# check if dpl requires user input
 	my $isPreselectionTemplate = $templateId;
 	$isPreselectionTemplate =~ s/\.sql\.xml//g;
-	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_datasource'} && $isPreselectionTemplate !~ m/.*_preselection.*$/;
+	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_requestcustomtag'} && $isPreselectionTemplate !~ m/.*_preselection.*$/;
 
 	if (!defined($params->{'pluginWebPageMethodsError'}) && -e $url && !$params->{'overwrite'}) {
 		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_ITEM_EXISTS');
