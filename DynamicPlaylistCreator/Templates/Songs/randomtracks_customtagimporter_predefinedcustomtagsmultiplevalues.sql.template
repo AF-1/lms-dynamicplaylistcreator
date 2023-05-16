@@ -18,27 +18,27 @@ select tracks.id, tracks.primary_artist from tracks
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	[%- IF includedmood %]
 	join customtagimporter_track_attributes includedmood on
-		includedmood.track = tracks.id and includedmood.module = 'customtag' and includedmood.attr = 'MOOD' and includedmood.value in ([% includedmood %])
+		includedmood.track = tracks.id and includedmood.type = 'customtag' and includedmood.attr = 'MOOD' and includedmood.value in ([% includedmood %])
 	[%- END %]
 	[%- IF excludedmood %]
 	left join customtagimporter_track_attributes excludedmood on
-		excludedmood.track = tracks.id and excludedmood.module = 'customtag' and excludedmood.attr = 'MOOD' and excludedmood.value in ([% excludedmood %])
+		excludedmood.track = tracks.id and excludedmood.type = 'customtag' and excludedmood.attr = 'MOOD' and excludedmood.value in ([% excludedmood %])
 	[%- END %]
 	[%- IF includedstyle %]
 	join customtagimporter_track_attributes includedstyle on
-		includedstyle.track = tracks.id and includedstyle.module = 'customtag' and includedstyle.attr = 'STYLE' and includedstyle.value in ([% includedstyle %])
+		includedstyle.track = tracks.id and includedstyle.type = 'customtag' and includedstyle.attr = 'STYLE' and includedstyle.value in ([% includedstyle %])
 	[%- END %]
 	[%- IF excludedstyle %]
 	left join customtagimporter_track_attributes excludedstyle on
-		excludedstyle.track = tracks.id and excludedstyle.module = 'customtag' and excludedstyle.attr = 'STYLE' and excludedstyle.value in ([% excludedstyle %])
+		excludedstyle.track = tracks.id and excludedstyle.type = 'customtag' and excludedstyle.attr = 'STYLE' and excludedstyle.value in ([% excludedstyle %])
 	[%- END %]
 	[%- IF includedlabel %]
 	join customtagimporter_track_attributes includedlabel on
-		includedlabel.track = tracks.id and includedlabel.module = 'customtag' and includedlabel.attr = 'RECORDLABEL' and includedlabel.value in ([% includedlabel %])
+		includedlabel.track = tracks.id and includedlabel.type = 'customtag' and includedlabel.attr = 'RECORDLABEL' and includedlabel.value in ([% includedlabel %])
 	[%- END %]
 	[%- IF excludedlabel %]
 	left join customtagimporter_track_attributes excludedlabel on
-		excludedlabel.track = tracks.id and excludedlabel.module = 'customtag' and excludedlabel.attr = 'RECORDLABEL' and excludedlabel.value in ([% excludedlabel %])
+		excludedlabel.track = tracks.id and excludedlabel.type = 'customtag' and excludedlabel.attr = 'RECORDLABEL' and excludedlabel.value in ([% excludedlabel %])
 	[%- END %]
 	WHERE
 		tracks.audio = 1

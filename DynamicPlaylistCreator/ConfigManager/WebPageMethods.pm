@@ -260,7 +260,7 @@ sub webNewItem {
 
 	if (-e catfile($self->customItemDirectory, unescape($itemFile).".".$self->extension) || -e catfile($self->customItemDirectory, unescape($itemFile).".".$self->simpleExtension)) {
 		my $i = 1;
-		while(-e catfile($self->customItemDirectory, unescape($itemFile).$i.".".$self->extension) || -e catfile($self->customItemDirectory, unescape($itemFile).$i.".".$self->simpleExtension)) {
+		while (-e catfile($self->customItemDirectory, unescape($itemFile).$i.".".$self->extension) || -e catfile($self->customItemDirectory, unescape($itemFile).$i.".".$self->simpleExtension)) {
 			$i = $i + 1;
 		}
 		$itemFile .= $i;

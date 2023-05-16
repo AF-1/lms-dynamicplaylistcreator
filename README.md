@@ -73,7 +73,7 @@ You can <b>only</b> start dynamic playlists directly in DPLC that do <b><u>not</
 </p></details><br>
 
 <details><summary>»<b>Which plugins does DPLC work with?</b>«</summary><br><p>
-It works with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists 4</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a> and <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip 3</b></a>.
+It works with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists 4</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a>, <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip 3</b></a> and <a href="https://github.com/AF-1/lms-customtagimporter#custom-tag-importer"><b>Custom Tag Importer</b></a>.
 </p></details><br>
 
 <details><summary>»<b>In some DPLC templates there's no option to set a <i>track limit</i> and no “do not repeat” setting.</b>«</summary><br><p>

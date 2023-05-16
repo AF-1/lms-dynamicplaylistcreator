@@ -45,12 +45,10 @@ my $prefs = preferences('plugin.dynamicplaylistcreator');
 
 sub new {
 	my ($class, $parameters) = @_;
-
 	my $self = $class->SUPER::new();
 
 	$self->pluginVersion($parameters->{'pluginVersion'});
 	$self->addSqlErrorCallback($parameters->{'addSqlErrorCallback'});
-
 	$self->init();
 
 	return $self;

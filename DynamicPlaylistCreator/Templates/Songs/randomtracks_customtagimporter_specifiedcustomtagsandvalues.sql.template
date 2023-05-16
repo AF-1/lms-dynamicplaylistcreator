@@ -24,35 +24,35 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF customtag1name and customtag1value %]
 	join customscan_track_attributes customtag1 on
-		customtag1.track = tracks.id and customtag1.module = 'customtag' and customtag1.attr = '[% customtag1name %]' and customtag1.value [% IF customtag1type == 'lt' %]<[% ELSIF customtag1type == 'le' %]<=[% ELSIF customtag1type == 'ge' %]>=[% ELSIF customtag1type == 'gt' %]>[% ELSIF customtag1type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag1value %]'
+		customtag1.track = tracks.id and customtag1.type = 'customtag' and customtag1.attr = '[% customtag1name %]' and customtag1.value [% IF customtag1type == 'lt' %]<[% ELSIF customtag1type == 'le' %]<=[% ELSIF customtag1type == 'ge' %]>=[% ELSIF customtag1type == 'gt' %]>[% ELSIF customtag1type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag1value %]'
 	[%- END %]
 	[%- IF customtag2name and customtag2value %]
 	join customscan_track_attributes customtag2 on
-		customtag2.track = tracks.id and customtag2.module = 'customtag' and customtag2.attr = '[% customtag2name %]' and customtag2.value [% IF customtag2type == 'lt' %]<[% ELSIF customtag2type == 'le' %]<=[% ELSIF customtag2type == 'ge' %]>=[% ELSIF customtag2type == 'gt' %]>[% ELSIF customtag2type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag2value %]'
+		customtag2.track = tracks.id and customtag2.type = 'customtag' and customtag2.attr = '[% customtag2name %]' and customtag2.value [% IF customtag2type == 'lt' %]<[% ELSIF customtag2type == 'le' %]<=[% ELSIF customtag2type == 'ge' %]>=[% ELSIF customtag2type == 'gt' %]>[% ELSIF customtag2type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag2value %]'
 	[%- END %]
 	[%- IF customtag3name and customtag3value %]
 	join customscan_track_attributes customtag3 on
-		customtag3.track = tracks.id and customtag3.module = 'customtag' and customtag3.attr = '[% customtag3name %]' and customtag3.value [% IF customtag3type == 'lt' %]<[% ELSIF customtag3type == 'le' %]<=[% ELSIF customtag3type == 'ge' %]>=[% ELSIF customtag3type == 'gt' %]>[% ELSIF customtag3type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag3value %]'
+		customtag3.track = tracks.id and customtag3.type = 'customtag' and customtag3.attr = '[% customtag3name %]' and customtag3.value [% IF customtag3type == 'lt' %]<[% ELSIF customtag3type == 'le' %]<=[% ELSIF customtag3type == 'ge' %]>=[% ELSIF customtag3type == 'gt' %]>[% ELSIF customtag3type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag3value %]'
 	[%- END %]
 	[%- IF customtag4name and customtag4value %]
 	join customscan_track_attributes customtag4 on
-		customtag4.track = tracks.id and customtag4.module = 'customtag' and customtag4.attr = '[% customtag4name %]' and customtag4.value [% IF customtag4type == 'lt' %]<[% ELSIF customtag4type == 'le' %]<=[% ELSIF customtag4type == 'ge' %]>=[% ELSIF customtag4type == 'gt' %]>[% ELSIF customtag4type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag4value %]'
+		customtag4.track = tracks.id and customtag4.type = 'customtag' and customtag4.attr = '[% customtag4name %]' and customtag4.value [% IF customtag4type == 'lt' %]<[% ELSIF customtag4type == 'le' %]<=[% ELSIF customtag4type == 'ge' %]>=[% ELSIF customtag4type == 'gt' %]>[% ELSIF customtag4type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag4value %]'
 	[%- END %]
 	[%- IF customtag5name and customtag5value %]
 	join customscan_track_attributes customtag5 on
-		customtag5.track = tracks.id and customtag5.module = 'customtag' and customtag5.attr = '[% customtag5name %]' and customtag5.value [% IF customtag5type == 'lt' %]<[% ELSIF customtag5type == 'le' %]<=[% ELSIF customtag5type == 'ge' %]>=[% ELSIF customtag5type == 'gt' %]>[% ELSIF customtag5type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag5value %]'
+		customtag5.track = tracks.id and customtag5.type = 'customtag' and customtag5.attr = '[% customtag5name %]' and customtag5.value [% IF customtag5type == 'lt' %]<[% ELSIF customtag5type == 'le' %]<=[% ELSIF customtag5type == 'ge' %]>=[% ELSIF customtag5type == 'gt' %]>[% ELSIF customtag5type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag5value %]'
 	[%- END %]
 	[%- IF customtag6name and customtag6value %]
 	join customscan_track_attributes customtag6 on
-		customtag6.track = tracks.id and customtag6.module = 'customtag' and customtag6.attr = '[% customtag6name %]' and customtag6.value [% IF customtag6type == 'lt' %]<[% ELSIF customtag6type == 'le' %]<=[% ELSIF customtag6type == 'ge' %]>=[% ELSIF customtag6type == 'gt' %]>[% ELSIF customtag6type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag6value %]'
+		customtag6.track = tracks.id and customtag6.type = 'customtag' and customtag6.attr = '[% customtag6name %]' and customtag6.value [% IF customtag6type == 'lt' %]<[% ELSIF customtag6type == 'le' %]<=[% ELSIF customtag6type == 'ge' %]>=[% ELSIF customtag6type == 'gt' %]>[% ELSIF customtag6type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag6value %]'
 	[%- END %]
 	[%- IF customtag7name and customtag7value %]
 	join customscan_track_attributes customtag7 on
-		customtag7.track = tracks.id and customtag7.module = 'customtag' and customtag7.attr = '[% customtag7name %]' and customtag7.value [% IF customtag7type == 'lt' %]<[% ELSIF customtag7type == 'le' %]<=[% ELSIF customtag7type == 'ge' %]>=[% ELSIF customtag7type == 'gt' %]>[% ELSIF customtag7type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag7value %]'
+		customtag7.track = tracks.id and customtag7.type = 'customtag' and customtag7.attr = '[% customtag7name %]' and customtag7.value [% IF customtag7type == 'lt' %]<[% ELSIF customtag7type == 'le' %]<=[% ELSIF customtag7type == 'ge' %]>=[% ELSIF customtag7type == 'gt' %]>[% ELSIF customtag7type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag7value %]'
 	[%- END %]
 	[%- IF customtag8name and customtag8value %]
 	join customscan_track_attributes customtag8 on
-		customtag8.track = tracks.id and customtag8.module = 'customtag' and customtag8.attr = '[% customtag8name %]' and customtag8.value [% IF customtag8type == 'lt' %]<[% ELSIF customtag8type == 'le' %]<=[% ELSIF customtag8type == 'ge' %]>=[% ELSIF customtag8type == 'gt' %]>[% ELSIF customtag8type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag8value %]'
+		customtag8.track = tracks.id and customtag8.type = 'customtag' and customtag8.attr = '[% customtag8name %]' and customtag8.value [% IF customtag8type == 'lt' %]<[% ELSIF customtag8type == 'le' %]<=[% ELSIF customtag8type == 'ge' %]>=[% ELSIF customtag8type == 'gt' %]>[% ELSIF customtag8type == 'contains' %]like[% ELSE %]=[% END %] '[% customtag8value %]'
 	[%- END %]
 	[%- IF recentlyplayed %]
 		[%- IF useapcvalues %]

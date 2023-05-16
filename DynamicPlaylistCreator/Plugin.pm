@@ -167,7 +167,6 @@ sub webPages {
 
 sub handleWebList {
 	my ($client, $params) = @_;
-	my $playlist = undef;
 
 	initPlayLists($client);
 
