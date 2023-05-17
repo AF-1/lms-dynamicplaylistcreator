@@ -81,7 +81,7 @@ sub initPrefs {
 			mkdir($customPlaylistFolder, 0755) unless (-d $customPlaylistFolder);
 			chdir($customPlaylistFolder);
 		} or do {
-			$log->error("Could not create or access dynamic playlists folder in parent folder '$_[1]'!");
+			$log->error("Could not create or access dynamic playlists folder in parent folder '$_[1]'! Please make sure that LMS has read/write permissions (755) for the parent folder.");
 			return;
 		};
 		$prefs->set('customplaylistfolder', $customPlaylistFolder);
@@ -236,7 +236,6 @@ sub handleWebExportPlaylist {
 	return getConfigManager()->webExportItem($client, $params);
 }
 
-
 sub createCustomPlaylistFolder {
 	my $customPlaylistFolder_parentfolderpath = $prefs->get('customdirparentfolderpath') || $serverPrefs->get('playlistdir');
 	my $customPlaylistFolder = catdir($customPlaylistFolder_parentfolderpath, 'DynamicPlaylistCreator');
@@ -244,7 +243,7 @@ sub createCustomPlaylistFolder {
 		mkdir($customPlaylistFolder, 0755) unless (-d $customPlaylistFolder);
 		chdir($customPlaylistFolder);
 	} or do {
-		$log->error("Could not create or access DynamicPlaylistCreator folder in parent folder '$customPlaylistFolder_parentfolderpath'!");
+		$log->error("Could not create or access DynamicPlaylistCreator folder in parent folder '$customPlaylistFolder_parentfolderpath'! Please make sure that LMS has read/write permissions (755) for the parent folder.");
 		return;
 	};
 	$prefs->set('customplaylistfolder', $customPlaylistFolder);

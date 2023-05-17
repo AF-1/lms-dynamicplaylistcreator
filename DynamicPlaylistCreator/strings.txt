@@ -155,7 +155,7 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLNAME
 	EN	Please enter a name for your dynamic playlist
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR
-	EN	No custom dir configured
+	EN	Could not access the <i>DynamicPlaylistCreator</i> folder. Please read the <a href="https://github.com/AF-1/lms-dynamicplaylistcreator#faq">FAQ</a> and check the server log for details.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLCUSTOMDIR
 	EN	Could not find <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span> for custom dynamic playlists
