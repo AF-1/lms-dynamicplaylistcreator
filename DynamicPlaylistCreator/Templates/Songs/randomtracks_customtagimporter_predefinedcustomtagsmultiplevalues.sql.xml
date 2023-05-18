@@ -3,7 +3,7 @@
 	<requireplugins>CustomTagImporter::Plugin</requireplugins>
 	<template>
 		<name>Random Tracks for Pre-Defined Custom Tags</name>
-		<templateversion>2</templateversion>
+		<templateversion>3</templateversion>
 		<description>Random tracks for pre-defined custom tags with &lt;b&gt;multiple&lt;/b&gt; specified values. &lt;br&gt;Currently available pre-defined tags: STYLE, MOOD, RECORDLABEL</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>51</listweight>
@@ -21,8 +21,8 @@
 		<parameter type="text" id="partoftitle" name="Track title contains" value=""/>
 		<parameter type="text" id="startofalbumtitle" name="Album title begins with" value=""/>
 		<parameter type="text" id="partofalbumtitle" name="Album title contains" value=""/>
-		<parameter type="checkbox" id="onlycompilation" name="Only include tracks on compilation albums" value=""/>
-		<parameter type="checkbox" id="noncompilation" name="Only include tracks on non compilation albums" value=""/>
+		<parameter type="checkbox" id="onlycompilation" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from compilation albums" value=""/>
+		<parameter type="checkbox" id="notcompilation" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from compilation albums" value=""/>
 		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>
 	</template>
 </dynamicplaylistcreator>
