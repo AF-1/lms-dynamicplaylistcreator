@@ -69,6 +69,12 @@ The most likely cause for the error message above and matching error messages in
 So please make sure that <b>LMS has read/write permissions (755) for the parent folder - and the <i>DynamicPlaylistCreator</i> folder</b> (if it exists but cannot be accessed).
 </p></details><br>
 
+<details><summary>»<b>When I <i>edit</i> my custom dynamic playlist, DPLC displays a <i>saved version</i> number and a <i>new version</i> number. What does that mean?</b>«</summary><br><p>
+When I change/add template parameters or fix template bugs, the template version number increases.<br>
+If you created your custom dynamic playlist with a different/older template version than from the current one, this discrepancy is displayed next to the template name on the edit page.<br><br>
+<b>Updating</b> your custom dynamic playlist (recommended) is as simple as <b>saving it</b> again. Even if you don't change any parameter (value), this will make DPLC update the SQLite statement of your custom dynamic playlist.
+</p></details><br>
+
 <details><summary>»<b>What are the files in the <i>DynamicPlaylistCreator</i> folder for? Can I edit them?</b>«</summary><br><p>
 When you create or edit and then <i>save</i> a custom dynamic playlist, DPLC will create 2 files in the <i>DynamicPlaylistCreator</i> folder (default location in the LMS playlists folder, can be changed in the plugin settings):<br>
 
@@ -88,8 +94,8 @@ You can <b>only</b> start dynamic playlists directly in DPLC that do <b><u>not</
 It works with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists 4</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a>, <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip 3</b></a> and <a href="https://github.com/AF-1/lms-customtagimporter#custom-tag-importer"><b>Custom Tag Importer</b></a>.
 </p></details><br>
 
-<details><summary>»<b>In some DPLC templates there's no option to set a <i>track limit</i> and no “do not repeat” setting.</b>«</summary><br><p>
-Dynamic playlists that <b>use the LMS cache</b> cannot have a track limit because <i>Dynamic Playlists</i> <b>4</b> will load <b>all</b> track IDs matching the active dynamic playlist's search parameters into the cache using a single initial database query. The cached track ID list should not have duplicates, hence no “do not repeat” option. DPL 4 will add small batches of tracks from this cached list to the players's current playlist. The number of new unplayed tracks to be added per batch can be set in the DPL settings. It's a global setting for all dynamic playlists (except album dynamic playlists which should add complete albums).
+<details><summary>»<b>In some DPLC templates there's no option to set a <i>track limit</i> and no <i>do not repeat</i> setting.</b>«</summary><br><p>
+Dynamic playlists that <b>use the LMS cache</b> cannot have a track limit because <i>Dynamic Playlists</i> <b>4</b> will load <b>all</b> track IDs matching the active dynamic playlist's search parameters into the cache using a single initial database query. The cached track ID list should not have duplicates, hence no <i>do not repeat</i> option. DPL 4 will add small batches of tracks from this cached list to the players's current playlist. The number of new unplayed tracks to be added per batch can be set in the DPL settings. It's a global setting for all dynamic playlists (except album dynamic playlists which should add complete albums).
 </p></details><br>
 
 <details><summary>»<b>Does DPLC handle online tracks?</b>«</summary><br><p>
