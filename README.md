@@ -71,7 +71,7 @@ So please make sure that <b>LMS has read/write permissions (755) for the parent 
 
 <details><summary>»<b>When I <i>edit</i> my custom dynamic playlist, DPLC displays a <i>saved version</i> number and a <i>new version</i> number. What does that mean?</b>«</summary><br><p>
 When I change/add template parameters or fix template bugs, the template version number increases.<br>
-If you created your custom dynamic playlist with a different/older template version than from the current one, this discrepancy is displayed next to the template name on the edit page.<br><br>
+If you created your custom dynamic playlist with a different/older template version than the current one, this discrepancy is displayed next to the template name on the edit page.<br><br>
 <b>Updating</b> your custom dynamic playlist (recommended) is as simple as <b>saving it</b> again. Even if you don't change any parameter (value), this will make DPLC update the SQLite statement of your custom dynamic playlist.
 </p></details><br>
 
