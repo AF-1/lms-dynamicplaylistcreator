@@ -16,8 +16,8 @@
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;date last played&lt;/b&gt;" value="0"/>
 		<parameter type="text" requireplugins="AlternativePlayCount::Plugin" id="maxskipcount" name="Only include tracks with a &lt;b&gt;skip count&lt;/b&gt; of &lt;b&gt;less&lt;/b&gt; than" value=""/>
 		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="recentlyskipped" name="Ignore &lt;b&gt;recently skipped&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
-		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
-		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
+		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
+		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
 		<parameter type="text" id="minartisttracks" name="Ignore albums with &lt;b&gt;less&lt;/b&gt; tracks than" value="3"/>
 		<parameter type="text" id="noofartists" name="Number of artists from which to get new tracks &lt;b&gt;per batch&lt;/b&gt;" value="1"/>
 		<parameter type="text" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value="20"/>

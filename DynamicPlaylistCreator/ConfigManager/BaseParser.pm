@@ -87,12 +87,7 @@ sub parseTemplateContent {
 
 	my $errorMsg = undef;
 	if ($content) {
-		my $timestamp = undef;
-		if (defined($localcontext->{'timestamp'})) {
-			$timestamp = $localcontext->{'timestamp'};
-		}
 		my $valuesXml = eval { XMLin($content, forcearray => ["parameter", "value"], keyattr => []) };
-
 		if ($@) {
 			$errorMsg = "$@";
 			$log->warn("Failed to parse ".$self->contentType." configuration ($item) because: $@");

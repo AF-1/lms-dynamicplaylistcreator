@@ -17,12 +17,16 @@
 			[% NEXT IF parameter.type == 'searchtype' %]
 			[% NEXT IF parameter.values.size == 0 %]
 			[% NEXT IF parameter.values.0.value == '' and parameter.values.size == 1 %]
+			[% NEXT IF CTIenabled && (parameter.type == 'sqloptionalsinglelist' && (matches = (parameter.id.match('(in|ex)cludedcustomtagname(\d+)'))) || (parameter.type == 'singlelist' && (matches = parameter.id.match('(in|ex)cludedcustomtagtype(\d+)'))) || (parameter.type == 'multivaltext' && (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')))) && matches.1 > customtagcount %]
+			[%- IF parameter.id == 'excludedcustomtagname1' %]
+			<tr><td>&nbsp;</td></tr>
+			[%- END %]
 			<tr>
 				<td>[% parameter.name %]</td>
 				<td>&nbsp;</td>
 				<td>
-				[% IF parameter.type == 'text' %]
-					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.id == 'playlistname' %] required[% END %]>
+				[% IF parameter.type == 'text' || parameter.type == 'multivaltext' %]
+					<input type="[% IF CTIenabled && (parameter.type == 'sqloptionalsinglelist' && (matches = (parameter.id.match('(in|ex)cludedcustomtagname(\d+)'))) || (parameter.type == 'singlelist' && (matches = parameter.id.match('(in|ex)cludedcustomtagtype(\d+)'))) || (parameter.type == 'multivaltext' && (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')))) && matches.1 > customtagcount %]hidden[% ELSE %]text[% END %]" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.id == 'virtuallibraryname' %] required[% END %][% IF parameter.placeholdervalue %] placeholder="[% parameter.placeholdervalue %]"[% END %]>
 				[% ELSIF parameter.type == 'searchtext' %]
 					<select class="rmargin" name="itemparameter_[% parameter.id %]_searchtype">
 						<option value="LIKE">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_CONTAINS" | string %]</option>
@@ -79,6 +83,10 @@
 				</td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>
+			[%- IF (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')) %]
+			<tr><td>&nbsp;</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			[%- END %]
 		[%- END %]
 		<tr><td colspan="3">&nbsp;</td></tr>
 		<input type="hidden" name="itemtemplate" value="[% pluginWebPageMethodsNewItemTemplate %]">

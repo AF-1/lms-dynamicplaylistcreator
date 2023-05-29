@@ -13,6 +13,9 @@
 [%- IF virtuallibrary %]
 -- PlaylistVirtualLibraryID1:[% virtuallibrary %]
 [%- END %]
+[%- IF excludevirtuallibrary %]
+-- PlaylistVirtualLibraryID2:[% excludevirtuallibrary %]
+[%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 [%- IF request1fromuser == 'genre' %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
@@ -169,17 +172,22 @@ select tracks.id, tracks.primary_artist from tracks
 		customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% customtagname %]' and customtagimporter_track_attributes.value = [% IF requestcustomtag %]''PlaylistParameter[% IF request1fromuser && request2fromuser %]3[% ELSIF request1fromuser && !request2fromuser %]2[% ELSE %]1[% END %]''[% ELSE %]'[% customtagvalue %]'[% END %]
 	[%- END %]
 	[%- # ------- (MULTIPLE) PLAYLISTS ------- %]
-	[%- IF request1fromuser == 'playlist' or request2fromuser == 'playlist' or request1fromuser == 'multiplestaticplaylists' or request2fromuser == 'multiplestaticplaylists' %]
+	[%- IF request1fromuser == 'playlist' or request2fromuser == 'playlist' or request1fromuser == 'multiplestaticplaylists' or request2fromuser == 'multiplestaticplaylists' or includedstaticplaylists %]
 	join playlist_track on
 		playlist_track.track = tracks.url and
 		[%- IF request1fromuser == 'multiplestaticplaylists' or request2fromuser == 'multiplestaticplaylists' %]
 		playlist_track.playlist in ('PlaylistParameter[% IF request1fromuser == 'multiplestaticplaylists' %]1[% ELSE %]2[% END %]')
-		[%- ELSE %]
+		[%- ELSIF request1fromuser == 'playlist' or request2fromuser == 'playlist' %]
 		playlist_track.playlist = 'PlaylistParameter[% IF request1fromuser == 'playlist' %]1[% ELSE %]2[% END %]'
+		[%- ELSIF includedstaticplaylists %]
+		playlist_track.playlist in (select max(playlist) from playlist_track, tracks where
+									playlist_track.playlist = tracks.id and
+									tracks.titlesearch in ([% includedstaticplaylists %])
+									group by playlist_track.playlist)
 		[%- END %]
 	[%- END %]
-	[%- # ------- ALBUM TITLE SEARCH ------- %]
-	[%- IF albumsearchtitle1 %]
+	[%- # ------- ALBUMS ------- %]
+	[%- IF albumsearchtitle1 or onlycompilation or notcompilation %]
 	join albums on
 		albums.id = tracks.album
 	[%- END %]
@@ -229,6 +237,12 @@ select tracks.id, tracks.primary_artist from tracks
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	WHERE
 		tracks.audio = 1
+	[%- IF excludevirtuallibrary %]
+		and not exists(select * from library_track
+			where
+				library_track.track = tracks.id and
+				library_track.library = 'PlaylistVirtualLibraryID2')
+	[%- END %]
 	[%- IF albumsearchtitle1 %]
 		and [% IF albumsearchtitle2 or albumsearchtitle3 %]([% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle1_searchtype.match('LIKE') %]%[% END %][% albumsearchtitle1 %]%'
 		[%- IF albumsearchtitle2 %]
@@ -248,6 +262,21 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks.year, 0) in ('PlaylistParameter[% IF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]1[% ELSE %]2[% END %]')
 	[%- END %]
 		and dynamicplaylist_history.id is null
+	[%- IF tracksearchtitle1 %]
+		and [% IF tracksearchtitle2 or tracksearchtitle3 %]([% END %][% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'or' && tracksearchtitle2_logop == 'and' %]([% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle1_searchtype.match('LIKE') %]%[% END %][% tracksearchtitle1 %]%'
+		[%- IF tracksearchtitle2 %]
+		[% IF tracksearchtitle2_searchtype.match('NOT') %]and [% ELSE %][% tracksearchtitle1_logop %] [% END %][% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'and' && tracksearchtitle2_logop == 'or' %]([% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle2_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle2_searchtype.match('LIKE') %]%[% END %][% tracksearchtitle2 %]%'[% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'or' && tracksearchtitle2_logop == 'and' %])[% END %]
+		[%- IF tracksearchtitle3 %]
+		[% IF tracksearchtitle3_searchtype.match('NOT') %]and [% ELSE %][% tracksearchtitle2_logop %] [% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle3_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle3_searchtype.match('LIKE') %]%[% END %][% tracksearchtitle3 %]%'[% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'and' && tracksearchtitle2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF tracksearchtitle2 or tracksearchtitle3 %])[% END %]
+	[%- END %]
+	[%- IF onlycompilation %]
+	and albums.compilation = 1
+	[%- END %]
+	[%- IF notcompilation %]
+	and ifnull(albums.compilation, 0) = 0
+	[%- END %]
 	[%- IF excludedcomment %]
 		and excludecomments.id is null
 	[%- END %]
@@ -262,6 +291,15 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF minyear %]
 		and tracks.year >= [% minyear %]
+	[%- END %]
+	[%- IF includedmultipleyears %]
+		and ifnull(tracks.year, 0) in ([% includedmultipleyears %])
+	[%- END %]
+	[%- IF excludedmultipleyears %]
+		and ifnull(tracks.year, 0) not in ([% excludedmultipleyears %])
+	[%- END %]
+	[%- IF includeddecades %]
+		and ifnull(tracks.year, 0) in ([% includeddecades %])
 	[%- END %]
 	[%- IF minrating && !exactrating %]
 		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
@@ -287,6 +325,12 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF maxbpm %]
 		and ifnull(tracks.bpm, 0) <= [% maxbpm %]
 	[%- END %]
+	[%- IF minfiletimestamp %]
+		and ifnull(tracks.timestamp, 0) >= [% minfiletimestamp %]
+	[%- END %]
+	[%- IF maxfiletimestamp %]
+		and ifnull(tracks.timestamp, 0) <= [% maxfiletimestamp %]
+	[%- END %]
 	[%- IF minbitrate %]
 		and ifnull(tracks.bitrate, 0) >= ([% minbitrate %] * 1000)
 	[%- END %]
@@ -298,6 +342,12 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF maxsamplerate %]
 		and ifnull(tracks.samplerate, 0) <= [% maxsamplerate %]
+	[%- END %]
+	[%- IF minsamplesize %]
+		and ifnull(tracks.samplesize, 0) >= [% minsamplesize %]
+	[%- END %]
+	[%- IF maxsamplesize %]
+		and ifnull(tracks.samplesize, 0) <= [% maxsamplesize %]
 	[%- END %]
 	[%- IF lyrics %]
 		and tracks.lyrics is not null

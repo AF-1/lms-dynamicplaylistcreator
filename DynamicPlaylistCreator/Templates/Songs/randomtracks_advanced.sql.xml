@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Tracks - Advanced</name>
-		<templateversion>4</templateversion>
+		<templateversion>5</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>2</listweight>
@@ -10,10 +10,13 @@
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter 1&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,virtuallibrary=Virtual Library,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists,addedtime=Last added time,lastplayed=Last played time,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
 		<parameter type="optionalsinglelist" id="request2fromuser" name="&lt;b&gt;Request parameter 2&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists,year=Year,multipleyears=Multiple Years,addedtime=Last added time,lastplayed=Last played time,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
-		<parameter type="text" id="minlength" name="&lt;b&gt;Min.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt; (in seconds)" value=""/>
-		<parameter type="text" id="maxlength" name="&lt;b&gt;Max.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt; (in seconds)" value=""/>
-		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
-		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
+		<parameter type="text" id="minlength" name="&lt;b&gt;Min.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt;" value="" placeholdervalue=" secs"/>
+		<parameter type="text" id="maxlength" name="&lt;b&gt;Max.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt;" value="" placeholdervalue=" secs"/>
+		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
+		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
+		<parameter type="multivaltext" id="includedmultipleyears" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from these years" value="" placeholdervalue=" comma-separated list of years"/>
+		<parameter type="multivaltext" id="excludedmultipleyears" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from these years" value="" placeholdervalue=" comma-separated list of years"/>
+		<parameter type="sqlmultiplelist" id="includeddecades" name="Only &lt;b&gt;include&lt;/b&gt; tracks from these &lt;b&gt;decades&lt;/b&gt;" value="" data="select cast(((ifnull(tracks.year,0)/10)*10) as int) as decade, cast(((tracks.year/10)*10) as int)||'s', cast(((ifnull(tracks.year,0)/10)*10) as int) from tracks where tracks.audio = 1 and ifnull(tracks.year,0) > 0 group by decade order by decade asc"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;date last played&lt;/b&gt;" value="0"/>
@@ -28,13 +31,15 @@
 		<parameter type="optionalsinglelist" id="maxrating" name="&lt;b&gt;Maximum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="optionalsinglelist" id="exactrating" name="&lt;b&gt;Exact&lt;/b&gt; rating (stars)" value="" data="zero=0,10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="checkbox" requireplugins="CustomTagImporter::Plugin" id="requestcustomtag" name="Request custom tag from user" value="0"/>
-		<parameter type="text" requireplugins="CustomTagImporter::Plugin" id="customtaguserfriendlyname" name="Custom Tag &lt;b&gt;user fiendly name&lt;/b&gt;" value="Owner"/>
-		<parameter type="text" requireplugins="CustomTagImporter::Plugin" id="customtagname" name="Custom Tag &lt;b&gt;name&lt;/b&gt;" value="OWNER"/>
+		<parameter type="text" requireplugins="CustomTagImporter::Plugin" id="customtaguserfriendlyname" name="Custom Tag &lt;b&gt;display&lt;/b&gt; name" value="" placeholdervalue="e.g. Record Label"/>
+		<parameter type="text" requireplugins="CustomTagImporter::Plugin" id="customtagname" name="Custom Tag &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue="e.g. RECORDLABEL"/>
 		<parameter type="text" requireplugins="CustomTagImporter::Plugin" id="customtagvalue" name="Custom Tag &lt;b&gt;value&lt;/b&gt; (if not requested)" value=""/>
-		<parameter type="text" id="minbitrate" name="Min. &lt;b&gt;bitrate&lt;/b&gt;" value=""/>
-		<parameter type="text" id="maxbitrate" name="Max. &lt;b&gt;bitrate&lt;/b&gt;" value=""/>
-		<parameter type="text" id="minsamplerate" name="Min. &lt;b&gt;sample rate&lt;/b&gt;" value=""/>
-		<parameter type="text" id="maxsamplerate" name="Max. &lt;b&gt;sample rate&lt;/b&gt;" value=""/>
+		<parameter type="text" id="minbitrate" name="Min. &lt;b&gt;bitrate&lt;/b&gt;" value="" placeholdervalue=" kbps"/>
+		<parameter type="text" id="maxbitrate" name="Max. &lt;b&gt;bitrate&lt;/b&gt;" value="" placeholdervalue=" kbps"/>
+		<parameter type="text" id="minsamplerate" name="Min. sample &lt;b&gt;rate&lt;/b&gt;" value="" placeholdervalue=" Hz"/>
+		<parameter type="text" id="maxsamplerate" name="Max. sample &lt;b&gt;rate&lt;/b&gt;" value="" placeholdervalue=" Hz"/>
+		<parameter type="text" id="minsamplesize" name="Min. sample &lt;b&gt;size&lt;/b&gt;" value="" placeholdervalue=" Bits"/>
+		<parameter type="text" id="maxsamplesize" name="Max. sample &lt;b&gt;size&lt;/b&gt;" value="" placeholdervalue=" Bits"/>
 		<parameter type="text" id="minbpm" name="Min. &lt;b&gt;BPM&lt;/b&gt;" value=""/>
 		<parameter type="text" id="maxbpm" name="Max. &lt;b&gt;BPM&lt;/b&gt;" value=""/>
 		<parameter type="checkbox" id="lyrics" name="Only tracks with &lt;b&gt;lyrics&lt;/b&gt;" value="0"/>
@@ -52,6 +57,19 @@
 		<parameter type="logop" id="albumsearchtitle2_logop" name="" value=""/>
 		<parameter type="searchtype" id="albumsearchtitle3_searchtype" name="albumsearchtitle3 search type" value=""/>
 		<parameter type="searchtext" id="albumsearchtitle3" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="checkbox" id="onlycompilation" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from compilation albums" value=""/>
+		<parameter type="checkbox" id="noncompilation" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from compilation albums" value=""/>
+		<parameter type="searchtype" id="tracksearchtitle1_searchtype" name="tracksearchtitle1 search type" value=""/>
+		<parameter type="searchtext" id="tracksearchtitle1" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="tracksearchtitle1_logop" name="" value=""/>
+		<parameter type="searchtype" id="tracksearchtitle2_searchtype" name="tracksearchtitle2 search type" value=""/>
+		<parameter type="searchtext" id="tracksearchtitle2" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="tracksearchtitle2_logop" name="" value=""/>
+		<parameter type="searchtype" id="tracksearchtitle3_searchtype" name="tracksearchtitle3 search type" value=""/>
+		<parameter type="searchtext" id="tracksearchtitle3" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="text" id="minfiletimestamp" name="File timestamp is &lt;b&gt;after or equal&lt;/b&gt; to" value="" placeholdervalue=" dd/mm/yyyy"/>
+		<parameter type="text" id="maxfiletimestamp" name="File timestamp is &lt;b&gt;before or equal&lt;/b&gt; to" value="" placeholdervalue=" dd/mm/yyyy"/>
+		<parameter type="sqlmultiplelist" id="includedstaticplaylists" name="Only &lt;b&gt;include&lt;/b&gt; tracks from these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="sqlmultiplelist" id="excludedstaticplaylists" name="&lt;b&gt;Ignore&lt;/b&gt; tracks in these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="checkbox" id="lossless" name="Only lossless formats" value="0"/>
 		<parameter type="contenttypelistcached" id="includedcontenttypes" name="Only include tracks with this &lt;b&gt;file format&lt;/b&gt;" value="0" quotevalue="1"/>
@@ -59,6 +77,7 @@
 		<parameter type="optionalsinglelist" id="remote" name="Limit to &lt;b&gt;remote / local&lt;/b&gt; tracks" value="" data="1=Only local library tracks,2=Only remote library tracks"/>
 		<parameter type="checkbox" id="activevirtuallibrary" name="Limit to &lt;b&gt;currently selected&lt;/b&gt; virtual library on &lt;b&gt;player&lt;/b&gt;" value=""/>
 		<parameter type="functionoptionalsinglelist" id="virtuallibrary" name="&lt;b&gt;Always&lt;/b&gt; limit to &lt;b&gt;this&lt;/b&gt; virtual library" value="" data="Plugins::DynamicPlaylistCreator::Plugin,getVirtualLibraries"/>
+		<parameter type="functionoptionalsinglelist" id="excludevirtuallibrary" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from &lt;b&gt;this&lt;/b&gt; virtual library" value="" data="Plugins::DynamicPlaylistCreator::Plugin,getVirtualLibraries"/>
 		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>
 	</template>
 </dynamicplaylistcreator>

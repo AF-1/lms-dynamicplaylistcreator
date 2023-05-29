@@ -10,8 +10,8 @@
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter&lt;/b&gt; from user" value="" data="decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,lastplayed=Last played time"/>
 		<parameter type="checkbox" id="notrepeat" name="Do &lt;b&gt;not repeat&lt;/b&gt; tracks within same playlist" value="1"/>
-		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
-		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
+		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
+		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
 		<parameter type="singlelist" id="source" name="All artists &lt;b&gt;mixed or one at a time&lt;/b&gt;" value="1" data="1=All artists mixed,2=One artist at a time"/>
 		<parameter type="text" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value="20"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>

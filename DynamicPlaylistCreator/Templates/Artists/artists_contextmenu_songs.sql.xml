@@ -15,8 +15,8 @@
 		<parameter type="optionalsinglelist" id="minrating" name="&lt;b&gt;Minimum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="optionalsinglelist" id="maxrating" name="&lt;b&gt;Maximum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="optionalsinglelist" id="exactrating" name="&lt;b&gt;Exact&lt;/b&gt; rating (stars)" value="" data="zero=0,10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
-		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
-		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value=""/>
+		<parameter type="text" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
+		<parameter type="text" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; albums" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;date last played&lt;/b&gt;" value="0"/>

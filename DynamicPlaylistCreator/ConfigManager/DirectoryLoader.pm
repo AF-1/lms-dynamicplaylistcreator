@@ -73,8 +73,6 @@ sub readFromDir {
 			$item =~ s/$extension//;
 		}
 
-		my $timestamp = (stat ($path))[9];
-
 		# read_file from File::Slurp
 		my $content = eval { read_file($path) };
 		if ($content) {

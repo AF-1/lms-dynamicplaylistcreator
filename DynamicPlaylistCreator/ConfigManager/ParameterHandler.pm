@@ -32,6 +32,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 use HTML::Entities;
+use Time::Local;
 use Data::Dumper;
 
 __PACKAGE__->mk_accessor(rw => qw(parameterPrefix criticalErrorCallback));
@@ -213,14 +214,20 @@ sub getValueOfTemplateParameter {
 		my $values = $parameter->{'values'};
 		for my $item (@{$values}) {
 			if (defined($selectedValues->{$item->{'id'}})) {
-				if (defined($result)) {
-					if ($result ne '') {
-						$result = $result.',';
-					} else {
-						$result = $result;
-					}
-				}
+				$result .= ',' if defined($result) && $result ne '';
+
 				my $thisvalue = $item->{'value'};
+				# if param = includeddecades, add years to decades
+				if ($parameter->{'id'} eq "includeddecades") {
+					my $decadeYears = $thisvalue;
+					unless ($thisvalue == 0) {
+						for (1..9) {
+							$decadeYears .= ','.($thisvalue + $_);
+						}
+					}
+					$thisvalue = $decadeYears;
+				}
+
 				if (!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) {
 					$thisvalue = quoteValue($thisvalue);
 				}
@@ -251,6 +258,25 @@ sub getValueOfTemplateParameter {
 				last;
 			}
 		}
+	} elsif ($parameter->{'type'} eq 'multivaltext') {
+		if ($params->{$self->parameterPrefix.'_'.$parameter->{'id'}}) {
+			my $thisvalue = $params->{$self->parameterPrefix.'_'.$parameter->{'id'}};
+			$thisvalue = Slim::Utils::Unicode::utf8decode_locale($thisvalue);
+			$log->info('thisvalue = '.Dumper($thisvalue));
+
+			my @paramvalues = split(/;/, $thisvalue);
+			my $quotedTextVal;
+
+			foreach (@paramvalues) {
+				if ($parameter->{'quotevalue'}) {
+					$quotedTextVal .= ($quotedTextVal ? ',' : '')."'".encode_entities(trim_leadtail($_), "&<>\'\"")."'";
+				} else {
+					$quotedTextVal .= ($quotedTextVal ? ',' : '').encode_entities(trim_leadtail($_), "&<>\'\"");
+				}
+			}
+			$log->info("Got ".$parameter->{'id'}." = $quotedTextVal");
+			$result = $quotedTextVal;
+		}
 	} else {
 		if ($params->{$self->parameterPrefix.'_'.$parameter->{'id'}}) {
 			my $thisvalue = $params->{$self->parameterPrefix.'_'.$parameter->{'id'}};
@@ -260,6 +286,12 @@ sub getValueOfTemplateParameter {
 			}
 
 			$thisvalue = handleSearchText($thisvalue) if $parameter->{'type'} eq 'searchtext';
+
+			# filestamp: date -> epoch time
+			if ($parameter->{'type'} eq 'text' && $parameter->{'id'} =~ /filetimestamp$/) {
+				my ($days, $months, $years) = split(m@/@, $thisvalue);
+				$thisvalue = timelocal(0,0,0,$days,$months-1,$years);
+			}
 
 			if ($parameter->{'quotevalue'}) {
 				return "'".encode_entities($thisvalue, "&<>\'\"")."'";
@@ -376,7 +408,7 @@ sub getSQLTemplateData {
 	my ($self, $sqlstatements) = @_;
 	my @result =();
 	my $dbh = getCurrentDBH();
-	my $trackno = 0;
+
 	for my $sql (split(/[;]/, $sqlstatements)) {
 		eval {
 			$sql =~ s/^\s+//g;
@@ -468,6 +500,13 @@ sub handleSearchText {
 
 sub getCurrentDBH {
 	return Slim::Schema->storage->dbh();
+}
+
+sub trim_leadtail {
+	my ($str) = @_;
+	$str =~ s{^\s+}{};
+	$str =~ s{\s+$}{};
+	return $str;
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;

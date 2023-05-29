@@ -48,7 +48,7 @@ my $log = logger('plugin.dynamicplaylistcreator');
 
 my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3);
 my %mediumFields = map {$_ => 35} qw(includedcomment excludedcomment);
-my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minbpm maxbpm skipcount similaritypercent maxskipcount);
+my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minbpm maxbpm skipcount maxskipcount);
 
 sub new {
 	my ($class, $parameters) = @_;
@@ -168,6 +168,9 @@ sub webEditItem {
 								$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 								$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
 							}
+							if ($p->{'type'} eq 'multivaltext') {
+								$p->{'elementsize'} = 50;
+							}
 
 							# use params unless required plugin is not enabled
 							my $useParameter = 1;
@@ -181,6 +184,11 @@ sub webEditItem {
 						}
 					}
 					$params->{'pluginWebPageMethodsEditItemParameters'} = \@parametersToSelect;
+				}
+				$params->{'CTIenabled'} = Slim::Utils::PluginManager->isEnabled('Plugins::CustomTagImporter::Plugin');
+				if ($params->{'CTIenabled'}) {
+					my $countSql = "select count(distinct attr) from customtagimporter_track_attributes where customtagimporter_track_attributes.type='customtag'";
+					$params->{'customtagcount'} = quickSQLcount($countSql);
 				}
 				$params->{'pluginWebPageMethodsEditItemTemplate'} = lc($templateData->{'id'});
 				$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
@@ -216,6 +224,9 @@ sub webNewItemParameters {
 					$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 					$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
 				}
+				if ($p->{'type'} eq 'multivaltext') {
+					$p->{'elementsize'} = 50;
+				}
 
 				# add param unless required plugin is not enabled
 				my $useParameter = 1;
@@ -229,6 +240,11 @@ sub webNewItemParameters {
 			}
 		}
 
+		$params->{'CTIenabled'} = Slim::Utils::PluginManager->isEnabled('Plugins::CustomTagImporter::Plugin');
+		if ($params->{'CTIenabled'}) {
+			my $countSql = "select count(distinct attr) from customtagimporter_track_attributes where customtagimporter_track_attributes.type='customtag'";
+			$params->{'customtagcount'} = quickSQLcount($countSql);
+		}
 		$params->{'pluginWebPageMethodsNewItemParameters'} = \@parametersToSelect;
 		$params->{'templateName'} = $template->{'name'};
 	}
@@ -845,6 +861,17 @@ sub fillTemplate {
 		$log->error("ERROR parsing template: ".$template->error());
 	}
 	return $output;
+}
+
+sub quickSQLcount {
+	my $dbh = Slim::Schema->storage->dbh();
+	my $sqlstatement = shift;
+	my $thisCount;
+	my $sth = $dbh->prepare($sqlstatement);
+	$sth->execute();
+	$sth->bind_columns(undef, \$thisCount);
+	$sth->fetch();
+	return $thisCount;
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;
