@@ -14,7 +14,7 @@
 	<table>
 	<tr>
 		<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME" | string %]&nbsp;&nbsp;</td>
-		<td><input type="text" name="file" size="50" value="[% pluginWebPageMethodsEditItemFileUnescaped %]"></td>
+		<td><input type="text" name="file" size="50" value="[% pluginWebPageMethodsEditItemFileUnescaped %]" required></td>
 	</tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td>
@@ -35,7 +35,7 @@
 	<input type="hidden" name="sqltextdplonly" value="[% sqltextdplonly %]">
 	<tr><td>&nbsp;</td></tr>
 	<tr><td colspan="1">
-		<input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'>
+		<input class="inputbutton" type="submit" value="[% "SAVE" | string %]">
 	</td></tr>
 	[% IF pluginWebPageMethodsError %]
 	<tr><td colspan="2">
