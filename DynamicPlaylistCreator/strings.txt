@@ -142,14 +142,8 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_VERSION
 PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_NEWVERSION
 	EN	new version
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_ITEM_EXISTS
-	EN	Invalid file name - a file with this name already exists
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_CUSTOMIZEDITEM_EXISTS
-	EN	Invalid file name - an sql file with this file name already exists
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME
-	EN	Please enter a file name
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_SAVEFAILED
+	EN	Could not save dynamic playlist. Please check the server log for details.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLNAME
 	EN	Please enter a name for your dynamic playlist
@@ -158,7 +152,7 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR
 	EN	Could not access the <i>DynamicPlaylistCreator</i> folder. Please read the <a href="https://github.com/AF-1/lms-dynamicplaylistcreator#faq">FAQ</a> and check the server log for details.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLCUSTOMDIR
-	EN	Could not find <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span> for custom dynamic playlists
+	EN	Could not find <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span> for custom dynamic playlists. Check the server log for details.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_DPLFILENAMEALREADYEXISTS
 	EN	A dynamic playlist file with this name already exists in the <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span>.<br>Please <span class="emphbold">edit</span> the dynamic playlist you want to export and <span class="emphbold">change its <i>file</i> name</span>.

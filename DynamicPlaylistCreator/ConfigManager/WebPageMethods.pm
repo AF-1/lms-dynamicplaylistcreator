@@ -251,85 +251,6 @@ sub webNewItemParameters {
 	return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItemParameters'}, $params);
 }
 
-sub webNewItem {
-	my ($self, $client, $params, $templateId, $templates) = @_;
-	$log->debug('Start webNewItem');
-
-	my $templateFile = $templateId;
-	my $itemFile = $templateFile;
-
-	my $regex1 = "\\.".$self->templateExtension."\$";
-	my $regex2 = ".".$self->templateDataExtension;
-	$templateFile =~ s/$regex1/$regex2/;
-
-	$itemFile =~ s/$regex1//;
-
-	my $fileName = lc($params->{'itemparameter_playlistname'});
-	my $templateFileName = basename($itemFile);
-
-	$fileName = lc($templateFileName) if !$fileName;
-	$fileName =~ s/[\$#@~!&*()\[\];.,:?^`'"\\\/]+//g;
-	$fileName =~ s/^[ \t\s]+|[ \t\s]+$//g;
-	$fileName =~ s/[\s]+/_/g;
-
-	my $template = $templates->{$templateId};
-
-	if (-e catfile($self->customItemDirectory, unescape($itemFile).".".$self->extension) || -e catfile($self->customItemDirectory, unescape($itemFile).".".$self->simpleExtension)) {
-		my $i = 1;
-		while (-e catfile($self->customItemDirectory, unescape($itemFile).$i.".".$self->extension) || -e catfile($self->customItemDirectory, unescape($itemFile).$i.".".$self->simpleExtension)) {
-			$i = $i + 1;
-		}
-		$itemFile .= $i;
-	}
-	my %templateParameters = ();
-	if (defined($template->{'parameter'})) {
-		my $parameters = $template->{'parameter'};
-		for my $p (@{$parameters}) {
-			if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
-				my $useParameter = 1;
-				if (defined($p->{'requireplugins'})) {
-					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
-				}
-				if ($useParameter) {
-					$self->parameterHandler->addValuesToTemplateParameter($p);
-					my $value = $self->parameterHandler->getValueOfTemplateParameter($params, $p);
-					$templateParameters{$p->{'id'}} = $value;
-				}
-			}
-		}
-	}
-
-	# add the name of template on which the dynamic playlist is based
-	$templateParameters{'basetemplate'} = $template->{'name'};
-
-	my $templateFileData = $templateFile;
-	my $doParsing = 1;
-	my $itemData = undef;
-
-	if ($doParsing) {
-		$itemData = $self->fillTemplate($templateFileData, \%templateParameters);
-	} else {
-		$itemData = $templateFileData;
-	}
-
-	$itemData = encode_entities($itemData, "&<>\'\"");
-	$params->{'sqltextdplonly'} = $itemData;
-
-	$itemFile .= ".".$self->simpleExtension;
-
-	for my $p (keys %{$params}) {
-		my $regexp = '^'.$self->parameterHandler->parameterPrefix.'_';
-		if ($p =~ /$regexp/) {
-			$templateParameters{$p} = $params->{$p};
-		}
-	}
-	$params->{'pluginWebPageMethodsNewItemParameters'} = \%templateParameters;
-	$params->{'pluginWebPageMethodsNewItemTemplate'} = $templateId;
-	$params->{'pluginWebPageMethodsEditItemFile'} = $itemFile;
-	$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($fileName);
-	return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItem'}, $params);
-}
-
 sub webDeleteItem {
 	my ($self, $client, $params, $itemId, $items) = @_;
 
@@ -423,11 +344,6 @@ sub webSaveItem {
 		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLNAME');
 	}
 
-	if (!$params->{'file'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME');
-	}
-
-
 	# check if dpl requires user input
 	my $isPreselectionTemplate = $templateId;
 	$isPreselectionTemplate =~ s/\.sql\.xml//g;
@@ -453,18 +369,34 @@ sub webSaveItem {
 sub webSaveNewItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
 	$log->debug('Start webSaveNewItem');
-
+	$log->debug('templateId = '.Dumper($templateId));
 	$params->{'pluginWebPageMethodsError'} = undef;
 
-	if (!$params->{'file'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_FILENAME');
+	my $templateFile = $templateId;
+
+	my $regex1 = "\\.".$self->templateExtension."\$";
+	my $regex2 = ".".$self->templateDataExtension;
+	$templateFile =~ s/$regex1/$regex2/;
+
+	my $fallbackFilename = $templateId;
+	$fallbackFilename =~ s/$regex1//;
+
+	my $fileName = lc($params->{'itemparameter_playlistname'}) || lc($fallbackFilename);
+	$fileName =~ s/[\$#@~!&*()\[\];.,:?^`'"\\\/]+//g;
+	$fileName =~ s/^[ \t\s]+|[ \t\s]+$//g;
+	$fileName =~ s/[\s]+/_/g;
+	my $dir = $self->customItemDirectory;
+
+	# if file name exists, append number
+	if (-e catfile($self->customItemDirectory, unescape($fileName).".".$self->extension) || -e catfile($self->customItemDirectory, unescape($fileName).".".$self->simpleExtension)) {
+		my $i = 1;
+		while (-e catfile($self->customItemDirectory, unescape($fileName).$i.".".$self->extension) || -e catfile($self->customItemDirectory, unescape($fileName).$i.".".$self->simpleExtension)) {
+			$i = $i + 1;
+		}
+		$fileName .= '_'.$i;
 	}
 
-	my $dir = $self->customItemDirectory;
-	if (!defined $dir || !-d $dir) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR');
-	}
-	my $file = unescape($params->{'file'}).".".$self->simpleExtension;
+	my $file = unescape($fileName).".".$self->simpleExtension;
 	my $customFile = $file;
 	my $regexp1 = ".".$self->simpleExtension."\$";
 	$regexp1 =~ s/\./\\./;
@@ -472,21 +404,45 @@ sub webSaveNewItem {
 	$customFile =~ s/$regexp1/$regexp2/;
 	my $url = catfile($dir, $file);
 	my $customUrl = catfile($dir, $customFile);
+	$log->debug('file = '.$file);
+	$log->debug('customfile = '.$customFile);
+
+	my $template = $templates->{$templateId};
+
+	my %templateParameters = ();
+	if (defined($template->{'parameter'})) {
+		my $parameters = $template->{'parameter'};
+		for my $p (@{$parameters}) {
+			if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
+				my $useParameter = 1;
+				if (defined($p->{'requireplugins'})) {
+					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
+				}
+				if ($useParameter) {
+					$self->parameterHandler->addValuesToTemplateParameter($p);
+					my $value = $self->parameterHandler->getValueOfTemplateParameter($params, $p);
+					$templateParameters{$p->{'id'}} = $value;
+				}
+			}
+		}
+	}
+
+	# add the name of template on which the dynamic playlist is based
+	$templateParameters{'basetemplate'} = $template->{'name'};
+
+	my $templateFileData = $templateFile;
+	my $itemData = $self->fillTemplate($templateFileData, \%templateParameters);
+	$itemData = encode_entities($itemData, "&<>\'\"");
+	$params->{'sqltextdplonly'} = $itemData;
 
 	# check if dpl requires user input
 	my $isPreselectionTemplate = $templateId;
 	$isPreselectionTemplate =~ s/\.sql\.xml//g;
 	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_requestcustomtag'} && $isPreselectionTemplate !~ m/.*_preselection.*$/;
 
-	if (!defined($params->{'pluginWebPageMethodsError'}) && -e $url && !$params->{'overwrite'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_ITEM_EXISTS');
-	}
-	if (!defined($params->{'pluginWebPageMethodsError'}) && -e $customUrl && !$params->{'overwrite'}) {
-		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_CUSTOMIZEDITEM_EXISTS');
-	}
-
 	if (!$self->saveSimpleItem($client, $params, $url, $templateId, $templates, $customUrl)) {
-		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItem'}, $params);
+		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_SAVEFAILED');
+		return $self->webCallbacks->webList($client, $params);
 	} else {
 		$params->{'dplrefresh'} = 1;
 		return $self->webCallbacks->webList($client, $params);
@@ -508,6 +464,7 @@ sub saveSimpleItem {
 		$log->debug("Opening configuration file: $url");
 		open($fh, ">:encoding(UTF-8)", $url) or do {
 			$params->{'pluginWebPageMethodsError'} = "Error saving $url:".$!;
+			$log->error("Error saving $url:".$!);
 		};
 	}
 
@@ -570,7 +527,7 @@ sub saveSimpleItem {
 
 	# write adv file
 	if (!($params->{'pluginWebPageMethodsError'})) {
-		$self->saveItem($client, $params, $customUrl, 1);
+		$self->saveItem($client, $params, $customUrl);
 	}
 
 	if ($params->{'pluginWebPageMethodsError'}) {
@@ -653,7 +610,7 @@ sub saveSimpleItem {
 }
 
 sub saveItem {
-	my ($self, $client, $params, $url, $dplonly) = @_;
+	my ($self, $client, $params, $url) = @_;
 	my $fh;
 	$log->debug('Start saveItem');
 
@@ -662,15 +619,14 @@ sub saveItem {
 	if (!($url =~ /$regexp/)) {
 		$url .= ".".$self->extension;
 	}
-	my $data = undef;
-
-	$data = $dplonly ? Slim::Utils::Unicode::utf8decode_locale($params->{'sqltextdplonly'}) : Slim::Utils::Unicode::utf8decode_locale($params->{'text'});
+	my $data = Slim::Utils::Unicode::utf8decode_locale($params->{'sqltextdplonly'});
 	$data =~ s/\r+\n/\n/g; # Remove any extra \r character, will create duplicate linefeeds on Windows if not removed
 
 	if (!($params->{'pluginWebPageMethodsError'})) {
 		$log->debug("Opening configuration file: $url");
 		open($fh, ">:encoding(UTF-8)", $url) or do {
 			$params->{'pluginWebPageMethodsError'} = "Error saving $url: ".$!;
+			$log->error("Error saving $url:".$!);
 		};
 	}
 	if (!($params->{'pluginWebPageMethodsError'})) {
@@ -686,9 +642,6 @@ sub saveItem {
 	}
 
 	if ($params->{'pluginWebPageMethodsError'}) {
-		$params->{'pluginWebPageMethodsEditItemFile'} = $params->{'file'};
-		$params->{'pluginWebPageMethodsEditItemData'} = encode_entities($params->{'text'});
-		$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($params->{'pluginWebPageMethodsEditItemFile'});
 		return undef;
 	} else {
 		return 1;
@@ -703,7 +656,7 @@ sub webExportItem {
 	# get DPL folder for custom dpls
 	my $dpl_customPLfolder = preferences('plugin.dynamicplaylists4')->get('customplaylistfolder');
 	if (!defined $dpl_customPLfolder || !-d $dpl_customPLfolder) {
-		$log->error(string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR'));
+		$log->error('Could not find Dynamic Playlists folder called "DPL-custom-lists" for custom dynamic playlists. Make sure it exists and LMS has read/write permissions (755) for the folder');
 		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLCUSTOMDIR');
 		return $self->webCallbacks->webList($client, $params);
 	}

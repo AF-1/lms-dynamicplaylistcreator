@@ -151,7 +151,6 @@ sub webPages {
 		"DynamicPlaylistCreator/webpagemethods_newitemtypes.html" => \&handleWebNewPlaylistTypes,
 		"DynamicPlaylistCreator/webpagemethods_deleteitemtype.html" => \&handleWebDeletePlaylistType,
 		"DynamicPlaylistCreator/webpagemethods_newitemparameters.html" => \&handleWebNewPlaylistParameters,
-		"DynamicPlaylistCreator/webpagemethods_newitem.html" => \&handleWebNewPlaylist,
 		"DynamicPlaylistCreator/webpagemethods_savenewitem.html" => \&handleWebSaveNewPlaylist,
 		"DynamicPlaylistCreator/webpagemethods_saveitem.html" => \&handleWebSavePlaylist,
 		"DynamicPlaylistCreator/webpagemethods_removeitem.html" => \&handleWebRemovePlaylist,
@@ -176,6 +175,13 @@ sub handleWebList {
 	}
 	@webPlaylists = sort {uc($a->{'name'}) cmp uc($b->{'name'})} @webPlaylists;
 
+	my $dir = $prefs->get('customplaylistfolder');
+	if (!defined $dir || !-d $dir) {
+		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR');
+		my $customPlaylistFolder_parentfolderpath = $prefs->get('customdirparentfolderpath');
+		$log->error("Could not create or access DynamicPlaylistCreator folder in parent folder '$customPlaylistFolder_parentfolderpath'! Please make sure that LMS has read/write permissions (755) for the parent folder.");
+	}
+
 	$params->{'nocustomdynamicplaylists'} = 1 if (scalar @webPlaylists == 0);
 	$params->{'displayplaybtn'} = $prefs->get('displayplaybtn');
 	$params->{'displayexportbtn'} = $prefs->get('displayexportbtn');
@@ -199,11 +205,6 @@ sub handleWebNewPlaylistTypes {
 sub handleWebNewPlaylistParameters {
 	my ($client, $params) = @_;
 	return getConfigManager()->webNewItemParameters($client, $params);
-}
-
-sub handleWebNewPlaylist {
-	my ($client, $params) = @_;
-	return getConfigManager()->webNewItem($client, $params);
 }
 
 sub handleWebSaveNewPlaylist {

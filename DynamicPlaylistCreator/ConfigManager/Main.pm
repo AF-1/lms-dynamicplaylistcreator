@@ -96,7 +96,6 @@ sub initWebPageMethods {
 	my %webTemplates = (
 		'webList' => 'plugins/DynamicPlaylistCreator/list.html',
 		'webEditItem' => 'plugins/DynamicPlaylistCreator/webpagemethods_edititem.html',
-		'webNewItem' => 'plugins/DynamicPlaylistCreator/webpagemethods_newitem.html',
 		'webNewItemParameters' => 'plugins/DynamicPlaylistCreator/webpagemethods_newitemparameters.html',
 		'webNewItemTypes' => 'plugins/DynamicPlaylistCreator/webpagemethods_newitemtypes.html',
 	);
@@ -133,7 +132,7 @@ sub initWebPageMethods {
 		'contentParser' => $self->contentParser,
 		'templateDirectories' => \@templateDirectories,
 		'itemDirectories' => \@itemDirectories,
-		'customItemDirectory' => $prefs->get("customplaylistfolder"),
+		'customItemDirectory' => $prefs->get('customplaylistfolder'),
 		'webCallbacks' => $self,
 		'webTemplates' => \%webTemplates,
 	);
@@ -231,14 +230,6 @@ sub webNewItemParameters {
 		$self->templates($self->readTemplateConfiguration($client));
 	}
 	return $self->webPageMethods->webNewItemParameters($client, $params, $params->{'itemtemplate'}, $self->templates);
-}
-
-sub webNewItem {
-	my ($self, $client, $params) = @_;
-	if (!defined($self->templates)) {
-		$self->templates($self->readTemplateConfiguration($client));
-	}
-	return $self->webPageMethods->webNewItem($client, $params, $params->{'itemtemplate'}, $self->templates);
 }
 
 sub webSaveNewItem {
