@@ -432,7 +432,6 @@ sub webSaveNewItem {
 
 	my $templateFileData = $templateFile;
 	my $itemData = $self->fillTemplate($templateFileData, \%templateParameters);
-	$itemData = encode_entities($itemData, "&<>\'\"");
 	$params->{'sqltextdplonly'} = $itemData;
 
 	# check if dpl requires user input
@@ -619,6 +618,7 @@ sub saveItem {
 	if (!($url =~ /$regexp/)) {
 		$url .= ".".$self->extension;
 	}
+
 	my $data = Slim::Utils::Unicode::utf8decode_locale($params->{'sqltextdplonly'});
 	$data =~ s/\r+\n/\n/g; # Remove any extra \r character, will create duplicate linefeeds on Windows if not removed
 
@@ -636,6 +636,7 @@ sub saveItem {
 		if ($encoding eq 'utf8') {
 			$data = Slim::Utils::Unicode::utf8toLatin1($data);
 		}
+
 		print $fh $data;
 		$log->debug('Writing to file succeeded');
 		close $fh;
