@@ -82,7 +82,11 @@ When you create or edit and then <i>save</i> a custom dynamic playlist, DPLC wil
 
 - In addition, DPLC will <b>always</b> save your custom dynamic playlist as an SQLite statement (file extension: <b>sql</b>) because <i>Dynamic Playlists</i> searches the DPLC custom folder for them.<br>
 
-<b>Do <u><i>not</i></u> move or edit any of these files manually!</b> DPLC will overwrite the changes. Or worse, your custom dynamic playlist will no longer work. And please <b>do not rename the <i>DynamicPlaylistCreator</i> folder</b>.
+<b>⚠️ Do <u><i>not</i></u> move or edit any of these files manually!</b> DPLC will overwrite the changes. Or worse, your custom dynamic playlist will no longer work. And please <b>do not rename the <i>DynamicPlaylistCreator</i> folder</b>.
+</p></details><br>
+
+<details><summary>»<b>I can't set a <i>file</i> name for <i>new</i> dynamic playlists in DPLC anymore.</b>«</summary><br><p>
+From version 1.<b>3.0</b> on, <b>DPLC handles all file names internally</b>. They are <b>derived from the <i>dynamic playlist name</i></b> and special characters are removed or replaced.<br>When you try to <i>save a new</i> dynamic playlist and DPLC finds a file with an identical file name, it will append a number to the end of the new file name so there will be no playlist ID conflicts. Once the dynamic playlist is saved, its <b>file</b> name (on which the playlist ID is based) won't change anymore, even if you change/edit the <b>playlist</b> name.
 </p></details><br>
 
 <details><summary>»<b>Why is the <i>Play button</i> not displayed for <i>all</i> dynamic playlists?</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>The <i>Play</i> button is not working for new dynamic playlists.</b>«</summary><br><p>
