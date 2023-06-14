@@ -2,10 +2,10 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Tracks - Advanced</name>
-		<templateversion>5</templateversion>
+		<templateversion>6</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<playlistcategory>tracks</playlistcategory>
-		<listweight>3</listweight>
+		<listweight>2</listweight>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your dynamic playlist"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter 1&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,virtuallibrary=Virtual Library,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists,addedtime=Last added time,lastplayed=Last played time,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
