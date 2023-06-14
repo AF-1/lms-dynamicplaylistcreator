@@ -46,7 +46,7 @@ my $serverPrefs = preferences('server');
 my $prefs = preferences('plugin.dynamicplaylistcreator');
 my $log = logger('plugin.dynamicplaylistcreator');
 
-my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3);
+my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 commentssearchstring1 commentssearchstring2 commentssearchstring3);
 my %mediumFields = map {$_ => 35} qw(includedcomment excludedcomment);
 my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minbpm maxbpm skipcount maxskipcount);
 

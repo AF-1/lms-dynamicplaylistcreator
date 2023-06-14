@@ -216,13 +216,9 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- END %]
 	[%- # ------- COMMENTS ------- %]
-	[%- IF includedcomment %]
+	[%- IF commentssearchstring1 %]
 	join comments on
-		comments.track = tracks.id and comments.value like [% includedcomment %]
-	[%- END %]
-	[%- IF excludedcomment %]
-	left join comments as excludecomments on
-		excludecomments.track = tracks.id and excludecomments.value like [% excludedcomment %]
+		comments.track = tracks.id
 	[%- END %]
 	[%- # ------- MISC ------- %]
 	[%- IF minrating or exactrating or maxrating or sortorder or recentlyplayed or playedbefore or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
@@ -242,6 +238,15 @@ select tracks.id, tracks.primary_artist from tracks
 			where
 				library_track.track = tracks.id and
 				library_track.library = 'PlaylistVirtualLibraryID2')
+	[%- END %]
+	[%- IF commentssearchstring1 %]
+		and [% IF commentssearchstring2 or commentssearchstring3 %]([% END %][% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'or' && commentssearchstring2_logop == 'and' %]([% END %]comments.value [% IF commentssearchstring1_searchtype.match('NOT') %]not [% END %]like '[% IF commentssearchstring1_searchtype.match('LIKE') %]%%[% END %][% commentssearchstring1 %]%%'
+		[%- IF commentssearchstring2 %]
+		[% IF commentssearchstring2_searchtype.match('NOT') %]and [% ELSE %][% commentssearchstring1_logop %] [% END %][% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'and' && commentssearchstring2_logop == 'or' %]([% END %]comments.value [% IF commentssearchstring2_searchtype.match('NOT') %]not [% END %]like '[% IF commentssearchstring2_searchtype.match('LIKE') %]%%[% END %][% commentssearchstring2 %]%%'[% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'or' && commentssearchstring2_logop == 'and' %])[% END %]
+		[%- IF commentssearchstring3 %]
+		[% IF commentssearchstring3_searchtype.match('NOT') %]and [% ELSE %][% commentssearchstring2_logop %] [% END %]comments.value [% IF commentssearchstring3_searchtype.match('NOT') %]not [% END %]like '[% IF commentssearchstring3_searchtype.match('LIKE') %]%%[% END %][% commentssearchstring3 %]%%'[% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'and' && commentssearchstring2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF commentssearchstring2 or commentssearchstring3 %])[% END %]
 	[%- END %]
 	[%- IF albumsearchtitle1 %]
 		and [% IF albumsearchtitle2 or albumsearchtitle3 %]([% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle1_searchtype.match('LIKE') %]%[% END %][% albumsearchtitle1 %]%'
@@ -276,9 +281,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF notcompilation %]
 	and ifnull(albums.compilation, 0) = 0
-	[%- END %]
-	[%- IF excludedcomment %]
-		and excludecomments.id is null
 	[%- END %]
 	[%- IF maxlength %]
 		and tracks.secs < [% maxlength %]

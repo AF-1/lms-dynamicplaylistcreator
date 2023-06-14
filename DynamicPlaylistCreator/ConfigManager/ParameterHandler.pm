@@ -285,7 +285,7 @@ sub getValueOfTemplateParameter {
 				$thisvalue = quoteValue($thisvalue);
 			}
 
-			$thisvalue = handleSearchText($thisvalue) if $parameter->{'type'} eq 'searchtext';
+			$thisvalue = handleSearchText($thisvalue, ($parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0)) if $parameter->{'type'} eq 'searchtext';
 
 			# filestamp: date -> epoch time
 			if ($parameter->{'type'} eq 'text' && $parameter->{'id'} =~ /filetimestamp$/) {
@@ -348,7 +348,7 @@ sub getXMLValueOfTemplateParameter {
 	} else {
 		if (defined($params->{$self->parameterPrefix.'_'.$parameter->{'id'}}) && $params->{$self->parameterPrefix.'_'.$parameter->{'id'}} ne '') {
 			my $value = Slim::Utils::Unicode::utf8decode_locale($params->{$self->parameterPrefix.'_'.$parameter->{'id'}});
-			$value = handleSearchText($value) if $parameter->{'type'} eq 'searchtext';
+			$value = handleSearchText($value, ($parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0)) if $parameter->{'type'} eq 'searchtext';
 			$result = '<value>'.encode_entities($value, "%_&<>\'\"").'</value>';
 			$log->debug("Got ".$parameter->{'id'}." = ".$value);
 		} else {
@@ -482,7 +482,8 @@ sub getFunctionTemplateData {
 }
 
 sub handleSearchText {
-	my $searchString = shift;
+	my ($searchString, $skipExact) = @_;
+
 	$searchString =~ s/^\s*//;
 	$searchString =~ s/\s+$//;
 
@@ -490,9 +491,10 @@ sub handleSearchText {
 		$searchString =~ s/%/\\%/ if $searchString =~ /%/;
 		$searchString =~ s/_/\\_/ if $searchString =~ /_/;
 	}
-	if (!$prefs->get('exacttitlesearch')) {
+	$searchString = Slim::Utils::Unicode::utf8decode_locale($searchString);
+
+	if (!$prefs->get('exacttitlesearch') && !$skipExact) {
 		$log->debug('Not using exact title search');
-		$searchString = Slim::Utils::Unicode::utf8decode_locale($searchString);
 		$searchString = Slim::Utils::Text::ignoreCaseArticles($searchString, 1);
 	}
 	return $searchString;
