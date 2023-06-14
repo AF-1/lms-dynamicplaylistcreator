@@ -46,9 +46,9 @@ my $serverPrefs = preferences('server');
 my $prefs = preferences('plugin.dynamicplaylistcreator');
 my $log = logger('plugin.dynamicplaylistcreator');
 
-my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 commentssearchstring1 commentssearchstring2 commentssearchstring3);
-my %mediumFields = map {$_ => 35} qw(includedcomment excludedcomment);
-my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minbpm maxbpm skipcount maxskipcount);
+my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3);
+my %mediumFields = map {$_ => 35} qw(commentssearchstring1 commentssearchstring2 commentssearchstring3);
+my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minsamplesize maxsamplesize minbpm maxbpm skipcount maxskipcount);
 
 sub new {
 	my ($class, $parameters) = @_;
@@ -163,7 +163,7 @@ sub webEditItem {
 							}
 
 							# add size for input element if specified
-							if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext') {
+							if ($p->{'type'} eq 'text' || $p->{'type'} eq 'number' || $p->{'type'} eq 'searchtext') {
 								$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
 								$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 								$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
@@ -219,7 +219,7 @@ sub webNewItemParameters {
 		for my $p (@{$parameters}) {
 			if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
 				# add size for input element if specified
-				if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext') {
+				if ($p->{'type'} eq 'text' || $p->{'type'} eq 'number' || $p->{'type'} eq 'searchtext') {
 					$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
 					$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 					$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
