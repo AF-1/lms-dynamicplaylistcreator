@@ -6,7 +6,7 @@
 		<description>Some basic options</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>1</listweight>
-		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="Random Tracks - Basic"/>
+		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your dynamic playlist"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,decade=Decade,genre=Genre,playlist=Playlist,year=Year"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>

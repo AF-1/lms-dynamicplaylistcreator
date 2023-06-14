@@ -6,15 +6,15 @@
 		<description>Focus on top rated albums</description>
 		<playlistcategory>albums</playlistcategory>
 		<listweight>2</listweight>
-		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="Top Rated Albums"/>
+		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your dynamic playlist"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter&lt;/b&gt; from user" value="" data="artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,virtuallibrary=Virtual Library,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists"/>
 		<parameter type="checkbox" id="notrepeat" name="Do &lt;b&gt;not repeat&lt;/b&gt; tracks within same playlist" value="1"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; albums" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;recently played&lt;/b&gt;" value="0"/>
-		<parameter type="text" id="minalbumtracks" name="Ignore albums with &lt;b&gt;less&lt;/b&gt; tracks than" value="3"/>
-		<parameter type="text" id="noofalbums" name="Number of albums from which to get new tracks &lt;b&gt;per batch&lt;/b&gt;" value="1"/>
-		<parameter type="text" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value=""/>
+		<parameter type="number" id="minalbumtracks" name="Ignore albums with &lt;b&gt;less&lt;/b&gt; tracks than" value="3"/>
+		<parameter type="number" id="noofalbums" name="Number of albums from which to get new tracks &lt;b&gt;per batch&lt;/b&gt;" value="1"/>
+		<parameter type="number" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value=""/>
 		<parameter type="optionalsinglelist" id="compis" name="Limit to or exclude &lt;b&gt;compilations&lt;/b&gt;" value="" data="1=Only compilations,2=No compilations"/>
 		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
