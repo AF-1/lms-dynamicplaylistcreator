@@ -34,7 +34,6 @@ use File::Spec::Functions qw(:ALL);
 use File::Basename;
 use File::Slurp;
 use FindBin qw($Bin);
-use Data::Dumper;
 
 __PACKAGE__->mk_accessor(rw => qw(pluginVersion extension includeExtensionInIdentifier identifierExtension parser));
 
@@ -55,7 +54,7 @@ sub new {
 sub readFromDir {
 	my ($self, $client, $dir, $items, $globalcontext) = @_;
 
-	$log->debug("Loading configuration from: $dir");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Loading configuration from: $dir");
 	my @dircontents = Slim::Utils::Misc::readDirectory($dir, $self->extension, 'dorecursive');
 
 	my $extensionRegexp = "\\.".$self->extension."\$";
@@ -80,23 +79,23 @@ sub readFromDir {
 			if ($encoding ne 'utf8') {
 				$content = Slim::Utils::Unicode::latin1toUTF8($content);
 				$content = Slim::Utils::Unicode::utf8on($content);
-				$log->debug("Loading $item and converting from latin1");
+				main::DEBUGLOG && $log->is_debug && $log->debug("Loading $item and converting from latin1");
 			} else {
 				$content = Slim::Utils::Unicode::utf8decode($content, 'utf8');
-				$log->debug("Loading $item without conversion with encoding ".$encoding);
+				main::DEBUGLOG && $log->is_debug && $log->debug("Loading $item without conversion with encoding ".$encoding);
 			}
 		}
 
 		if ($content) {
 			if (defined($self->parser)) {
 				my %localcontext = ();
-				$log->debug("Parsing file: $path");
+				main::DEBUGLOG && $log->is_debug && $log->debug("Parsing file: $path");
 				my $errorMsg = $self->parser->parse($client, $item, $content, $items, $globalcontext, \%localcontext);
 				if ($errorMsg) {
 					$log->error("Unable to open file: $path\n$errorMsg");
 				}
 			} else {
-				$log->debug('No parser defined');
+				main::DEBUGLOG && $log->is_debug && $log->debug('No parser defined');
 			}
 		} else {
 			if ($@) {
@@ -121,7 +120,7 @@ sub readDataFromDir {
 		$file .= ".".$self->extension;
 	}
 
-	$log->debug("Loading item data from: $dir/$file");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Loading item data from: $dir/$file");
 
 	my $path = catfile($dir, $file);
 
@@ -136,10 +135,10 @@ sub readDataFromDir {
 		if ($encoding ne 'utf8') {
 			$content = Slim::Utils::Unicode::latin1toUTF8($content);
 			$content = Slim::Utils::Unicode::utf8on($content);
-			$log->debug("Loading $itemId and converting from latin1 to $encoding");
+			main::DEBUGLOG && $log->is_debug && $log->debug("Loading $itemId and converting from latin1 to $encoding");
 		} else {
 			$content = Slim::Utils::Unicode::utf8decode($content, 'utf8');
-			$log->debug("Loading $itemId without conversion with encoding ".$encoding);
+			main::DEBUGLOG && $log->is_debug && $log->debug("Loading $itemId without conversion with encoding ".$encoding);
 		}
 	}
 	return $content;

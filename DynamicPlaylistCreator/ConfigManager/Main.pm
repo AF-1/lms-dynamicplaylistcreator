@@ -36,7 +36,6 @@ use Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler;
 use Plugins::DynamicPlaylistCreator::ConfigManager::PlaylistWebPageMethods;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
-use Data::Dumper;
 
 __PACKAGE__->mk_accessor(rw => qw(pluginVersion contentDirectoryHandler templateContentDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler contentPluginHandler templatePluginHandler parameterHandler templateParser contentParser templateContentParser webPageMethods addSqlErrorCallback templates items));
 
@@ -115,7 +114,7 @@ sub initWebPageMethods {
 			foreach (@subDirs) {
 				push @templateDirectories, catdir($plugindir, "DynamicPlaylistCreator", "Templates", $_);
 			}
-			$log->debug('templateDirectories = '.Dumper(\@templateDirectories));
+			main::DEBUGLOG && $log->is_debug && $log->debug('templateDirectories = '.Data::Dump::dump(\@templateDirectories));
 		}
 	}
 	my %webPageMethodsParameters = (
@@ -146,7 +145,7 @@ sub readTemplateConfiguration {
 	my %globalcontext = ();
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	for my $plugindir (@pluginDirs) {
-		$log->debug("Checking for dir: ".catdir($plugindir, "DynamicPlaylistCreator", "Templates"));
+		main::DEBUGLOG && $log->is_debug && $log->debug("Checking for dir: ".catdir($plugindir, "DynamicPlaylistCreator", "Templates"));
 		next unless -d catdir($plugindir, "DynamicPlaylistCreator", "Templates");
 		$self->templateDirectoryHandler()->readFromDir($client, catdir($plugindir, "DynamicPlaylistCreator", "Templates"), \%templates, \%globalcontext);
 	}
@@ -157,7 +156,7 @@ sub readItemConfiguration {
 	my ($self, $client, $storeInCache) = @_;
 
 	my $dir = $prefs->get("customplaylistfolder");
-	$log->debug("Searching for item configuration in: $dir");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Searching for item configuration in: $dir");
 
 	my %customItems = ();
 	my %globalcontext = ();
@@ -165,9 +164,9 @@ sub readItemConfiguration {
 
 	$globalcontext{'templates'} = $self->templates;
 
-	$log->debug("Checking for dir: $dir");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Checking for dir: $dir");
 	if (!defined $dir || !-d $dir) {
-		$log->debug("Skipping custom configuration scan - directory is undefined");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Skipping custom configuration scan - directory is undefined");
 	} else {
 		$self->templateContentDirectoryHandler()->readFromDir($client, $dir, \%customItems, \%globalcontext);
 	}

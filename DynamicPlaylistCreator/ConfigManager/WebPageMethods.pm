@@ -34,10 +34,8 @@ use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
 use XML::Simple;
 use File::Basename;
-use Data::Dumper;
 use FindBin qw($Bin);
 use HTML::Entities;
-use Data::Dumper;
 
 __PACKAGE__->mk_accessor(rw => qw(pluginVersion extension simpleExtension contentPluginHandler templatePluginHandler contentDirectoryHandler contentTemplateDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler parameterHandler contentParser templateDirectories itemDirectories customItemDirectory webCallbacks webTemplates template templateExtension templateDataExtension));
 
@@ -91,7 +89,7 @@ sub webNewItemTypes {
 	my ($self, $client, $params, $templates) = @_;
 
 	my $structuredTemplates = $self->structureItemTypes($templates);
-	$log->debug(Dumper($structuredTemplates));
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($structuredTemplates));
 
 	$params->{'pluginWebPageMethodsTemplates'} = \@{$structuredTemplates};
 	$params->{'pluginWebPageMethodsPostUrl'} = $self->webTemplates->{'webNewItemParameters'};
@@ -101,7 +99,7 @@ sub webNewItemTypes {
 
 sub webEditItem {
 	my ($self, $client, $params, $itemId, $itemHash, $templates) = @_;
-	$log->debug('Start webEditItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start webEditItem');
 
 	if (defined($itemId) && defined($itemHash->{$itemId})) {
 		my $templateData = $self->loadTemplateValues($client, $itemId, $itemHash->{$itemId});
@@ -157,9 +155,9 @@ sub webEditItem {
 							if ($p->{'id'} eq 'playlistname') {
 								$p->{'basetemplate'} = $template->{'name'};
 								$p->{'templateversion'} = $template->{'templateversion'};
-								$log->debug('new template version: '.Dumper($p->{'templateversion'}));
+								main::DEBUGLOG && $log->is_debug && $log->debug('new template version: '.Data::Dump::dump($p->{'templateversion'}));
 								$p->{'dpltemplateversion'} = $dplTemplateVersion;
-								$log->debug('template version of dynamic playlist: '.Dumper($p->{'dpltemplateversion'}));
+								main::DEBUGLOG && $log->is_debug && $log->debug('template version of dynamic playlist: '.Data::Dump::dump($p->{'dpltemplateversion'}));
 							}
 
 							# add size for input element if specified
@@ -287,7 +285,7 @@ sub webPlayItem {
 
 sub webSaveItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
-	$log->debug('Start webSaveItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start webSaveItem');
 
 	my $templateFile = $templateId;
 	my $regex1 = "\\.".$self->templateExtension."\$";
@@ -329,7 +327,7 @@ sub webSaveItem {
 		}
 	}
 
-	$log->debug('templateParameters = '.Dumper(\%templateParameters));
+	main::DEBUGLOG && $log->is_debug && $log->debug('templateParameters = '.Data::Dump::dump(\%templateParameters));
 
 	# add the name of template on which the dynamic playlist is based
 	$templateParameters{'basetemplate'} = $template->{'name'};
@@ -357,10 +355,10 @@ sub webSaveItem {
 	my $url = catfile($dir, $file);
 	my $customUrl = catfile($dir, $file.".".$self->extension);
 	if (!$self->saveSimpleItem($client, $params, $url, $templateId, $templates, $customUrl)) {
-		$log->debug('saveSimpleItem FAILED - return to edit mode');
+		main::DEBUGLOG && $log->is_debug && $log->debug('saveSimpleItem FAILED - return to edit mode');
 		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 	} else {
-		$log->debug('saveSimpleItem succeeded');
+		main::DEBUGLOG && $log->is_debug && $log->debug('saveSimpleItem succeeded');
 		$params->{'dplrefresh'} = 1;
 		return $self->webCallbacks->webList($client, $params);
 	}
@@ -368,8 +366,8 @@ sub webSaveItem {
 
 sub webSaveNewItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
-	$log->debug('Start webSaveNewItem');
-	$log->debug('templateId = '.Dumper($templateId));
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start webSaveNewItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('templateId = '.Data::Dump::dump($templateId));
 	$params->{'pluginWebPageMethodsError'} = undef;
 
 	my $templateFile = $templateId;
@@ -404,8 +402,8 @@ sub webSaveNewItem {
 	$customFile =~ s/$regexp1/$regexp2/;
 	my $url = catfile($dir, $file);
 	my $customUrl = catfile($dir, $customFile);
-	$log->debug('file = '.$file);
-	$log->debug('customfile = '.$customFile);
+	main::DEBUGLOG && $log->is_debug && $log->debug('file = '.$file);
+	main::DEBUGLOG && $log->is_debug && $log->debug('customfile = '.$customFile);
 
 	my $template = $templates->{$templateId};
 
@@ -451,7 +449,7 @@ sub webSaveNewItem {
 sub saveSimpleItem {
 	my ($self, $client, $params, $url, $templateId, $templates, $customUrl) = @_;
 	my $fh;
-	$log->debug('Start saveSimpleItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start saveSimpleItem');
 	my $regexp = $self->simpleExtension;
 	$regexp =~ s/\./\\./;
 	$regexp = ".*".$regexp."\$";
@@ -460,7 +458,7 @@ sub saveSimpleItem {
 	}
 
 	if (!($params->{'pluginWebPageMethodsError'})) {
-		$log->debug("Opening configuration file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Opening configuration file: $url");
 		open($fh, ">:encoding(UTF-8)", $url) or do {
 			$params->{'pluginWebPageMethodsError'} = "Error saving $url:".$!;
 			$log->error("Error saving $url:".$!);
@@ -518,9 +516,9 @@ sub saveSimpleItem {
 			$data = Slim::Utils::Unicode::utf8toLatin1($data);
 		}
 
-		$log->debug("Writing to file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Writing to file: $url");
 		print $fh $data;
-		$log->debug('Writing to file succeeded');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Writing to file succeeded');
 		close $fh;
 	}
 
@@ -611,7 +609,7 @@ sub saveSimpleItem {
 sub saveItem {
 	my ($self, $client, $params, $url) = @_;
 	my $fh;
-	$log->debug('Start saveItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start saveItem');
 
 	my $regexp = ".".$self->extension."\$";
 	$regexp =~ s/\./\\./;
@@ -623,7 +621,7 @@ sub saveItem {
 	$data =~ s/\r+\n/\n/g; # Remove any extra \r character, will create duplicate linefeeds on Windows if not removed
 
 	if (!($params->{'pluginWebPageMethodsError'})) {
-		$log->debug("Opening configuration file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Opening configuration file: $url");
 		open($fh, ">:encoding(UTF-8)", $url) or do {
 			$params->{'pluginWebPageMethodsError'} = "Error saving $url: ".$!;
 			$log->error("Error saving $url:".$!);
@@ -631,14 +629,14 @@ sub saveItem {
 	}
 	if (!($params->{'pluginWebPageMethodsError'})) {
 
-		$log->debug("Writing to file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Writing to file: $url");
 		my $encoding = Slim::Utils::Unicode::encodingFromString($data);
 		if ($encoding eq 'utf8') {
 			$data = Slim::Utils::Unicode::utf8toLatin1($data);
 		}
 
 		print $fh $data;
-		$log->debug('Writing to file succeeded');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Writing to file succeeded');
 		close $fh;
 	}
 
@@ -652,7 +650,7 @@ sub saveItem {
 sub webExportItem {
 	my ($self, $client, $params, $itemId, $items) = @_;
 	my $data = $self->loadItemDataFromAnyDir($itemId);
-	$log->debug('itemId = '.$itemId.' -- data = '.Dumper($data));
+	main::DEBUGLOG && $log->is_debug && $log->debug('itemId = '.$itemId.' -- data = '.Data::Dump::dump($data));
 
 	# get DPL folder for custom dpls
 	my $dpl_customPLfolder = preferences('plugin.dynamicplaylists4')->get('customplaylistfolder');
@@ -663,7 +661,7 @@ sub webExportItem {
 	}
 
 	my $url = catfile($dpl_customPLfolder, $itemId).'.sql';
-	$log->debug('url = '.Dumper($url));
+	main::DEBUGLOG && $log->is_debug && $log->debug('url = '.Data::Dump::dump($url));
 	if (-e $url) {
 		$params->{'pluginWebPageMethodsError'} = string('PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_DPLFILENAMEALREADYEXISTS');
 		return $self->webCallbacks->webList($client, $params);
@@ -676,13 +674,13 @@ sub webExportItem {
 	};
 
 	if (!($params->{'pluginWebPageMethodsError'})) {
-		$log->debug("Writing to file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Writing to file: $url");
 		my $encoding = Slim::Utils::Unicode::encodingFromString($data);
 		if ($encoding eq 'utf8') {
 			$data = Slim::Utils::Unicode::utf8toLatin1($data);
 		}
 		print $fh $data;
-		$log->debug('Writing to file succeeded');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Writing to file succeeded');
 		close $fh;
 
 		webDeleteItem($self, $client, $params, $itemId, $items);
@@ -829,13 +827,6 @@ sub quickSQLcount {
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;
-
-sub unescape {
-	my ($in, $isParam) = @_;
-	return if !$in;
-	$in =~ s/\+/ /g if $isParam;
-	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-	return $in;
-}
+*unescape = \&URI::Escape::uri_unescape;
 
 1;

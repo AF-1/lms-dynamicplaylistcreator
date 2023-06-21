@@ -32,10 +32,8 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
-use Data::Dumper;
 use FindBin qw($Bin);
 
-use Plugins::DynamicPlaylistCreator::Settings;
 use Plugins::DynamicPlaylistCreator::ConfigManager::Main;
 
 my $playLists = undef;
@@ -60,7 +58,8 @@ sub initPlugin {
 	$pluginVersion = Slim::Utils::PluginManager->dataForPlugin($class)->{'version'};
 
 	initPrefs();
-	if (!$::noweb) {
+	if (main::WEBUI) {
+		require Plugins::DynamicPlaylistCreator::Settings;
 		Plugins::DynamicPlaylistCreator::Settings->new($class);
 	}
 
@@ -69,7 +68,7 @@ sub initPlugin {
 
 sub initPrefs {
 	$prefs->init({
-		customdirparentfolderpath => $serverPrefs->get('playlistdir'),
+		customdirparentfolderpath => Slim::Utils::OSDetect::dirsFor('prefs'),
 	});
 
 	createCustomPlaylistFolder();
@@ -92,10 +91,10 @@ sub initPrefs {
 sub postinitPlugin {
 	my $class = shift;
 	my $cachePluginVersion = $cache->get('dplc_pluginversion');
-	$log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Dumper($cachePluginVersion));
+	main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
 	unless ($cachePluginVersion && $cachePluginVersion eq $pluginVersion && $cache->get('dplc_contributorlist_all') && $cache->get('dplc_contributorlist_albumartists') && $cache->get('dplc_contributorlist_composers') && $cache->get('dplc_genrelist') && $cache->get('dplc_contenttypes')) {
-		$log->debug('Refreshing caches for contributors, genres and content types');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Refreshing caches for contributors, genres and content types');
 		refreshSQLCache();
 	}
 
@@ -119,7 +118,7 @@ sub initPlayLists {
 	if (defined($client)) {
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&refreshDPLplaylists);
 	}
-	$log->debug('playlists = '.Dumper($playLists));
+	main::DEBUGLOG && $log->is_debug && $log->debug('playlists = '.Data::Dump::dump($playLists));
 }
 
 sub getConfigManager {
@@ -137,7 +136,7 @@ sub refreshDPLplaylists {
 	my $client = shift;
 
 	Slim::Utils::Timers::killTimers($client, \&refreshDPLplaylists);
-	$log->debug('Tell DPL to refresh list of dynamic playlists');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Tell DPL to refresh list of dynamic playlists');
 	my $request = $client->execute(['dynamicplaylist', 'refreshplaylists']);
 	$request->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
 }
@@ -188,7 +187,7 @@ sub handleWebList {
 	$params->{'hidedplrefreshmsg'} = $prefs->get('hidedplrefreshmsg');
 	$params->{'dplversion'} = $dplVersion if $dplVersion;
 	$params->{'pluginDynamicPlaylistCreatorPlayLists'} = \@webPlaylists;
-	$log->debug('webPlaylists = '.Dumper(\@webPlaylists));
+	main::DEBUGLOG && $log->is_debug && $log->debug('webPlaylists = '.Data::Dump::dump(\@webPlaylists));
 	return Slim::Web::HTTP::filltemplatefile('plugins/DynamicPlaylistCreator/list.html', $params);
 }
 
@@ -226,7 +225,7 @@ sub handleWebStartPlaylist {
 	my ($client, $params) = @_;
 	my $dpl = $params->{'item'};
 	return unless $client && $dpl;
-	$log->debug('Tell DPL to play dynamic playlist "'.$dpl.'"');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Tell DPL to play dynamic playlist "'.$dpl.'"');
 	my $request = $client->execute(['dynamicplaylist', 'playlist', 'play', 'dplccustom_'.$dpl]);
 	$request->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
 	return getConfigManager()->webPlayItem($client, $params);
@@ -238,13 +237,12 @@ sub handleWebExportPlaylist {
 }
 
 sub createCustomPlaylistFolder {
-	my $customPlaylistFolder_parentfolderpath = $prefs->get('customdirparentfolderpath') || $serverPrefs->get('playlistdir');
+	my $customPlaylistFolder_parentfolderpath = $prefs->get('customdirparentfolderpath') || Slim::Utils::OSDetect::dirsFor('prefs');
 	my $customPlaylistFolder = catdir($customPlaylistFolder_parentfolderpath, 'DynamicPlaylistCreator');
 	eval {
 		mkdir($customPlaylistFolder, 0755) unless (-d $customPlaylistFolder);
-		chdir($customPlaylistFolder);
 	} or do {
-		$log->error("Could not create or access DynamicPlaylistCreator folder in parent folder '$customPlaylistFolder_parentfolderpath'! Please make sure that LMS has read/write permissions (755) for the parent folder.");
+		$log->error("Could not create DynamicPlaylistCreator folder in parent folder '$customPlaylistFolder_parentfolderpath'! Please make sure that LMS has read/write permissions (755) for the parent folder.");
 		return;
 	};
 	$prefs->set('customplaylistfolder', $customPlaylistFolder);
@@ -253,13 +251,13 @@ sub createCustomPlaylistFolder {
 sub getVirtualLibraries {
 	my (@items, @hiddenVLs);
 	my $libraries = Slim::Music::VirtualLibraries->getLibraries();
-	$log->debug('ALL virtual libraries: '.Dumper($libraries));
+	main::DEBUGLOG && $log->is_debug && $log->debug('ALL virtual libraries: '.Data::Dump::dump($libraries));
 
 	while (my ($key, $values) = each %{$libraries}) {
 		my $count = Slim::Music::VirtualLibraries->getTrackCount($key);
 		my $name = $values->{'name'};
 		my $displayName = Slim::Utils::Unicode::utf8decode($name, 'utf8').' ('.Slim::Utils::Misc::delimitThousands($count).($count == 1 ? ' track' : ' tracks').')';
-		$log->debug("VL: ".$displayName);
+		main::DEBUGLOG && $log->is_debug && $log->debug("VL: ".$displayName);
 		my $persistentVLID = $values->{'id'};
 
 		push @items, {
@@ -284,7 +282,7 @@ sub getVirtualLibraries {
 }
 
 sub refreshSQLCache {
-	$log->debug('Deleting old caches and creating new ones');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Deleting old caches and creating new ones');
 	$cache->remove('dplc_pluginversion');
 	$cache->remove('dplc_contributorlist_all');
 	$cache->remove('dplc_contributorlist_albumartists');
@@ -300,34 +298,25 @@ sub refreshSQLCache {
 
 	my $contributorList_all = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_all);
 	$cache->set('dplc_contributorlist_all', $contributorList_all, 'never');
-	$log->debug('contributorList_all count = '.scalar(@{$contributorList_all}));
+	main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_all count = '.scalar(@{$contributorList_all}));
 
 	my $contributorList_albumartists = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_albumartists);
 	$cache->set('dplc_contributorlist_albumartists', $contributorList_albumartists, 'never');
-	$log->debug('contributorList_albumartists count = '.scalar(@{$contributorList_albumartists}));
+	main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_albumartists count = '.scalar(@{$contributorList_albumartists}));
 
 	my $contributorList_composers = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_composers);
 	$cache->set('dplc_contributorlist_composers', $contributorList_composers, 'never');
-	$log->debug('contributorList_composers count = '.scalar(@{$contributorList_composers}));
+	main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_composers count = '.scalar(@{$contributorList_composers}));
 
 	my $genreList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $genreSQL);
 	$cache->set('dplc_genrelist', $genreList, 'never');
-	$log->debug('genreList count = '.scalar(@{$genreList}));
+	main::DEBUGLOG && $log->is_debug && $log->debug('genreList count = '.scalar(@{$genreList}));
 
 	my $contentTypesList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contentTypesSQL);
 	$cache->set('dplc_contenttypes', $contentTypesList, 'never');
-	$log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
+	main::DEBUGLOG && $log->is_debug && $log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
 
 	$cache->set('dplc_pluginversion', $pluginVersion);
-}
-
-*escape = \&URI::Escape::uri_escape_utf8;
-
-sub unescape {
-	my ($in, $isParam) = @_;
-	$in =~ s/\+/ /g if $isParam;
-	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-	return $in;
 }
 
 1;
