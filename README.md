@@ -62,13 +62,6 @@ Users familiar with SQLite can <b>use the <i>export</i> button</b> to <b>permane
 Moved dynamic playlists are removed from and no longer managed by DPLC.<br><br>Please note: the <b>export</b> button is <b>disabled by default</b> and can be enabled in DPLC's settings.
 </p></details><br>
 
-<details><summary>»<b>I <i>can't save</i> new dynamic playlists. I get this error message: “Could not access the <i>DynamicPlaylistCreator</i> folder“.</i></b>«</summary><br><p>
-The <i>DynamicPlaylistCreator</i> folder is where DPLC stores all files related to your custom dynamic playlists and where the <i>Dynamic Playlists</i> plugin expects to find them. The folder name is hard-coded and must not be changed.<br>
-On every LMS (re)start, DPLC checks if there's a folder called <i>DynamicPlaylistCreator</i> in the parent folder. The default <b>parent</b> folder is the <i>LMS playlist folder</i> but you can change that in DPLC's preferences. If it doesn't find the folder <i>DynamicPlaylistCreator</i> inside the specified parent folder, it will try to create it.<br><br>
-The most likely cause for the error message above and matching error messages in the server log is that DPLC can't create the folder because LMS doesn't have read/write permissions for the parent folder (or the <i>DynamicPlaylistCreator</i> folder).<br><br>
-So please make sure that <b>LMS has read/write permissions (755) for the parent folder - and the <i>DynamicPlaylistCreator</i> folder</b> (if it exists but cannot be accessed).
-</p></details><br>
-
 <details><summary>»<b>When I <i>edit</i> my custom dynamic playlist, DPLC displays a <i>saved version</i> number and a <i>new version</i> number. What does that mean?</b>«</summary><br><p>
 When I change/add template parameters or fix template bugs, the template version number increases.<br>
 If you created your custom dynamic playlist with a different/older template version than the current one, this discrepancy is displayed next to the template name on the edit page.<br><br>
@@ -104,6 +97,13 @@ Dynamic playlists that <b>use the LMS cache</b> cannot have a track limit becaus
 
 <details><summary>»<b>Does DPLC handle online tracks?</b>«</summary><br><p>
 DPLC creates dynamic playlists for the <i>Dynamic Playlists</i> plugin which will process <b>online tracks</b> that have been <b>added to your LMS library as part of an <i>album</i></b>. LMS does not import <b>single</b> online tracks or tracks of <i>online</i> <b>playlists</b> as <b>library</b> tracks and therefore these won't be processed by <i>Dynamic Playlists</i>.</p></details><br>
+
+<details><summary>»<b>I <i>can't save</i> new dynamic playlists. I get this error message: “Could not create the <i>DynamicPlaylistCreator</i> folder“.</i></b>«</summary><br><p>
+The <i>DynamicPlaylistCreator</i> folder is where DPLC stores all files related to your custom dynamic playlists and where the <i>Dynamic Playlists</i> plugin expects to find them. The folder name is hard-coded and must not be changed.<br>
+On every LMS (re)start, DPLC checks if there's a folder called <i>DynamicPlaylistCreator</i> in the parent folder. The default <b>parent</b> folder is the <i>LMS preferences folder</i> but you can change that in DPLC's preferences. If it doesn't find the folder <i>DynamicPlaylistCreator</i> inside the specified parent folder, it will try to create it.<br><br>
+The most likely cause for the error message above and matching error messages in the server log is that DPLC can't create the folder because LMS doesn't have read/write permissions for the parent folder (or the <i>DynamicPlaylistCreator</i> folder).<br><br>
+So please make sure that <b>LMS has read/write permissions (755) for the parent folder - and the <i>DynamicPlaylistCreator</i> folder</b> (if it exists but cannot be accessed).
+</p></details><br>
 
 <details><summary>»<b>Can I import my custom dynamic playlists from the <i>SQLPlayList</i> plugin?</b>«</summary><br><p>
 No, you <b>can't</b> import or migrate dynamic playlist definitions from the <i>SQLPlayList</i> plugin to <i>Dynamic Playlist <b>Creator</b></i>. They are based on templates which are different from the ones that DPLC uses.
