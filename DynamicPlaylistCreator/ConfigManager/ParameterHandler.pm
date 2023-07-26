@@ -201,7 +201,7 @@ sub parameterIsSpecified {
 sub getValueOfTemplateParameter {
 	my ($self, $params, $parameter) = @_;
 	my $result = '';
-	my $dbh = getCurrentDBH();
+	my $dbh = Slim::Schema->dbh;
 	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ /listcached/) {
 		my $selectedValues = undef;
 		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} eq 'contributorlistcachedall' || $parameter->{'type'} eq 'contributorlistcachedalbumartists' || $parameter->{'type'} eq 'contributorlistcachedcomposers') {
@@ -310,7 +310,7 @@ sub getValueOfTemplateParameter {
 
 sub getXMLValueOfTemplateParameter {
 	my ($self, $params, $parameter) = @_;
-	my $dbh = getCurrentDBH();
+	my $dbh = Slim::Schema->dbh;
 	my $result = '';
 	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ /listcached/) {
 		my $selectedValues = undef;
@@ -406,12 +406,14 @@ sub getCheckBoxesQueryParameter {
 sub getSQLTemplateData {
 	my ($self, $sqlstatements) = @_;
 	my @result =();
-	my $dbh = getCurrentDBH();
+	my $dbh = Slim::Schema->dbh;
 
 	for my $sql (split(/[;]/, $sqlstatements)) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("sql = ".Data::Dump::dump($sql));
 		eval {
 			$sql =~ s/^\s+//g;
 			$sql =~ s/\s+$//g;
+			next if !$sql;
 			my $sth = $dbh->prepare($sql);
 			main::DEBUGLOG && $log->is_debug && $log->debug("Executing: $sql");
 			$sth->execute() or do {
@@ -497,10 +499,6 @@ sub handleSearchText {
 		$searchString = Slim::Utils::Text::ignoreCaseArticles($searchString, 1);
 	}
 	return $searchString;
-}
-
-sub getCurrentDBH {
-	return Slim::Schema->storage->dbh();
 }
 
 sub trim_leadtail {
