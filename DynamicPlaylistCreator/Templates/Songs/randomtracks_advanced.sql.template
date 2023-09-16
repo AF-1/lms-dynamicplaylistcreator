@@ -239,6 +239,15 @@ select tracks.id, tracks.primary_artist from tracks
 				library_track.track = tracks.id and
 				library_track.library = 'PlaylistVirtualLibraryID2')
 	[%- END %]
+	[%- IF filepath1 %]
+		and [% IF filepath2 or filepath3 %]([% END %][% IF filepath2 && filepath3 && filepath1_logop == 'or' && filepath2_logop == 'and' %]([% END %]tracks.url [% IF filepath1_searchtype.match('NOT') %]not [% END %]like '[% IF filepath1_searchtype.match('LIKE') %]%%[% END %][% filepath1 | fileurluri %]%%' ESCAPE '\'
+		[%- IF filepath2 %]
+		[% IF filepath2_searchtype.match('NOT') %]and [% ELSE %][% filepath1_logop %] [% END %][% IF filepath2 && filepath3 && filepath1_logop == 'and' && filepath2_logop == 'or' %]([% END %]tracks.url [% IF filepath2_searchtype.match('NOT') %]not [% END %]like '[% IF filepath2_searchtype.match('LIKE') %]%%[% END %][% filepath2 | fileurluri %]%%' ESCAPE '\'[% IF filepath2 && filepath3 && filepath1_logop == 'or' && filepath2_logop == 'and' %])[% END %]
+		[%- IF filepath3 %]
+		[% IF filepath3_searchtype.match('NOT') %]and [% ELSE %][% filepath2_logop %] [% END %]tracks.url [% IF filepath3_searchtype.match('NOT') %]not [% END %]like '[% IF filepath3_searchtype.match('LIKE') %]%%[% END %][% filepath3 | fileurluri %]%%' ESCAPE '\'[% IF filepath2 && filepath3 && filepath1_logop == 'and' && filepath2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF filepath2 or filepath3 %])[% END %]
+	[%- END %]
 	[%- IF commentssearchstring1 %]
 		and [% IF commentssearchstring2 or commentssearchstring3 %]([% END %][% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'or' && commentssearchstring2_logop == 'and' %]([% END %]comments.value [% IF commentssearchstring1_searchtype.match('NOT') %]not [% END %]like '[% IF commentssearchstring1_searchtype.match('LIKE') %]%%[% END %][% commentssearchstring1 %]%%'
 		[%- IF commentssearchstring2 %]

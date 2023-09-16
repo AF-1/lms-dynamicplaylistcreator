@@ -75,6 +75,14 @@
 		<parameter type="searchtext" id="tracksearchtitle3" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="text" id="minfiletimestamp" name="File timestamp is &lt;b&gt;after or equal&lt;/b&gt; to" value="" placeholdervalue=" dd/mm/yyyy"/>
 		<parameter type="text" id="maxfiletimestamp" name="File timestamp is &lt;b&gt;before or equal&lt;/b&gt; to" value="" placeholdervalue=" dd/mm/yyyy"/>
+		<parameter type="searchtype" id="filepath1_searchtype" name="filepath1 search type" value=""/>
+		<parameter type="searchurl" id="filepath1" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
+		<parameter type="logop" id="filepath1_logop" name="" value=""/>
+		<parameter type="searchtype" id="filepath2_searchtype" name="filepath2 search type" value=""/>
+		<parameter type="searchurl" id="filepath2" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
+		<parameter type="logop" id="filepath2_logop" name="" value=""/>
+		<parameter type="searchtype" id="filepath3_searchtype" name="filepath3 search type" value=""/>
+		<parameter type="searchurl" id="filepath3" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
 		<parameter type="sqlmultiplelist" id="includedstaticplaylists" name="Only &lt;b&gt;include&lt;/b&gt; tracks from these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="sqlmultiplelist" id="excludedstaticplaylists" name="&lt;b&gt;Ignore&lt;/b&gt; tracks in these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="checkbox" id="lossless" name="Only lossless formats" value="0"/>

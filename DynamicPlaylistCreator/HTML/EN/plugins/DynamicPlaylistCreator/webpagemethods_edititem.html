@@ -27,14 +27,14 @@
 				<td>
 				[% IF parameter.type == 'text' || parameter.type == 'number' || parameter.type == 'multivaltext' %]
 					<input type="[% IF CTIenabled && (parameter.type == 'sqloptionalsinglelist' && (matches = (parameter.id.match('(in|ex)cludedcustomtagname(\d+)'))) || (parameter.type == 'singlelist' && (matches = parameter.id.match('(in|ex)cludedcustomtagtype(\d+)'))) || (parameter.type == 'multivaltext' && (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')))) && matches.1 > customtagcount %]hidden[% ELSE %]text[% END %]" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.type == 'number' %] inputmode="numeric" pattern="[0-9]*"[% END %][% IF parameter.placeholdervalue %] placeholder="[% parameter.placeholdervalue %]"[% END %][% IF parameter.id == 'playlistname' %] required[% END %]>
-				[% ELSIF parameter.type == 'searchtext' %]
+				[% ELSIF parameter.type == 'searchtext' || parameter.type == 'searchurl' %]
 					<select class="rmargin" name="itemparameter_[% parameter.id %]_searchtype">
 						<option [% IF searchtype == "LIKE" %]selected[% END %] value="LIKE" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_CONTAINS" | string %]</option>
 						<option [% IF searchtype == "NOT LIKE" %]selected[% END %] value="NOT LIKE" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_CONTAIN" | string %]</option>
 						<option [% IF searchtype == "STARTS WITH" %]selected[% END %] value="STARTS WITH" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_STARTS_WITH" | string %]</option>
 						<option [% IF searchtype == "STARTS NOT WITH" %]selected[% END %] value="STARTS NOT WITH" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_START_WITH" | string %]</option>
 					</select>
-					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %]>
+					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.placeholdervalue %] placeholder="[% parameter.placeholdervalue %]"[% END %]>
 				[% ELSIF parameter.type == 'logop' %]
 					<select name="itemparameter_[% parameter.id %]">
 						[% FOREACH option = {

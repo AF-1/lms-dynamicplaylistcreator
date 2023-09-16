@@ -284,7 +284,8 @@ sub getValueOfTemplateParameter {
 				$thisvalue = quoteValue($thisvalue);
 			}
 
-			$thisvalue = handleSearchText($thisvalue, ($parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0)) if $parameter->{'type'} eq 'searchtext';
+			$thisvalue = handleSearchText($thisvalue, $parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0) if $parameter->{'type'} eq 'searchtext';
+			$thisvalue = handleSearchURL($thisvalue) if $parameter->{'type'} eq 'searchurl';
 
 			# filestamp: date -> epoch time
 			if ($parameter->{'type'} eq 'text' && $parameter->{'id'} =~ /filetimestamp$/) {
@@ -347,7 +348,8 @@ sub getXMLValueOfTemplateParameter {
 	} else {
 		if (defined($params->{$self->parameterPrefix.'_'.$parameter->{'id'}}) && $params->{$self->parameterPrefix.'_'.$parameter->{'id'}} ne '') {
 			my $value = Slim::Utils::Unicode::utf8decode_locale($params->{$self->parameterPrefix.'_'.$parameter->{'id'}});
-			$value = handleSearchText($value, ($parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0)) if $parameter->{'type'} eq 'searchtext';
+			$value = handleSearchText($value, $parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0) if $parameter->{'type'} eq 'searchtext';
+			$value = handleSearchURL($value) if $parameter->{'type'} eq 'searchurl';
 			$result = '<value>'.encode_entities($value, "%_&<>\'\"").'</value>';
 			main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = ".$value);
 		} else {
@@ -480,6 +482,25 @@ sub getFunctionTemplateData {
 		$log->warn("Error getting values for: $data, incorrect number of parameters ".scalar(@params));
 	}
 	return \@result;
+}
+
+sub handleSearchURL {
+	my $url = shift;
+	$url =~ s/^\s*//;
+	$url =~ s/\s+$//;
+
+	my $uri = URI::Escape::uri_escape_utf8($url);
+
+	# don't escape backslashes
+	$uri =~ s$%(?:2F|5C)$/$ig;
+
+	# don't escape colon after file
+	$uri =~ s$file(?:%3A|_3A)$file:$ig;
+
+	# replace the % in the URI escaped string with a single character placeholder
+	$uri =~ s/%/_/g;
+
+	return $uri;
 }
 
 sub handleSearchText {
