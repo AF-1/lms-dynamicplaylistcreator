@@ -842,8 +842,8 @@ sub fileURLFromPathUri {
 	# don't escape backslashes
 	$uri =~ s$%(?:2F|5C)$/$ig;
 
-	# don't escape colon after file
-	$uri =~ s$file(?:%3A|_3A)$file:$ig;
+	# don't escape colons (important for file: and Windows)
+	$uri =~ s$%(?:3A|_3A)$:$ig;
 
 	# replace the % in the URI escaped string with a single character placeholder
 	$uri =~ s/%/_/g;
