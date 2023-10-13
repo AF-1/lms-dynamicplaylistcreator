@@ -87,7 +87,7 @@
 				</td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>
-			[%- IF (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')) %]
+			[%- IF (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')) || parameter.id == 'clistartcmd4' %]
 			<tr><td>&nbsp;</td></tr>
 			<tr><td>&nbsp;</td></tr>
 			[%- END %]

@@ -93,5 +93,13 @@
 		<parameter type="functionoptionalsinglelist" id="virtuallibrary" name="&lt;b&gt;Always&lt;/b&gt; limit to &lt;b&gt;this&lt;/b&gt; virtual library" value="" data="Plugins::DynamicPlaylistCreator::Plugin,getVirtualLibraries"/>
 		<parameter type="functionoptionalsinglelist" id="excludevirtuallibrary" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from &lt;b&gt;this&lt;/b&gt; virtual library" value="" data="Plugins::DynamicPlaylistCreator::Plugin,getVirtualLibraries"/>
 		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>
+		<parameter type="text" id="clistartcmd1" name="Playlist &lt;b&gt;start&lt;/b&gt; action 1" value="" placeholdervalue=" Enter a valid CLI command"/>
+		<parameter type="text" id="clistartcmd2" name="Playlist &lt;b&gt;start&lt;/b&gt; action 2" value="" placeholdervalue=" Enter a valid CLI command"/>
+		<parameter type="text" id="clistartcmd3" name="Playlist &lt;b&gt;start&lt;/b&gt; action 3" value="" placeholdervalue=" Enter a valid CLI command"/>
+		<parameter type="text" id="clistartcmd4" name="Playlist &lt;b&gt;start&lt;/b&gt; action 4" value="" placeholdervalue=" Enter a valid CLI command"/>
+		<parameter type="text" id="clistopcmd1" name="Playlist &lt;b&gt;stop&lt;/b&gt; action 1" value="" placeholdervalue=" Enter a valid CLI command"/>
+		<parameter type="text" id="clistopcmd2" name="Playlist &lt;b&gt;stop&lt;/b&gt; action 2" value="" placeholdervalue=" Enter a valid CLI command"/>
+		<parameter type="text" id="clistopcmd3" name="Playlist &lt;b&gt;stop&lt;/b&gt; action 3" value="" placeholdervalue=" Enter a valid CLI command"/>
+		<parameter type="text" id="clistopcmd4" name="Playlist &lt;b&gt;stop&lt;/b&gt; action 4" value="" placeholdervalue=" Enter a valid CLI command"/>
 	</template>
 </dynamicplaylistcreator>
