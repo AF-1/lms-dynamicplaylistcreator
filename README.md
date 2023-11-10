@@ -10,7 +10,7 @@ The target group for this plugin is users who want to quickly and easily create 
 ## Requirements
 - Dynamic Playlists version **4**
 
-- LMS version ≥ 7.9
+- LMS version >= **8**.0
 
 - LMS database = SQLite
 <br><br><br>
