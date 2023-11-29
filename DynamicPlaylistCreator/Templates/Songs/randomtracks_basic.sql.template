@@ -4,6 +4,9 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 -- PlaylistUseCache: 1
 [%- IF virtuallibrary %]
 -- PlaylistVirtualLibraryID1:[% virtuallibrary %]
@@ -95,6 +98,7 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and dynamicplaylist_history.id is null
 	[%- IF request1fromuser == 'album' %]
 		and tracks.album = 'PlaylistParameter1'
 	[%- ELSIF request1fromuser == 'year' %]
@@ -102,7 +106,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- ELSIF request1fromuser == 'decade' %]
 		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
 	[%- END %]
-		and dynamicplaylist_history.id is null
 	[%- IF includedgenres %]
 		and genres.namesearch in ([% includedgenres %])
 	[%- END %]

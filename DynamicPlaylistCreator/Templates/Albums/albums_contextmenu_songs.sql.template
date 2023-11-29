@@ -1,6 +1,9 @@
 -- PlaylistName:[% playlistname %]
 -- PlaylistMenuListType:contextmenu
 -- PlaylistCategory:albums
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 -- PlaylistUseCache: 1
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
@@ -52,7 +55,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and genres.namesearch in ([% includedgenres %])
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or exactrating or maxrating or sortorder or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or includedratings or maxrating or sortorder or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -69,20 +72,20 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF minlength %]
 		and tracks.secs > [% minlength %]
 	[%- END %]
-	[%- IF minrating && !exactrating %]
+	[%- IF minrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
 	[%- END %]
 	[%- IF request2fromuser == 'minRating' or request3fromuser == 'minRating' %]
 		and ifnull(tracks_persistent.rating, 0) >= 'PlaylistParameter[% IF request2fromuser == 'minRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
-	[%- IF maxrating && !exactrating %]
+	[%- IF maxrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
 	[%- END %]
 	[%- IF request2fromuser == 'maxRating' or request3fromuser == 'maxRating' %]
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request2fromuser == 'minRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
-	[%- IF exactrating && !minrating && !maxrating %]
-		and ifnull(tracks_persistent.rating, 0) = [% IF exactrating == 'zero' %]0[% ELSE %][% exactrating %][% END %]
+	[%- IF includedratings && !minrating && !maxrating && request1fromuser != 'exactRating' && request2fromuser != 'exactRating' %]
+		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
 	[%- END %]
 	[%- IF request2fromuser == 'exactRating' or request3fromuser == 'exactRating' %]
 		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request2fromuser == 'minRating' %]2[% ELSE %]3[% END %]'

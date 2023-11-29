@@ -4,6 +4,9 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 [%- IF nooftracks %]
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
@@ -141,10 +144,8 @@ create temporary table tmp_random_contributors as
 		[%- END %]
 		[%- END %]
 		[%- # ------- MISC ------- %]
-		[%- IF notrepeat %]
 		left join dynamicplaylist_history on
 			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-		[%- END %]
 		[%- IF playedbefore or sortorder or recentlyplayed or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
 		left join tracks_persistent on
 			tracks_persistent.urlmd5 = tracks.urlmd5
@@ -155,15 +156,13 @@ create temporary table tmp_random_contributors as
 		[%- END %]
 		WHERE
 			tracks.audio = 1
+			and dynamicplaylist_history.id is null
 		[%- IF request1fromuser == 'year' or request2fromuser == 'year' %]
 			and ifnull(tracks.year, 0) = 'PlaylistParameter[% IF request1fromuser == 'year' %]1[% ELSE %]2[% END %]'
 		[%- ELSIF request1fromuser == 'decade' or request2fromuser == 'decade' %]
 			and infull(tracks.year, 0) >= 'PlaylistParameter[% IF request1fromuser == 'decade' %]1[% ELSE %]2[% END %]' and ifnull(tracks.year, 0) < ('PlaylistParameter[% IF request1fromuser == 'decade' %]1[% ELSE %]2[% END %]' + 10)
 		[%- ELSIF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' or request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' %]
 			and ifnull(tracks.year, 0) in ('PlaylistParameter[% IF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]1[% ELSE %]2[% END %]')
-		[%- END %]
-		[%- IF notrepeat %]
-			and dynamicplaylist_history.id is null
 		[%- END %]
 		[%- IF playedbefore == 1 and !recentlyplayed %]
 			and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
@@ -253,21 +252,17 @@ select tracks.id, tracks.primary_artist from tracks
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and dynamicplaylist_history.id is null
 	[%- IF request1fromuser == 'year' or request2fromuser == 'year' %]
 		and ifnull(tracks.year, 0) = 'PlaylistParameter[% IF request1fromuser == 'year' %]1[% ELSE %]2[% END %]'
 	[%- ELSIF request1fromuser == 'decade' or request2fromuser == 'decade' %]
 		and ifnull(tracks.year, 0) >= 'PlaylistParameter[% IF request1fromuser == 'decade' %]1[% ELSE %]2[% END %]' and ifnull(tracks.year, 0) < ('PlaylistParameter[% IF request1fromuser == 'decade' %]1[% ELSE %]2[% END %]' + 10)
 	[%- ELSIF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' or request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' %]
 		and ifnull(tracks.year, 0) in ('PlaylistParameter[% IF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]1[% ELSE %]2[% END %]')
-	[%- END %]
-	[%- IF notrepeat %]
-		and dynamicplaylist_history.id is null
 	[%- END %]
 	[%- IF playedbefore == 1 and !recentlyplayed %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0

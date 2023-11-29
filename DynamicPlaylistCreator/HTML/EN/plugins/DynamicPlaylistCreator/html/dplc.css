@@ -1,0 +1,25 @@
+.inputbutton{padding:2px;}.rmargin{margin-right:10px;}
+@font-face {
+	font-family: 'fontawesome-light';
+	src: url('fonts/customized-light-font.woff?51z09u') format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+}
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'fontawesome-light' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-info-circle:before {
+  content: "\f05a";
+}
+.icon-warning:before {
+  content: "\f071";
+}

@@ -4,6 +4,9 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 -- PlaylistUseCache: 1
 [% IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
@@ -71,6 +74,7 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and dynamicplaylist_history.id is null
 	[%- IF request1fromuser == 'album' or request2fromuser == 'album' %]
 		and tracks.album = 'PlaylistParameter[% IF request1fromuser == 'album' %]1[% ELSE %]2[% END %]'
 	[%- ELSIF request1fromuser == 'year' or request2fromuser == 'year' %]
@@ -80,7 +84,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- ELSIF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' or request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' %]
 		and ifnull(tracks.year, 0) in ('PlaylistParameter[% IF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]1[% ELSE %]2[% END %]')
 	[%- END %]
-		and dynamicplaylist_history.id is null
 	[%- IF request1fromuser == 'minRating' or request2fromuser == 'minRating' %]
 		and ifnull(tracks_persistent.rating, 0) >= 'PlaylistParameter[% IF request1fromuser == 'minRating' %]1[% ELSE %]2[% END %]'
 	[%- END %]

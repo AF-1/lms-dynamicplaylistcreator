@@ -89,12 +89,12 @@ sub initPrefs {
 
 sub postinitPlugin {
 	my $class = shift;
-	my $cachePluginVersion = $cache->get('dplc_pluginversion');
-	main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
-	unless ($cachePluginVersion && $cachePluginVersion eq $pluginVersion && $cache->get('dplc_contributorlist_all') && $cache->get('dplc_contributorlist_albumartists') && $cache->get('dplc_contributorlist_composers') && $cache->get('dplc_genrelist') && $cache->get('dplc_contenttypes')) {
-		main::DEBUGLOG && $log->is_debug && $log->debug('Refreshing caches for contributors, genres and content types');
-		refreshSQLCache();
+	unless (!Slim::Schema::hasLibrary() || Slim::Music::Import->stillScanning) {
+		my $cachePluginVersion = $cache->get('dplc_pluginversion');
+		main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
+
+		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('dplc_contributorlist_all') || !$cache->get('dplc_contributorlist_albumartists') || !$cache->get('dplc_contributorlist_composers') || !$cache->get('dplc_genrelist') || !$cache->get('dplc_contenttypes') || ((Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) && !$cache->get('dplc_releasetypes')));
 	}
 
 	my @enabledPlugins = Slim::Utils::PluginManager->enabledPlugins();
@@ -288,12 +288,14 @@ sub refreshSQLCache {
 	$cache->remove('dplc_contributorlist_composers');
 	$cache->remove('dplc_genrelist');
 	$cache->remove('dplc_contenttypes');
+	$cache->remove('dplc_releasetypes');
 
 	my $contributorSQL_all = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5,6) group by contributors.id order by contributors.namesort asc";
 	my $contributorSQL_albumartists = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc";
 	my $contributorSQL_composers = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role = 2 group by contributors.id order by contributors.namesort asc";
 	my $genreSQL = "select genres.id,genres.name,genres.namesearch from genres order by namesort asc";
 	my $contentTypesSQL = "select distinct tracks.content_type,tracks.content_type,tracks.content_type from tracks where tracks.content_type is not null and tracks.content_type != 'cpl' and tracks.content_type != 'src' and tracks.content_type != 'ssp' and tracks.content_type != 'dir' order by tracks.content_type asc";
+	my $releaseTypesSQL = "select distinct albums.release_type,albums.release_type,albums.release_type from albums order by albums.release_type asc";
 
 	my $contributorList_all = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_all);
 	$cache->set('dplc_contributorlist_all', $contributorList_all, 'never');
@@ -315,7 +317,29 @@ sub refreshSQLCache {
 	$cache->set('dplc_contenttypes', $contentTypesList, 'never');
 	main::DEBUGLOG && $log->is_debug && $log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
 
+	if (Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) {
+		my $releaseTypesList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $releaseTypesSQL);
+		foreach my $releaseType (@{$releaseTypesList}) {
+			$releaseType->{'name'} = _releaseTypeName($releaseType->{'name'});
+		}
+		$cache->set('dplc_releasetypes', $releaseTypesList, 'never');
+		main::DEBUGLOG && $log->is_debug && $log->debug('releaseTypesList count = '.scalar(@{$releaseTypesList}));
+	}
+
 	$cache->set('dplc_pluginversion', $pluginVersion);
+}
+
+sub _releaseTypeName {
+	my $releaseType = shift;
+
+	my $nameToken = uc($releaseType);
+	$nameToken =~ s/[^a-z_0-9]/_/ig;
+	my $name;
+	foreach ('RELEASE_TYPE_' . $nameToken, 'RELEASE_TYPE_CUSTOM_' . $nameToken, $nameToken) {
+		$name = string($_) if Slim::Utils::Strings::stringExists($_);
+		last if $name;
+	}
+	return $name || $releaseType;
 }
 
 1;

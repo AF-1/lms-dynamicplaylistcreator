@@ -1,6 +1,9 @@
 -- PlaylistName:[% playlistname %]
 -- PlaylistGroups:[% playlistgroups %]
 -- PlaylistCategory:albums
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 [%- IF source == 1 %]
 -- PlaylistUseCache: 1
 [%- END %]
@@ -42,15 +45,11 @@ select tracks.id, tracks.primary_artist from tracks
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	WHERE
 		tracks.audio = 1
-	[%- IF notrepeat %]
 		and dynamicplaylist_history.id is null
-	[%- END %]
 	[%- IF source == 1 %]
 		and tracks.album in ('PlaylistPreselectedAlbums')
 	[%- END %]

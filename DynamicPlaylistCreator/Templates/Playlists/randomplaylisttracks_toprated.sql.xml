@@ -2,14 +2,14 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Top Rated Static Playlists</name>
-		<templateversion>2</templateversion>
+		<templateversion>3</templateversion>
 		<description>Random tracks from top rated static playlists</description>
 		<playlistcategory>playlists</playlistcategory>
 		<listweight>2</listweight>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your dynamic playlist"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
+		<parameter type="checkbox" id="repeat" name="&lt;b&gt;Never&lt;/b&gt; stop" value="0" tooltipvalue="When all matching tracks have been played, the history and cache are deleted so that these tracks can be played again. You will end up with a dynamic playlist that will not stop playing as long as tracks are found that match the search criteria."/>
 		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter&lt;/b&gt; from user" value="" data="genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,virtuallibrary=Virtual Library"/>
-		<parameter type="checkbox" id="notrepeat" name="Do &lt;b&gt;not repeat&lt;/b&gt; tracks within same playlist" value="1"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;recently played&lt;/b&gt;" value="0"/>

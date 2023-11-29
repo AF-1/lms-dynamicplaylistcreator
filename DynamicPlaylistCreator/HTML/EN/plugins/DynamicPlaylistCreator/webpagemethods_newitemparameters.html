@@ -1,4 +1,4 @@
-<style>.inputbutton{padding:2px;}.rmargin{margin-right:10px;}</style>
+<link href="[% webroot %]plugins/DynamicPlaylistCreator/html/dplc.css" rel="stylesheet" />
 [%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
 [%- pwd_list = BLOCK -%]/
 	<a href="[% webroot %]plugins/DynamicPlaylistCreator/list.html">
@@ -22,7 +22,7 @@
 			<tr><td>&nbsp;</td></tr>
 			[%- END %]
 			<tr>
-				<td>[% parameter.name %]</td>
+				<td>[% parameter.name %][% IF parameter.tooltipvalue %]&nbsp;&nbsp;<span class="icon-info-circle" title="[% parameter.tooltipvalue | html %]"></span>[% END %]</td>
 				<td>&nbsp;</td>
 				<td>
 				[% IF parameter.type == 'text' || parameter.type == 'number' || parameter.type == 'multivaltext' %]
@@ -64,7 +64,7 @@
 					</table>
 				[% ELSIF parameter.type == 'checkbox' %]
 					<input type="checkbox" name="itemparameter_[% parameter.id %]" id="itemparameter_[% parameter.id %]" value="1" [% parameter.value ? "checked" : "" %]>
-				[% ELSIF parameter.type.match('checkboxes') || parameter.type == 'genrelistcached' || parameter.type.match == 'contenttypelistcached' %]
+				[% ELSIF parameter.type.match('checkboxes') || parameter.type == 'genrelistcached' || parameter.type.match == 'contenttypelistcached' || parameter.type.match == 'releasetypelistcached' %]
 					<table border="0">[% USE table parameter.values, cols=3, pad=0 %]
 						[%- FOREACH itemrow = table.rows %]
 							<tr>

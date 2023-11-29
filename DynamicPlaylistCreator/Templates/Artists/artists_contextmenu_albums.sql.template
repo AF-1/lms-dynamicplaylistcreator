@@ -4,6 +4,9 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 [% IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
 [% ELSIF sortorder == 2 %]
@@ -106,16 +109,15 @@ create temporary table tmp_artist_albums as
 		join alternativeplaycount on
 			alternativeplaycount.urlmd5 = tracks.urlmd5
 		[%- END %]
-		[%- IF albumsearchtitle1 %]
+		[%- IF albumsearchtitle1 or includedreleasetypes %]
 		join albums on
 			albums.id = tracks.album
 		[%- END %]
-		[%- IF notrepeat %]
 		left join dynamicplaylist_history on
 			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-		[%- END %]
 		WHERE
 			tracks.audio = 1
+			and dynamicplaylist_history.id is null
 		[%- IF albumsearchtitle1 %]
 			and [% IF albumsearchtitle2 or albumsearchtitle3 %]([% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle1_searchtype.match('LIKE') %]%%[% END %][% albumsearchtitle1 %]%%'
 			[%- IF albumsearchtitle2 %]
@@ -125,15 +127,15 @@ create temporary table tmp_artist_albums as
 			[%- END %]
 			[%- END %][% IF albumsearchtitle2 or albumsearchtitle3 %])[% END %]
 		[%- END %]
+		[%- IF includedreleasetypes %]
+			and albums.release_type in ([% includedreleasetypes %])
+		[%- END %]
 		[%- IF request2fromuser == 'year' or request3fromuser == 'year' %]
 			and ifnull(tracks.year, 0) = 'PlaylistParameter[% IF request2fromuser == 'year' %]2[% ELSE %]3[% END %]'
 		[%- ELSIF request2fromuser == 'decade' or request3fromuser == 'decade' %]
 			and ifnull(tracks.year, 0) >= [% IF request2fromuser == 'decade' %]2[% ELSE %]3[% END %]' and ifnull(tracks.year, 0) < ([% IF request2fromuser == 'decade' %]2[% ELSE %]3[% END %]' + 10)
 		[%- ELSIF request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' or request3fromuser == 'multipledecades' or request3fromuser == 'multipleyears' %]
 			and ifnull(tracks.year, 0) in ([% IF request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' %]2[% ELSE %]3[% END %]')
-		[%- END %]
-		[%- IF notrepeat %]
-			and dynamicplaylist_history.id is null
 		[%- END %]
 		[%- IF playedbefore == 1 and !recentlyplayed %]
 			and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
@@ -192,7 +194,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and library_track.library = 'PlaylistCurrentVirtualLibraryForClient'
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or exactrating or maxrating or sortorder or request2fromuser == 'addedtime' or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'addedtime' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or includedratings or maxrating or sortorder or request2fromuser == 'addedtime' or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'addedtime' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -200,15 +202,11 @@ select tracks.id, tracks.primary_artist from tracks
 	join alternativeplaycount on
 		alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	WHERE
 		tracks.audio = 1
-	[%- IF notrepeat %]
 		and dynamicplaylist_history.id is null
-	[%- END %]
 	[%- IF maxlength %]
 		and tracks.secs < [% maxlength %]
 	[%- END %]
@@ -228,20 +226,20 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF minyear %]
 		and tracks.year >= [% minyear %]
 	[%- END %]
-	[%- IF minrating && !exactrating %]
+	[%- IF minrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
 	[%- END %]
 	[%- IF request2fromuser == 'minRating' or request3fromuser == 'minRating' %]
 		and ifnull(tracks_persistent.rating, 0) >= 'PlaylistParameter[% IF request2fromuser == 'minRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
-	[%- IF maxrating && !exactrating %]
+	[%- IF maxrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
 	[%- END %]
 	[%- IF request2fromuser == 'maxRating' or request3fromuser == 'maxRating' %]
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request2fromuser == 'maxRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
-	[%- IF exactrating && !minrating && !maxrating %]
-		and ifnull(tracks_persistent.rating, 0) = [% IF exactrating == 'zero' %]0[% ELSE %][% exactrating %][% END %]
+	[%- IF includedratings && !minrating && !maxrating && request1fromuser != 'exactRating' && request2fromuser != 'exactRating' %]
+		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
 	[%- END %]
 	[%- IF request2fromuser == 'exactRating' or request3fromuser == 'exactRating' %]
 		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request2fromuser == 'exactRating' %]2[% ELSE %]3[% END %]'

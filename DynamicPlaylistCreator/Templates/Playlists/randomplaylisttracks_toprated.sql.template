@@ -4,6 +4,9 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 [%- IF nooftracks %]
 -- PlaylistLimitOption:[% nooftracks %]
 [%- END %]
@@ -76,12 +79,11 @@ create temporary table tmp_random_staticplaylists as
 		[%- END %]
 		[%- END %]
 		[%- # ------- MISC ------- %]
-		[%- IF notrepeat %]
 		left join dynamicplaylist_history on
 			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-		[%- END %]
 		WHERE
 			tracks.audio = 1
+			and dynamicplaylist_history.id is null
 		[%- IF request1fromuser == 'year' %]
 			and ifnull(tracks.year, 0) = 'PlaylistParameter1'
 		[%- ELSIF request1fromuser == 'decade' %]
@@ -100,7 +102,7 @@ create temporary table tmp_random_staticplaylists as
 								genre_track.genre = genres.id and
 								genres.namesearch in ([% excludedgenres %]))
 		[%- END %]
-		[%- IF includedgenres or notrepeat %]
+		[%- IF includedgenres %]
 		group by tracks.id
 		[%- END %]
 		group by playlist_track.playlist
@@ -144,21 +146,17 @@ select tracks.id, tracks.primary_artist from tracks
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and dynamicplaylist_history.id is null
 	[%- IF request1fromuser == 'year' %]
 		and ifnull(tracks.year, 0) = 'PlaylistParameter1'
 	[%- ELSIF request1fromuser == 'decade' %]
 		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
 	[%- ELSIF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]
 		and ifnull(tracks.year, 0) in ('PlaylistParameter1')
-	[%- END %]
-	[%- IF notrepeat %]
-		and dynamicplaylist_history.id is null
 	[%- END %]
 	[%- IF maxskipcount %]
 		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]

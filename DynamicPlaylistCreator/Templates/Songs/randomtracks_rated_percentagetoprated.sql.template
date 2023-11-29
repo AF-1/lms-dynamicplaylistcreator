@@ -4,6 +4,9 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 [%- IF percentage == 'zero' %]
 -- PlaylistUseCache: 1
 [%- END %]
@@ -35,10 +38,8 @@ create temporary table randomweightedratingslow as select tracks.id, tracks.prim
 	join genres on
 		genres.id = genre_track.genre
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- IF recentlyplayed and useapcvalues %]
@@ -47,10 +48,8 @@ create temporary table randomweightedratingslow as select tracks.id, tracks.prim
 	[%- END %]
 	WHERE
 		audio = 1
-		and ifnull(tracks_persistent.rating, 0) > 0 and ifnull(tracks_persistent.rating, 0) < [% minratingfortoprated %]
-	[%- IF notrepeat %]
 		and dynamicplaylist_history.id is null
-	[%- END %]
+		and ifnull(tracks_persistent.rating, 0) > 0 and ifnull(tracks_persistent.rating, 0) < [% minratingfortoprated %]
 	[%- IF includedgenres %]
 		and genres.namesearch in ([% includedgenres %])
 	[%- END %]
@@ -81,10 +80,8 @@ create temporary table randomweightedratingshigh as [% END %]select tracks.id, t
 	join genres on
 		genres.id = genre_track.genre
 	[%- END %]
-	[%- IF notrepeat %]
 	left join dynamicplaylist_history on
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- END %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- IF recentlyplayed and useapcvalues %]
@@ -93,10 +90,8 @@ create temporary table randomweightedratingshigh as [% END %]select tracks.id, t
 	[%- END %]
 	WHERE
 		tracks.audio = 1
-		and tracks_persistent.rating >= [% minratingfortoprated %]
-	[%- IF notrepeat %]
 		and dynamicplaylist_history.id is null
-	[%- END %]
+		and tracks_persistent.rating >= [% minratingfortoprated %]
 	[%- IF includedgenres %]
 		and genres.namesearch in ([% includedgenres %])
 	[%- END %]

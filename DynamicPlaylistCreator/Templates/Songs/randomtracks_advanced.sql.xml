@@ -2,12 +2,13 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Tracks - Advanced</name>
-		<templateversion>6</templateversion>
+		<templateversion>7</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>2</listweight>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your dynamic playlist"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
+		<parameter type="checkbox" id="repeat" name="&lt;b&gt;Never&lt;/b&gt; stop" value="0" tooltipvalue="When all matching tracks have been played, the history and cache are deleted so that these tracks can be played again. You will end up with a dynamic playlist that will not stop playing as long as tracks are found that match the search criteria."/>
 		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter 1&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,virtuallibrary=Virtual Library,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists,addedtime=Last added time,lastplayed=Last played time,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
 		<parameter type="optionalsinglelist" id="request2fromuser" name="&lt;b&gt;Request parameter 2&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists,year=Year,multipleyears=Multiple Years,addedtime=Last added time,lastplayed=Last played time,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
 		<parameter type="number" id="minlength" name="&lt;b&gt;Min.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt;" value="" placeholdervalue=" secs"/>
@@ -35,7 +36,7 @@
 		<parameter type="searchtext" id="commentssearchstring3" name="&lt;b&gt;Comments&lt;/b&gt;" value=""/>
 		<parameter type="optionalsinglelist" id="minrating" name="&lt;b&gt;Minimum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="optionalsinglelist" id="maxrating" name="&lt;b&gt;Maximum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
-		<parameter type="optionalsinglelist" id="exactrating" name="&lt;b&gt;Exact&lt;/b&gt; rating (stars)" value="" data="zero=0,10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
+		<parameter type="multiplelist" id="includedratings" name="Only &lt;b&gt;include&lt;/b&gt; tracks with these exact &lt;b&gt;ratings&lt;/b&gt; (stars)" value="" data="0=unrated,10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="checkbox" requireplugins="CustomTagImporter::Plugin" id="requestcustomtag" name="Request custom tag from user" value="0"/>
 		<parameter type="text" requireplugins="CustomTagImporter::Plugin" id="customtaguserfriendlyname" name="Custom Tag &lt;b&gt;display&lt;/b&gt; name" value="" placeholdervalue="e.g. Record Label"/>
 		<parameter type="text" requireplugins="CustomTagImporter::Plugin" id="customtagname" name="Custom Tag &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue="e.g. RECORDLABEL"/>
@@ -65,6 +66,7 @@
 		<parameter type="searchtext" id="albumsearchtitle3" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="checkbox" id="onlycompilation" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from compilation albums" value=""/>
 		<parameter type="checkbox" id="noncompilation" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from compilation albums" value=""/>
+		<parameter type="releasetypelistcached" id="includedreleasetypes" minlmsversion="8.4.0" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;release types&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="searchtype" id="tracksearchtitle1_searchtype" name="tracksearchtitle1 search type" value=""/>
 		<parameter type="searchtext" id="tracksearchtitle1" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="logop" id="tracksearchtitle1_logop" name="" value=""/>

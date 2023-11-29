@@ -4,6 +4,9 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
 -- PlaylistUseCache: 1
 [%- IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
@@ -213,7 +216,7 @@ select tracks.id, tracks.primary_artist from tracks
 		[%- END %]
 	[%- END %]
 	[%- # ------- ALBUMS ------- %]
-	[%- IF albumsearchtitle1 or onlycompilation or notcompilation %]
+	[%- IF albumsearchtitle1 or onlycompilation or notcompilation or includedreleasetypes %]
 	join albums on
 		albums.id = tracks.album
 	[%- END %]
@@ -247,7 +250,7 @@ select tracks.id, tracks.primary_artist from tracks
 		comments.track = tracks.id
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF minrating or exactrating or maxrating or sortorder or recentlyplayed or playedbefore or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
+	[%- IF minrating or includedratings or maxrating or sortorder or recentlyplayed or playedbefore or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -259,6 +262,7 @@ select tracks.id, tracks.primary_artist from tracks
 		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	WHERE
 		tracks.audio = 1
+		and dynamicplaylist_history.id is null
 	[%- IF excludevirtuallibrary %]
 		and not exists(select * from library_track
 			where
@@ -301,7 +305,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- ELSIF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' or request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' %]
 		and ifnull(tracks.year, 0) in ('PlaylistParameter[% IF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' %]1[% ELSE %]2[% END %]')
 	[%- END %]
-		and dynamicplaylist_history.id is null
 	[%- IF tracksearchtitle1 %]
 		and [% IF tracksearchtitle2 or tracksearchtitle3 %]([% END %][% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'or' && tracksearchtitle2_logop == 'and' %]([% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle1_searchtype.match('LIKE') %]%%[% END %][% tracksearchtitle1 %]%%'
 		[%- IF tracksearchtitle2 %]
@@ -312,10 +315,13 @@ select tracks.id, tracks.primary_artist from tracks
 		[%- END %][% IF tracksearchtitle2 or tracksearchtitle3 %])[% END %]
 	[%- END %]
 	[%- IF onlycompilation %]
-	and albums.compilation = 1
+		and albums.compilation = 1
 	[%- END %]
 	[%- IF notcompilation %]
-	and ifnull(albums.compilation, 0) = 0
+		and ifnull(albums.compilation, 0) = 0
+	[%- END %]
+	[%- IF includedreleasetypes %]
+		and albums.release_type in ([% includedreleasetypes %])
 	[%- END %]
 	[%- IF maxlength %]
 		and tracks.secs < [% maxlength %]
@@ -338,20 +344,20 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF includeddecades %]
 		and ifnull(tracks.year, 0) in ([% includeddecades %])
 	[%- END %]
-	[%- IF minrating && !exactrating %]
+	[%- IF minrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
 	[%- END %]
 	[%- IF request1fromuser == 'minRating' or request2fromuser == 'minRating' %]
 		and ifnull(tracks_persistent.rating, 0) >= 'PlaylistParameter[% IF request1fromuser == 'minRating' %]1[% ELSE %]2[% END %]'
 	[%- END %]
-	[%- IF maxrating && !exactrating %]
+	[%- IF maxrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
 	[%- END %]
 	[%- IF request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request1fromuser == 'maxRating' %]1[% ELSE %]2[% END %]'
 	[%- END %]
-	[%- IF exactrating && !minrating && !maxrating %]
-		and ifnull(tracks_persistent.rating, 0) = [% IF exactrating == 'zero' %]0[% ELSE %][% exactrating %][% END %]
+	[%- IF includedratings && !minrating && !maxrating && request1fromuser != 'exactRating' && request2fromuser != 'exactRating' %]
+		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
 	[%- END %]
 	[%- IF request1fromuser == 'exactRating' or request2fromuser == 'exactRating' %]
 		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request1fromuser == 'exactRating' %]1[% ELSE %]2[% END %]'

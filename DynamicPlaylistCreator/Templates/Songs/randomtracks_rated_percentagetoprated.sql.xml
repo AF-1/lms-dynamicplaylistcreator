@@ -2,13 +2,13 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Rated Tracks</name>
-		<templateversion>2</templateversion>
+		<templateversion>3</templateversion>
 		<description>Some basic options, set percentage of top rated tracks.</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>3</listweight>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your dynamic playlist"/>
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
-		<parameter type="checkbox" id="notrepeat" name="Do &lt;b&gt;not repeat&lt;/b&gt; tracks within same playlist" value="1"/>
+		<parameter type="checkbox" id="repeat" name="&lt;b&gt;Never&lt;/b&gt; stop" value="0" tooltipvalue="When all matching tracks have been played, the history and cache are deleted so that these tracks can be played again. You will end up with a dynamic playlist that will not stop playing as long as tracks are found that match the search criteria."/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;recently played&lt;/b&gt;" value="0"/>
 		<parameter type="singlelist" id="minratingfortoprated" name="&lt;b&gt;Min.&lt;/b&gt; rating for &lt;b&gt;top&lt;/b&gt; rated tracks" value="60" data="40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
