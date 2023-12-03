@@ -1,25 +1,34 @@
-.inputbutton{padding:2px;}.rmargin{margin-right:10px;}
+.inputbutton{padding:2px;}
+.rmargin{margin-right:10px;}
 @font-face {
 	font-family: 'fontawesome-light';
-	src: url('fonts/customized-light-font.woff?51z09u') format('woff');
+	src: url('fonts/fontawesome-light.woff?51z09u') format('woff');
 	font-weight: normal;
 	font-style: normal;
 	font-display: block;
 }
 [class^="icon-"], [class*=" icon-"] {
-  font-family: 'fontawesome-light' !important;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-family: 'fontawesome-light' !important;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 .icon-info-circle:before {
-  content: "\f05a";
+	content: "\f05a";
 }
 .icon-warning:before {
-  content: "\f071";
+	content: "\f071";
 }
+details summary{
+cursor:pointer;outline:none;margin-bottom:10px;margin-left:10px;
+}
+details summary > *{display:inline;}
+.categoryheader{font-weight:600;text-transform:capitalize;}
+.templates td:first-child {padding-left:20px;}
+td.col1{width:16em;}
+.filler{height:4px !important;}
