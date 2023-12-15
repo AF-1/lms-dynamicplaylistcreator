@@ -15,22 +15,34 @@
 <br>
 
 [% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYEXPORTBTN" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYEXPORTBTN_DESC" %]
-	<input type="checkbox" name="pref_displayexportbtn" id="displayexportbtn" [% IF prefs.displayexportbtn %] checked [% END %]">
+	<select class="stdedit" name="pref_displayexportbtn" id="displayexportbtn">
+		<option [% IF NOT prefs.displayexportbtn %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+		<option [% IF prefs.displayexportbtn %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
 [% END %]
 <br>
 
 [% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYPLAYBTN" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYPLAYBTN_DESC" %]
-	<input type="checkbox" name="pref_displayplaybtn" id="displayplaybtn" [% IF prefs.displayplaybtn %] checked [% END %]">
+	<select class="stdedit" name="pref_displayplaybtn" id="displayplaybtn">
+		<option [% IF NOT prefs.displayplaybtn %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+		<option [% IF prefs.displayplaybtn %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
 [% END %]
 <br>
 
 [% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG_DESC" %]
-	<input type="checkbox" name="pref_hidedplrefreshmsg" id="hidedplrefreshmsg" [% IF prefs.hidedplrefreshmsg %] checked [% END %]">
+	<select class="stdedit" name="pref_hidedplrefreshmsg" id="hidedplrefreshmsg">
+		<option [% IF NOT prefs.hidedplrefreshmsg %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+		<option [% IF prefs.hidedplrefreshmsg %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
 [% END %]
 <br>
 
 [% WRAPPER setting title="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH" desc="SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH_DESC" %]
-	<input type="checkbox" name="pref_exacttitlesearch" id="exacttitlesearch" [% IF prefs.exacttitlesearch %] checked [% END %]">
+	<select class="stdedit" name="pref_exacttitlesearch" id="exacttitlesearch">
+		<option [% IF NOT prefs.exacttitlesearch %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+		<option [% IF prefs.exacttitlesearch %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
 [% END %]
 <br>
 
