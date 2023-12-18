@@ -1,7 +1,7 @@
 #
 # Dynamic Playlist Creator
 #
-# (c) 2022 AF-1
+# (c) 2022 AF
 #
 # Some code based on the SQLPlayList plugin (c) 2006 Erland Isaksson
 #
