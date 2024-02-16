@@ -4,9 +4,6 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[%- IF useapcvalues %]
--- PlaylistRequiredPlugins:AlternativePlayCount
-[%- END %]
 [%- IF repeat %]
 -- PlaylistRepeat: 1
 [%- END %]
