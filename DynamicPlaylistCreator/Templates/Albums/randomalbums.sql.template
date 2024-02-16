@@ -174,7 +174,7 @@ create temporary table tmp_random_albums as
 		join albums on
 			albums.id = tracks.album
 		[%- END %]
-		[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder)) or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
+		[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or partlyplayed)) or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
 		left join tracks_persistent on
 			tracks_persistent.urlmd5 = tracks.urlmd5
 		[%- END %]
@@ -279,6 +279,9 @@ create temporary table tmp_random_albums as
 		[%- END %]
 		[%- IF addedtime %]
 		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
+		[%- END %]
+		[%- IF partlyplayed and playedbefore != 1 %]
+		and [% IF useapcvalues %]min(ifnull(alternativeplaycount.playCount,0))[% ELSE %]min(ifnull(tracks_persistent.playCount,0))[% END %] = 0 and [% IF useapcvalues %]avg(ifnull(alternativeplaycount.playCount,0))[% ELSE %]avg(ifnull(tracks_persistent.playCount,0))[% END %] > 0
 		[%- END %]
 		order by [% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 %]avgcount desc, [% ELSIF sortorder == 2 %]avgcount asc, [% END %]random()
 		[% IF sortorder or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]limit 30) as subselection

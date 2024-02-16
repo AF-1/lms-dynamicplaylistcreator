@@ -146,7 +146,7 @@ create temporary table tmp_random_contributors as
 		[%- # ------- MISC ------- %]
 		left join dynamicplaylist_history on
 			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-		[%- IF playedbefore or sortorder or recentlyplayed or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
+		[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or partlyplayed)) or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
 		left join tracks_persistent on
 			tracks_persistent.urlmd5 = tracks.urlmd5
 		[%- END %]
@@ -202,6 +202,9 @@ create temporary table tmp_random_contributors as
 		having [% IF maxdpsv %]ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% IF mindpsv %] and [% END %][% END %][% IF mindpsv %]ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %][% IF minartisttracks %] and count(tracks.id) >= [% minartisttracks %][% END %]
 		[%- ELSIF minartisttracks %]
 		having count(tracks.id) >= [% minartisttracks %]
+		[%- END %]
+		[%- IF partlyplayed and playedbefore != 1 %]
+		and [% IF useapcvalues %]min(ifnull(alternativeplaycount.playCount,0))[% ELSE %]min(ifnull(tracks_persistent.playCount,0))[% END %] = 0 and [% IF useapcvalues %]avg(ifnull(alternativeplaycount.playCount,0))[% ELSE %]avg(ifnull(tracks_persistent.playCount,0))[% END %] > 0
 		[%- END %]
 		order by [% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 %]avgcount desc, [% ELSIF sortorder == 2 %]avgcount asc, [% END %]random()
 		[%- IF sortorder or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]limit 30) as subselection

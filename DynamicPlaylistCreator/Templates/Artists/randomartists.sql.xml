@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Artists</name>
-		<templateversion>4</templateversion>
+		<templateversion>5</templateversion>
 		<description>Artist template with options</description>
 		<playlistcategory>artists</playlistcategory>
 		<listweight>1</listweight>
@@ -13,6 +13,7 @@
 		<parameter type="optionalsinglelist" id="request2fromuser" name="&lt;b&gt;Request parameter 2&lt;/b&gt; from user" value="" data="genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,playlist=Static Playlist,multiplestaticplaylists=Multiple Static Playlists,addedtime=Last added time,lastplayed=Last played time"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
+		<parameter type="checkbox" id="partlyplayed" name="Only &lt;b&gt;partly played&lt;/b&gt; artists" value="0"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;date last played&lt;/b&gt;" value="0"/>
 		<parameter type="number" requireplugins="AlternativePlayCount::Plugin" id="maxskipcount" name="Only include tracks with a &lt;b&gt;skip count&lt;/b&gt; of &lt;b&gt;less&lt;/b&gt; than" value=""/>
 		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="recentlyskipped" name="Ignore &lt;b&gt;recently skipped&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
