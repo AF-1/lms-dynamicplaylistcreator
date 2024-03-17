@@ -114,7 +114,7 @@ No, you <b>can't</b> import or migrate dynamic playlist definitions from the <i>
 </p></details><br>
 
 <details><summary>»<b>Can you translate DPLC into my language?</b>«</summary><br><p>
-This plugin will not be localized because parameter names and value names are baked into the templates. And a halfway localized version is worse than a non-localized one.
+This plugin will not be localized because the parameter and value names in the template are hard-coded. And a halfway localized version is worse than a non-localized one.
 </p></details><br>
 <br>
 
