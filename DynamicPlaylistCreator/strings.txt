@@ -2,7 +2,7 @@ PLUGIN_DYNAMICPLAYLISTCREATOR
 	EN	Dynamic Playlist Creator
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_DESC
-	EN	Helps you create custom smart playlists (dynamic playlists) for the Dynamic Playlists plugin using templates. More information on the GitHub page.
+	EN	Helps you create custom smart playlists (dynamic playlists) for the Dynamic Playlists plugin using templates. More information, screenshots and FAQ on the GitHub page.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_SETTINGS
 	EN	Various Settings
