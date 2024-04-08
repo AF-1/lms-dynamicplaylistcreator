@@ -16,7 +16,7 @@ The target group for this plugin is users who want to quickly and easily create 
 <br><br><br>
 
 
-## Screenshots
+## Screenshots[^2]
 <img src="screenshots/dplc.gif" width="100%">
 <br><br><br>
 
@@ -119,3 +119,4 @@ This plugin will not be localized because the parameter and value names in the t
 <br>
 
 [^1]:inspired by and based on Erland's SQLPlayList
+[^2]: The screenshots might not correspond to the current UI in every detail.
