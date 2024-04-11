@@ -50,7 +50,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description' => 'PLUGIN_DYNAMICPLAYLISTCREATOR',
 });
 my $cache = Slim::Utils::Cache->new();
-my $dplVersion = 0;
 
 sub initPlugin {
 	my $class = shift;
@@ -95,14 +94,6 @@ sub postinitPlugin {
 		main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
 		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('dplc_contributorlist_all') || !$cache->get('dplc_contributorlist_albumartists') || !$cache->get('dplc_contributorlist_composers') || !$cache->get('dplc_genrelist') || !$cache->get('dplc_contenttypes') || ((Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) && !$cache->get('dplc_releasetypes')));
-	}
-
-	my @enabledPlugins = Slim::Utils::PluginManager->enabledPlugins();
-	for my $plugin (@enabledPlugins) {
-		if ($plugin =~ /DynamicPlaylists/) {
-			my $version = int(version->parse(Slim::Utils::PluginManager->dataForPlugin($plugin)->{'version'}));
-			$dplVersion = $version if $version > $dplVersion;
-		}
 	}
 }
 
@@ -184,7 +175,6 @@ sub handleWebList {
 	$params->{'displayplaybtn'} = $prefs->get('displayplaybtn');
 	$params->{'displayexportbtn'} = $prefs->get('displayexportbtn');
 	$params->{'hidedplrefreshmsg'} = $prefs->get('hidedplrefreshmsg');
-	$params->{'dplversion'} = $dplVersion if $dplVersion;
 	$params->{'pluginDynamicPlaylistCreatorPlayLists'} = \@webPlaylists;
 	main::DEBUGLOG && $log->is_debug && $log->debug('webPlaylists = '.Data::Dump::dump(\@webPlaylists));
 	return Slim::Web::HTTP::filltemplatefile('plugins/DynamicPlaylistCreator/list.html', $params);

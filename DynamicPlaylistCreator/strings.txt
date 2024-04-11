@@ -70,9 +70,6 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM
 	EN	Create new dynamic playlist
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_UNSUPPORTEDVERSION
-	EN	This plugin creates custom dynamic playlists compatible <span class="emphbold">only</span> with <i>Dynamic Playlists</i> version <span class="emphbold">4</span>.
-
 PLUGIN_DYNAMICPLAYLISTCREATOR_DPLREFRESHMSG
 	EN	<span class="emphbold"><i>Dynamic Playlists</i> is updating the list of available dynamic playlists...</span>
 

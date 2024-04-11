@@ -63,9 +63,6 @@
 		[% IF pluginWebPageMethodsError %]
 			<p><br><br><span class="error">[% pluginWebPageMethodsError %]</span><br></p>
 		[% END %]
-		[% IF dplversion && dplversion < 4 %]
-			<p><br><br><span class="error">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_UNSUPPORTEDVERSION" | string %]</span></p>
-		[% END %]
 		[% IF !hidedplrefreshmsg && dplrefresh %]
 			<p><br><br><span id="dplrefreshmsg" class="dplrefreshmsg">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_DPLREFRESHMSG" | string %]</span></p>
 
