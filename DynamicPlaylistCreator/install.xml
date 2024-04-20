@@ -11,7 +11,7 @@
 	<icon>plugins/DynamicPlaylistCreator/html/images/dplc_icon_svg.png</icon>
 	<defaultState>enabled</defaultState>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>Lyrion Music Server</id>
 		<minVersion>8.0</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>
