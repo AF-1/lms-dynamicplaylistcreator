@@ -272,11 +272,14 @@ sub getValueOfTemplateParameter {
 			my @paramvalues = split(/;/, $thisvalue);
 			my $quotedTextVal;
 
-			foreach (@paramvalues) {
+			foreach my $thisParamVal (@paramvalues) {
+				if (!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) {
+					$thisParamVal = quoteValue($thisParamVal);
+				}
 				if ($parameter->{'quotevalue'}) {
-					$quotedTextVal .= ($quotedTextVal ? ',' : '')."'".encode_entities(trim_leadtail($_), "&<>\'\"")."'";
+					$quotedTextVal .= ($quotedTextVal ? ',' : '')."'".encode_entities(trim_leadtail($thisParamVal), "&<>\'\"")."'";
 				} else {
-					$quotedTextVal .= ($quotedTextVal ? ',' : '').encode_entities(trim_leadtail($_), "&<>\'\"");
+					$quotedTextVal .= ($quotedTextVal ? ',' : '').encode_entities(trim_leadtail($thisParamVal), "&<>\'\"");
 				}
 			}
 			main::INFOLOG && $log->is_info && $log->info("Got ".$parameter->{'id'}." = $quotedTextVal");
@@ -437,6 +440,7 @@ sub getSQLTemplateData {
 				$sth->bind_col(1, \$id);
 				$sth->bind_col(2, \$name);
 				$sth->bind_col(3, \$value);
+
 				while($sth->fetch()) {
 					if ($newUnicodeHandling) {
 						my %item = (
@@ -511,7 +515,6 @@ sub handleSearchURL {
 
 sub handleSearchText {
 	my ($searchString, $skipExact) = @_;
-
 	$searchString =~ s/^\s*//;
 	$searchString =~ s/\s+$//;
 
@@ -523,7 +526,7 @@ sub handleSearchText {
 
 	if (!$prefs->get('exacttitlesearch') && !$skipExact) {
 		main::DEBUGLOG && $log->is_debug && $log->debug('Not using exact title search');
-		$searchString = Slim::Utils::Text::ignoreCaseArticles($searchString, 1);
+		$searchString = Slim::Utils::Text::ignoreCase($searchString, 1);
 	}
 	return $searchString;
 }

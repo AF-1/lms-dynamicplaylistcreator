@@ -92,7 +92,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and library_track.library = 'PlaylistCurrentVirtualLibraryForClient'
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or includedratings or maxrating or sortorder or request2fromuser == 'addedtime' or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'addedtime' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or (includedratings or includedratings == 0) or maxrating or sortorder or request2fromuser == 'addedtime' or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'addedtime' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -133,7 +133,7 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF request2fromuser == 'maxRating' or request3fromuser == 'maxRating' %]
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request2fromuser == 'maxRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
-	[%- IF includedratings && !minrating && !maxrating && request1fromuser != 'exactRating' && request2fromuser != 'exactRating' %]
+	[%- IF (includedratings or includedratings == 0) && !minrating && !maxrating && request1fromuser != 'exactRating' && request2fromuser != 'exactRating' %]
 		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
 	[%- END %]
 	[%- IF request2fromuser == 'exactRating' or request3fromuser == 'exactRating' %]

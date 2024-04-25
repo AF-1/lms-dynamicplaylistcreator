@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Playlist Context Menu - Songs</name>
-		<templateversion>3</templateversion>
+		<templateversion>4</templateversion>
 		<description>Songs from selected static playlist</description>
 		<playlistcategory>playlists</playlistcategory>
 		<listweight>7</listweight>
