@@ -19,26 +19,26 @@
 	</td></tr>
 	<tr><td colspan="3">&nbsp;</td></tr>
 	[% END %]
-	[% odd = 1 %]
 </table>
 [%- FOREACH category = ['tracks', 'artists', 'albums', 'genres', 'years', 'playlists'] %]
+	[% odd = 1 %]
 	<details open><summary><span class="categoryheader">[% category %]</span></summary>
 		<table border="0">
 			[%- FOREACH item IN pluginWebPageMethodsTemplates.sort('listweight') %]
 				[%- IF item.playlistcategory == category %]
 				<tr class="templates">
-					<td class="col1" nowrap>
+					<td class="col1[% IF odd %] odd[% ELSE %] even[% END %]" nowrap>
 						<a href="[% webroot %][% pluginWebPageMethodsPostUrl %]?itemtemplate=[% item.id %]&player=[% player | uri %]">[% item.name %]</a>
 					</td>
 					<td class="[% IF odd %]odd[% ELSE %]even[% END %]">&nbsp;&nbsp;&nbsp;</td>
 					<td class="[% IF odd %]odd[% ELSE %]even[% END %]">[% item.description %]
 					</td>
 				</tr>
-				<tr><td class="[% IF odd %]odd[% ELSE %]even[% END %] filler" colspan="3">&nbsp;</td></tr>
-				[% odd = !odd %]
+				<tr><td class="filler" colspan="3">&nbsp;</td></tr>
 				[%- END %]
 			[%- END %]
-			</table>
+		</table>
 	</details>
+	[% odd = 0 %]
 <br>
 [% END -%]

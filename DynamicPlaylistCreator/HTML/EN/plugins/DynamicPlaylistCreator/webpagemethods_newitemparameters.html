@@ -3,7 +3,7 @@
 [%- pwd_list = BLOCK -%]/
 	<a href="[% webroot %]plugins/DynamicPlaylistCreator/list.html">
 		[% "PLUGIN_DYNAMICPLAYLISTCREATOR" | string %]
-	</a>[% IF templateName %] > [% templateName %][% END %]
+	</a>[% IF templateName %] [% IF systemSkin == 'Classic' %]/[% ELSE %]>[% END %] [% templateName %][% END %]
 [% END -%]
 [%- pageHeaderInfo = BLOCK %]
 [% END -%]
