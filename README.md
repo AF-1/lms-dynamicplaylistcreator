@@ -1,9 +1,14 @@
 # Dynamic Playlist Creator
 
-**Dynamic Playlist Creator**[^1] (DPLC) allows you to create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
-The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and **not** working directly with SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually (see [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq)).
+**Dynamic Playlist Creator**[^1] (DPLC) helps you create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
+The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and **not** working directly with SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq)).
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
+<br><br><br>
+
+
+## Screenshots[^2]
+<img src="screenshots/dplc.gif" width="100%">
 <br><br><br>
 
 
@@ -16,19 +21,12 @@ The target group for this plugin is users who want to quickly and easily create 
 <br><br><br>
 
 
-## Screenshots[^2]
-<img src="screenshots/dplc.gif" width="100%">
-<br><br><br>
-
-
 ## Installation
 ⚠️ **Please read the [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq) *before* installing this plugin.**<br>
 
-You should be able to install **Dynamic Playlist Creator** from the LMS main repository (LMS plugin library):<br>**LMS > Settings > Plugins**.<br>
+**Dynamic Playlist Creator** is available from the LMS plugin library: **LMS > Settings > Manage Plugins**.<br>
 
 If you want to test a new patch that hasn't made it into a release version yet, you'll have to [install the plugin manually](https://github.com/AF-1/sobras/wiki/Manual-installation-of-LMS-plugins).
-
-It usually takes a few hours for a *new* release to be listed on the LMS plugin page.
 <br><br><br><br>
 
 
@@ -119,4 +117,4 @@ This plugin will not be localized because the parameter and value names in the t
 <br>
 
 [^1]:inspired by and based on Erland's SQLPlayList
-[^2]: The screenshots might not correspond to the current UI in every detail.
+[^2]: The screenshots might not correspond to the UI of the latest release in every detail.
