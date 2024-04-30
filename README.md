@@ -1,7 +1,7 @@
 # Dynamic Playlist Creator
 
 **Dynamic Playlist Creator**[^1] (DPLC) helps you create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
-The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and **not** working directly with SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq)).
+The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and **not** working directly with SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
 <br><br><br>
@@ -22,7 +22,6 @@ The target group for this plugin is users who want to quickly and easily create 
 
 
 ## Installation
-⚠️ **Please read the [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq) *before* installing this plugin.**<br>
 
 **Dynamic Playlist Creator** is available from the LMS plugin library: **LMS > Settings > Manage Plugins**.<br>
 
@@ -32,7 +31,7 @@ If you want to test a new patch that hasn't made it into a release version yet, 
 
 ## Reporting a new issue
 
-If you want to report a new issue, please fill out this [**issue report template**](https://github.com/AF-1/lms-dynamicplaylistcreator/issues/new?template=bug_report.md&title=%5BISSUE%5D+).
+If you want to report a new issue, please read the [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq) *first* and then fill out this [**issue report template**](https://github.com/AF-1/lms-dynamicplaylistcreator/issues/new?template=bug_report.md&title=%5BISSUE%5D+).
 <br><br><br><br>
 
 
