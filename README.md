@@ -31,7 +31,7 @@ If you want to test a new patch that hasn't made it into a release version yet, 
 
 ## Reporting a new issue
 
-If you want to report a new issue, please read the [FAQ](https://github.com/AF-1/lms-dynamicplaylistcreator#faq) *first* and then fill out this [**issue report template**](https://github.com/AF-1/lms-dynamicplaylistcreator/issues/new?template=bug_report.md&title=%5BISSUE%5D+).
+If you want to report a new issue, please read the [FAQ](#faq) *first* and then fill out this [**issue report template**](https://github.com/AF-1/lms-dynamicplaylistcreator/issues/new?template=bug_report.md&title=%5BISSUE%5D+).
 <br><br><br><br>
 
 
