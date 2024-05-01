@@ -103,7 +103,7 @@ So please make sure that <b>LMS has read/write permissions (755) for the parent 
 </p></details><br>
 
 <details><summary>»<b>Can I import my custom dynamic playlists from the <i>SQLPlayList</i> plugin?</b>«</summary><br><p>
-No, you <b>can't</b> import or migrate dynamic playlist definitions from the <i>SQLPlayList</i> plugin to <i>Dynamic Playlist <b>Creator</b></i>. They are based on templates which are different from the ones that DPLC uses.
+You <b>can't</b> migrate dynamic playlist definitions from the <i>SQLPlayList</i> plugin to <i>Dynamic Playlist <b>Creator</b></i>. They are based on templates which are different from the ones that DPLC uses.
 </p></details><br>
 
 <details><summary>»<b>Can you translate DPLC into my language?</b>«</summary><br><p>
