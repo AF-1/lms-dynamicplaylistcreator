@@ -1,7 +1,7 @@
 # Dynamic Playlist Creator
 
 **Dynamic Playlist Creator**[^1] (DPLC) helps you create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
-The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and **not** working directly with SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
+The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and **not** work directly with SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
 <br><br><br><br>
