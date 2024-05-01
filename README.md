@@ -1,7 +1,7 @@
 # Dynamic Playlist Creator
 
 **Dynamic Playlist Creator**[^1] (DPLC) helps you create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
-The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and do **not** work directly with SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
+The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and do **not** want to work with raw SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
 <br><br><br><br>
@@ -53,7 +53,7 @@ It <b>takes a couple of seconds</b> for the <i>Dynamic Playlists</i> plugin to s
 </p></details><br>
 
 <details><summary>»<b>Can I <i>edit the SQLite statement</i> of my dynamic playlists manually in DPLC?</b>«<br>&nbsp;&nbsp;&nbsp;&nbsp;»<b>What does the <i>export</i> button do?</b>«</summary><br><p>
-The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using <b>only</b> templates and do <b>not</b> work directly with SQLite statements. Accordingly, DPLC does <b>not include the option to edit SQLite statements</b> manually in a tiny text area.<br><br>
+The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using <b>only</b> templates and do <b>not</b> want to work with raw SQLite statements. Accordingly, DPLC does <b>not include the option to edit SQLite statements</b> manually in a tiny plugin text area.<br><br>
 
 Users familiar with SQLite can <b>use the <i>export</i> button</b> to <b>permanently move</b> a dynamic playlist <i>currently managed by DPLC</i> to the <i>Dynamic Playlists</i> plugin, i.e. its folder for custom dynamic playlists called <b>DPL-custom-lists</b>. There you can edit it like any other custom dynamic playlist with your favorite code editor.<br>
 Moved dynamic playlists are removed from and no longer managed by DPLC.<br><br>Please note: the <b>export</b> button is <b>disabled by default</b> and can be enabled in DPLC's settings.
