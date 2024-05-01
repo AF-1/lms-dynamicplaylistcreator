@@ -85,11 +85,11 @@ You can <b>only</b> start dynamic playlists directly in DPLC that do <b><u>not</
 </p></details><br>
 
 <details><summary>»<b>Which plugins does DPLC work with?</b>«</summary><br><p>
-It works with <a href="https://github.com/AF-1/lms-dynamicplaylists#faq"><b>Dynamic Playlists</b></a>, <a href="https://github.com/AF-1/lms-alternativeplaycount"><b>Alternative Play Count</b></a>, <a href="https://github.com/AF-1/lms-customskip#custom-skip"><b>Custom Skip</b></a> and <a href="https://github.com/AF-1/lms-customtagimporter#custom-tag-importer"><b>Custom Tag Importer</b></a>.
+It works with <a href="https://github.com/AF-1/#-dynamic-playlists"><b>Dynamic Playlists</b></a>, <a href="https://github.com/AF-1/#-alternative-play-count"><b>Alternative Play Count</b></a>, <a href="https://github.com/AF-1/#-custom-skip"><b>Custom Skip</b></a> and <a href="https://github.com/AF-1/#-custom-tag-importer"><b>Custom Tag Importer</b></a>.
 </p></details><br>
 
 <details><summary>»<b>In some DPLC templates there's no option to set a <i>track limit</i> and no <i>do not repeat</i> setting.</b>«</summary><br><p>
-Dynamic playlists that <b>use the LMS cache</b> cannot have a track limit because <i>Dynamic Playlists</i> <b>4</b> will load <b>all</b> track IDs matching the active dynamic playlist's search parameters into the cache using a single initial database query. The cached track ID list should not have duplicates, hence no <i>do not repeat</i> option. DPL will add small batches of tracks from this cached list to the players's current playlist. The number of new unplayed tracks to be added per batch can be set in the DPL settings. It's a global setting for all dynamic playlists (except album dynamic playlists which should add complete albums).
+Dynamic playlists that <b>use the LMS cache</b> cannot have a track limit because <i>Dynamic Playlists</i> will load <b>all</b> track IDs matching the active dynamic playlist's search parameters into the cache using a single initial database query. The cached track ID list should not have duplicates, hence no <i>do not repeat</i> option. DPL will add small batches of tracks from this cached list to the players's current playlist. The number of new unplayed tracks to be added per batch can be set in the DPL settings. It's a global setting for all dynamic playlists (except album dynamic playlists which should add complete albums).
 </p></details><br>
 
 <details><summary>»<b>Does DPLC handle online tracks?</b>«</summary><br><p>
