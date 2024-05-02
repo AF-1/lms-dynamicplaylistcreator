@@ -33,6 +33,10 @@
 						<option value="NOT LIKE">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_CONTAIN" | string %]</option>
 						<option value="STARTS WITH">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_STARTS_WITH" | string %]</option>
 						<option value="STARTS NOT WITH">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_START_WITH" | string %]</option>
+						[% IF parameter.id.match('commentssearchstring1') %]
+						<option value="HASVALUE">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_HASVALUE" | string %]</option>
+						<option value="NOVALUE">[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_HASNOVALUE" | string %]</option>
+						[% END %]
 					</select>
 					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.placeholdervalue %] placeholder="[% parameter.placeholdervalue %]"[% END %]>
 				[% ELSIF parameter.type == 'logop' %]
