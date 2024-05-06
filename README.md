@@ -4,7 +4,7 @@
 The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and do **not** want to work with raw SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
 <br><br>
 
-> 💡 You can use the templates to create dynamic playlists for many purposes, but of course they do not cover all conceivable use cases.<br>
+> 💡 The templates allow you to create dynamic playlists for many purposes, but of course they do not cover all conceivable use cases.<br>
 > Don't forget: the [**Dynamic Playlists**](https://github.com/AF-1/#-dynamic-playlists) plugin also allows you to use (raw) SQLite statements that you can customise exactly to your needs (see [DPL FAQ](https://github.com/AF-1/lms-dynamicplaylists#faq)).
 
 <br><br>
