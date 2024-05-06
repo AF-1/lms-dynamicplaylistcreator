@@ -18,6 +18,7 @@
 			[% NEXT IF parameter.values.size == 0 %]
 			[% NEXT IF parameter.values.0.value == '' and parameter.values.size == 1 %]
 			[% NEXT IF CTIenabled && (parameter.type == 'sqloptionalsinglelist' && (matches = (parameter.id.match('(in|ex)cludedcustomtagname(\d+)'))) || (parameter.type == 'singlelist' && (matches = parameter.id.match('(in|ex)cludedcustomtagsearchtype(\d+)'))) || (parameter.type == 'multivaltext' && (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')))) && matches.1 > customtagcount %]
+			[% NEXT IF CTIenabled && (parameter.type == 'logop' && (matches = parameter.id.match('includedcustomtag(\d+)_logop'))) && matches.0 > (customtagcount - 1) %]
 			[%- IF parameter.id == 'excludedcustomtagname1' %]
 			<tr><td>&nbsp;</td></tr>
 			[%- END %]
