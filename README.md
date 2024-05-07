@@ -101,6 +101,10 @@ Dynamic playlists that <b>use the LMS cache</b> cannot have a track limit becaus
 <details><summary>»<b>Does DPLC handle online tracks?</b>«</summary><br><p>
 DPLC creates dynamic playlists for the <i>Dynamic Playlists</i> plugin which will process <b>online tracks</b> that have been <b>added to your LMS library as part of an <i>album</i></b>. LMS does not import <b>single</b> online tracks or tracks of <i>online</i> <b>playlists</b> as <b>library</b> tracks and therefore these won't be processed by <i>Dynamic Playlists</i>.</p></details><br>
 
+<details><summary>»<b>How do I use custom tags from the <i>Custom Tag Importer</i> plugin?</b>«</summary><br><p>
+You can use up to 8 custom tags with templates that support custom tags from the <i>Custom Tag Importer</i> plugin. If you use different logical operators (and/or) to link them, please make sure that you <b>group the custom tags</b> <i>linked by AND</i> and <i>those linked by OR</i>.<br><br><i>Example:</i> if you have 5 custom tags (A, B, C, D, E) and you definitely want 2 of them (A, B) and one of the remaining 3 (C, D, E), put them in this order: A <b>and</b> B <b>and</b> ( C <b>or</b> D <b>or</b> E ). The 2 ANDs first, then the ORs. Both groups are linked by AND.
+</p></details><br>
+
 <details><summary>»<b>I <i>can't save</i> new dynamic playlists. I get this error message: “Could not create the <i>DynamicPlaylistCreator</i> folder“.</i></b>«</summary><br><p>
 The <i>DynamicPlaylistCreator</i> folder is where DPLC stores all files related to your custom dynamic playlists and where the <i>Dynamic Playlists</i> plugin expects to find them. The folder name is hard-coded and must not be changed.<br>
 On every LMS (re)start, DPLC checks if there's a folder called <i>DynamicPlaylistCreator</i> in the parent folder. The default <b>parent</b> folder is the <i>LMS preferences folder</i> but you can change that in DPLC's preferences. If it doesn't find the folder <i>DynamicPlaylistCreator</i> inside the specified parent folder, it will try to create it.<br><br>
