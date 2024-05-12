@@ -91,6 +91,10 @@ sub webNewItemTypes {
 	my $structuredTemplates = $self->structureItemTypes($templates);
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($structuredTemplates));
 
+	my @playlistCategories = ('tracks', 'artists', 'albums', 'genres', 'years', 'playlists');
+	splice @playlistCategories, 3, 0, 'works' if (versionToInt($::VERSION) >= versionToInt('9.0.0'));
+	$params->{'playlistcategories'} = \@playlistCategories;
+
 	$params->{'pluginWebPageMethodsTemplates'} = \@{$structuredTemplates};
 	$params->{'pluginWebPageMethodsPostUrl'} = $self->webTemplates->{'webNewItemParameters'};
 

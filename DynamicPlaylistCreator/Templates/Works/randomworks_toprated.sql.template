@@ -1,6 +1,6 @@
 -- PlaylistName:[% playlistname %]
 -- PlaylistGroups:[% playlistgroups %]
--- PlaylistCategory:albums
+-- PlaylistCategory:works
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
@@ -69,10 +69,10 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-drop table if exists tmp_random_albums;
-create temporary table tmp_random_albums as
-	select subselection.album as album from
-		(select distinct tracks.album as album, avg(ifnull(tracks_persistent.rating,0)) as avgrating, count(distinct tracks.id) as totaltrackcount from tracks
+drop table if exists tmp_random_works;
+create temporary table tmp_random_works as
+	select subselection.album as album, subselection.work as work, subselection.grouping as grouping from
+		(select distinct tracks.album as album, tracks.work as work, tracks.grouping as grouping, avg(ifnull(tracks_persistent.rating,0)) as avgrating, count(distinct tracks.id) as totaltrackcount from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
 		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 		join library_track on
@@ -117,15 +117,12 @@ create temporary table tmp_random_albums as
 		[%- # ------- MISC ------- %]
 		left join tracks_persistent on
 			tracks_persistent.urlmd5 = tracks.urlmd5
-		[%- IF compis %]
-		join albums on
-			albums.id = tracks.album
-		[%- END %]
 		left join dynamicplaylist_history on
 			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 		WHERE
 			tracks.audio = 1
 			and dynamicplaylist_history.id is null
+			and tracks.work is not null
 		[%- IF includedartists %]
 			and contributors.namesearch in ([% includedartists %])
 		[%- END %]
@@ -177,22 +174,19 @@ create temporary table tmp_random_albums as
 		[%- IF request1fromuser == 'year' %]
 			and tracks.year = 'PlaylistParameter1'
 		[%- END %]
-		group by tracks.album
+		group by case when tracks.grouping is not null then tracks.grouping else tracks.work end
 		[%- IF recentlyplayed %]
-		having [% IF useapcvalues %]max(ifnull(alternativeplaycount.lastPlayed,0))[% ELSE %]max(ifnull(tracks_persistent.lastPlayed,0))[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %][% IF compis %] and ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %][% END %]
-		[%- ELSIF compis %]
-		having ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %][% IF minalbumtracks %] and count(tracks.id) >= [% minalbumtracks %][% END %]
-		[%- ELSIF minalbumtracks %]
-		having count(tracks.id) >= [% minalbumtracks %]
+		having [% IF useapcvalues %]max(ifnull(alternativeplaycount.lastPlayed,0))[% ELSE %]max(ifnull(tracks_persistent.lastPlayed,0))[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minworktracks %] and count(tracks.id) >= [% minworktracks %][% END %]
+		[%- ELSIF minworktracks %]
+		having count(tracks.id) >= [% minworktracks %]
 		[%- END %]
 		order by avgrating desc, random()
 		limit 30) as subselection
 	order by random()
-	limit [% IF noofalbums %][% noofalbums %][% ELSE %]1[% END %];
+	limit [% IF noofworks %][% noofworks %][% ELSE %]1[% END %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select tracks.id, tracks.primary_artist from tracks
-	join tmp_random_albums
-		on tmp_random_albums.album = tracks.album
+	join tmp_random_works on (tracks.album = tmp_random_works.album and tracks.work = tmp_random_works.work and case when tmp_random_works.grouping is not null then tracks.grouping = tmp_random_works.grouping else 1 end)
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 	join library_track on
@@ -271,6 +265,6 @@ select tracks.id, tracks.primary_artist from tracks
 							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
 	group by tracks.id
-	order by tmp_random_albums.album, tracks.disc, tracks.tracknum
+	order by tmp_random_works.album, tracks.disc, tracks.tracknum
 	[% IF nooftracks %]limit [% nooftracks %][% END %];
-drop table tmp_random_albums;
+drop table tmp_random_works;

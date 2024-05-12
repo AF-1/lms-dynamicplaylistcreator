@@ -20,7 +20,7 @@
 	<tr><td colspan="3">&nbsp;</td></tr>
 	[% END %]
 </table>
-[%- FOREACH category = ['tracks', 'artists', 'albums', 'genres', 'years', 'playlists'] %]
+[%- FOREACH category = playlistcategories %]
 	[% odd = 1 %]
 	<details open><summary><span class="categoryheader">[% category %]</span></summary>
 		<table border="0">
