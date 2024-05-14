@@ -112,7 +112,6 @@ create temporary table tmp_random_works as
 		join genres on
 			genres.id = genre_track.genre
 		[%- END %]
-	[%- END %]
 		[%- END %]
 		[%- # ------- MISC ------- %]
 		left join tracks_persistent on
@@ -125,6 +124,13 @@ create temporary table tmp_random_works as
 			and tracks.work is not null
 		[%- IF includedartists %]
 			and contributors.namesearch in ([% includedartists %])
+		[%- END %]
+		[%- IF excludedworks %]
+			and not exists (select * from tracks t2, works
+							where
+								t2.id = tracks.id and
+								works.id = tracks.work and
+								works.titlesearch in ([% excludedworks %]))
 		[%- END %]
 		[%- IF includedcomposers %]
 			and exists (select * from tracks t2,contributor_track,contributors

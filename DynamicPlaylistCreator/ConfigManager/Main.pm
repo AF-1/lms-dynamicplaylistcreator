@@ -111,6 +111,7 @@ sub initWebPageMethods {
 		if (-d catdir($plugindir, "DynamicPlaylistCreator", "Templates")) {
 			push @templateDirectories, catdir($plugindir, "DynamicPlaylistCreator", "Templates");
 			my @subDirs = ('Songs', 'Artists', 'Albums', 'Genres', 'Years', 'Playlists');
+			splice @subDirs, 3, 0, 'Works' if (Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0);
 			foreach (@subDirs) {
 				push @templateDirectories, catdir($plugindir, "DynamicPlaylistCreator", "Templates", $_);
 			}

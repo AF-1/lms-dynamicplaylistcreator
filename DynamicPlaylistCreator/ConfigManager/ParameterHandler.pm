@@ -122,6 +122,9 @@ sub addValuesToTemplateParameter {
 	} elsif ($p->{'type'} eq 'releasetypelistcached') {
 		my $listValues = $cache->get('dplc_releasetypes') || [];
 		$p->{'values'} = $listValues;
+	} elsif ($p->{'type'} eq 'worklistcached') {
+		my $listValues = $cache->get('dplc_worklist') || [];
+		$p->{'values'} = $listValues;
 	} elsif ($p->{'type'} =~ '.*list$' || $p->{'type'} =~ '.*checkboxes$') {
 		my @listValues = ();
 		my @values = split(/,/, $p->{'data'});
@@ -183,7 +186,7 @@ sub parameterIsSpecified {
 
 	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ /listcached/) {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} eq 'contributorlistcachedall' || $parameter->{'type'} eq 'contributorlistcachedalbumartists' || $parameter->{'type'} eq 'contributorlistcachedcomposers') {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} eq 'contributorlistcachedall' || $parameter->{'type'} eq 'contributorlistcachedalbumartists' || $parameter->{'type'} eq 'contributorlistcachedcomposers' || $parameter->{'type'} eq 'worklistcached') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
@@ -210,7 +213,7 @@ sub getValueOfTemplateParameter {
 	my $dbh = Slim::Schema->dbh;
 	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ /listcached/) {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} eq 'contributorlistcachedall' || $parameter->{'type'} eq 'contributorlistcachedalbumartists' || $parameter->{'type'} eq 'contributorlistcachedcomposers') {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} eq 'contributorlistcachedall' || $parameter->{'type'} eq 'contributorlistcachedalbumartists' || $parameter->{'type'} eq 'contributorlistcachedcomposers' || $parameter->{'type'} eq 'worklistcached') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
@@ -324,7 +327,7 @@ sub getXMLValueOfTemplateParameter {
 	my $result = '';
 	if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} =~ /.*checkboxes$/ || $parameter->{'type'} =~ /listcached/) {
 		my $selectedValues = undef;
-		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} eq 'contributorlistcachedall' || $parameter->{'type'} eq 'contributorlistcachedalbumartists' || $parameter->{'type'} eq 'contributorlistcachedcomposers') {
+		if ($parameter->{'type'} =~ /.*multiplelist$/ || $parameter->{'type'} eq 'contributorlistcachedall' || $parameter->{'type'} eq 'contributorlistcachedalbumartists' || $parameter->{'type'} eq 'contributorlistcachedcomposers' || $parameter->{'type'} eq 'worklistcached') {
 			$selectedValues = $self->getMultipleListQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});

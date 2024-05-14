@@ -92,7 +92,7 @@ sub webNewItemTypes {
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($structuredTemplates));
 
 	my @playlistCategories = ('tracks', 'artists', 'albums', 'genres', 'years', 'playlists');
-	splice @playlistCategories, 3, 0, 'works' if (versionToInt($::VERSION) >= versionToInt('9.0.0'));
+	splice @playlistCategories, 3, 0, 'works' if (Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0);
 	$params->{'playlistcategories'} = \@playlistCategories;
 
 	$params->{'pluginWebPageMethodsTemplates'} = \@{$structuredTemplates};
@@ -189,7 +189,7 @@ sub webEditItem {
 							if (defined($p->{'requireplugins'})) {
 								$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 							}
-							if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+							if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 								main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 								$useParameter = 0;
 							}
@@ -249,7 +249,7 @@ sub webNewItemParameters {
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 				}
-				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+				if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 					$useParameter = 0;
 				}
@@ -340,7 +340,7 @@ sub webSaveItem {
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 				}
-				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+				if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 					$useParameter = 0;
 				}
@@ -446,7 +446,7 @@ sub webSaveNewItem {
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 				}
-				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+				if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 					$useParameter = 0;
 				}
@@ -525,7 +525,7 @@ sub saveSimpleItem {
 					if (defined($p->{'requireplugins'})) {
 						$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 					}
-					if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+					if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 						main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 						$useParameter = 0;
 					}
@@ -582,7 +582,7 @@ sub saveSimpleItem {
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 				}
-				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+				if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 					$useParameter = 0;
 				}
@@ -621,7 +621,7 @@ sub saveSimpleItem {
 					if (defined($p->{'requireplugins'})) {
 						$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 					}
-					if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+					if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 						main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 						$useParameter = 0;
 					}
@@ -945,17 +945,6 @@ sub quickSQLcount {
 	$sth->bind_columns(undef, \$thisCount);
 	$sth->fetch();
 	return $thisCount;
-}
-
-sub versionToInt {
-	my $versionString = shift;
-	my @parts = split /\./, $versionString;
-	my $formatted = 0;
-	foreach my $p (@parts) {
-		$formatted *= 100;
-		$formatted += int($p);
-	}
-	return $formatted;
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;

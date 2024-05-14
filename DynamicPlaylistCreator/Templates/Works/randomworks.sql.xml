@@ -39,6 +39,7 @@
 		<parameter type="searchtype" id="worksearchtitle3_searchtype" name="worksearchtitle3 search type" value=""/>
 		<parameter type="searchtext" id="worksearchtitle3" name="Work &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="releasetypelistcached" id="includedreleasetypes" minlmsversion="8.4.0" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;release types&lt;/b&gt;" value="0" quotevalue="1"/>
+		<parameter type="worklistcached" id="excludedworks" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;works&lt;/b&gt;" value="" quotevalue="1"/>
 		<parameter type="checkbox" id="activevirtuallibrary" name="Limit to &lt;b&gt;currently selected&lt;/b&gt; virtual library on &lt;b&gt;player&lt;/b&gt;" value=""/>
 		<parameter type="functionoptionalsinglelist" id="virtuallibrary" name="&lt;b&gt;Always&lt;/b&gt; limit to &lt;b&gt;this&lt;/b&gt; virtual library" value="" data="Plugins::DynamicPlaylistCreator::Plugin,getVirtualLibraries"/>
 		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>

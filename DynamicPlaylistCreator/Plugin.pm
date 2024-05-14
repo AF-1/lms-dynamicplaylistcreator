@@ -93,7 +93,7 @@ sub postinitPlugin {
 		my $cachePluginVersion = $cache->get('dplc_pluginversion');
 		main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
-		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('dplc_contributorlist_all') || !$cache->get('dplc_contributorlist_albumartists') || !$cache->get('dplc_contributorlist_composers') || !$cache->get('dplc_genrelist') || !$cache->get('dplc_contenttypes') || ((Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) && !$cache->get('dplc_releasetypes')));
+		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('dplc_contributorlist_all') || !$cache->get('dplc_contributorlist_albumartists') || !$cache->get('dplc_contributorlist_composers') || !$cache->get('dplc_genrelist') || !$cache->get('dplc_contenttypes') || ((Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) && !$cache->get('dplc_releasetypes')) || ((Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0) && !$cache->get('dplc_worklist')));
 	}
 }
 
@@ -279,6 +279,7 @@ sub refreshSQLCache {
 	$cache->remove('dplc_genrelist');
 	$cache->remove('dplc_contenttypes');
 	$cache->remove('dplc_releasetypes');
+	$cache->remove('dplc_worklist');
 
 	my $contributorSQL_all = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5,6) group by contributors.id order by contributors.namesort asc";
 	my $contributorSQL_albumartists = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc";
@@ -286,6 +287,7 @@ sub refreshSQLCache {
 	my $genreSQL = "select genres.id,genres.name,genres.namesearch from genres order by namesort asc";
 	my $contentTypesSQL = "select distinct tracks.content_type,tracks.content_type,tracks.content_type from tracks where tracks.content_type is not null and tracks.content_type != 'cpl' and tracks.content_type != 'src' and tracks.content_type != 'ssp' and tracks.content_type != 'dir' order by tracks.content_type asc";
 	my $releaseTypesSQL = "select distinct albums.release_type,albums.release_type,albums.release_type from albums order by albums.release_type asc";
+	my $workSQL = "select works.id,works.title,works.titlesearch from works join tracks on works.id = tracks.work where tracks.work is not null group by works.id order by works.titlesort asc";
 
 	my $contributorList_all = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_all);
 	$cache->set('dplc_contributorlist_all', $contributorList_all, 'never');
@@ -314,6 +316,12 @@ sub refreshSQLCache {
 		}
 		$cache->set('dplc_releasetypes', $releaseTypesList, 'never');
 		main::DEBUGLOG && $log->is_debug && $log->debug('releaseTypesList count = '.scalar(@{$releaseTypesList}));
+	}
+
+	if (Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0) {
+		my $workList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $workSQL);
+		$cache->set('dplc_worklist', $workList, 'never');
+		main::DEBUGLOG && $log->is_debug && $log->debug('workList count = '.scalar(@{$workList}));
 	}
 
 	$cache->set('dplc_pluginversion', $pluginVersion);

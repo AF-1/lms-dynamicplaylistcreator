@@ -68,7 +68,7 @@ sub loadTemplate {
 	for my $plugindir (@pluginDirs) {
 		if (-d catdir($plugindir, "DynamicPlaylistCreator", "Templates")) {
 			my @subDirs = ('Songs', 'Artists', 'Albums', 'Genres', 'Years', 'Playlists');
-			splice @subDirs, 3, 0, 'Works' if (versionToInt($::VERSION) >= versionToInt('9.0.0'));
+			splice @subDirs, 3, 0, 'Works' if (Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0);
 			foreach (@subDirs) {
 				if (-e catfile($plugindir, "DynamicPlaylistCreator", "Templates", $_, $templateFile)) {
 				$path = catfile($plugindir, "DynamicPlaylistCreator", "Templates", $_, $templateFile);
@@ -107,17 +107,6 @@ sub loadTemplate {
 sub parse {
 	my ($self, $client, $item, $content, $items, $globalcontext, $localcontext) = @_;
 	return $self->parseTemplateContent($client, $item, $content, $items, $globalcontext->{'templates'}, $globalcontext, $localcontext);
-}
-
-sub versionToInt {
-	my $versionString = shift;
-	my @parts = split /\./, $versionString;
-	my $formatted = 0;
-	foreach my $p (@parts) {
-		$formatted *= 100;
-		$formatted += int($p);
-	}
-	return $formatted;
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;
