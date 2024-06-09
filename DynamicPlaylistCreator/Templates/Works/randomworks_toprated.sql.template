@@ -67,8 +67,8 @@
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_works;
 create temporary table tmp_random_works as
-	select subselection.album as album, subselection.work as work, subselection.grouping as grouping from
-		(select distinct tracks.album as album, tracks.work as work, tracks.grouping as grouping, avg(ifnull(tracks_persistent.rating,0)) as avgrating, count(distinct tracks.id) as totaltrackcount from tracks
+	select subselection.album as album, subselection.work as work, subselection.performance as performance from
+		(select distinct tracks.album as album, tracks.work as work, tracks.performance as performance, avg(ifnull(tracks_persistent.rating,0)) as avgrating, count(distinct tracks.id) as totaltrackcount from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
 		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 		join library_track on
@@ -176,7 +176,7 @@ create temporary table tmp_random_works as
 		[%- IF request1fromuser == 'year' %]
 			and tracks.year = 'PlaylistParameter1'
 		[%- END %]
-		group by case when tracks.grouping is not null then tracks.grouping else tracks.work end
+		group by case when tracks.performance is not null then tracks.performance else tracks.work end
 		[%- IF recentlyplayed %]
 		having [% IF useapcvalues %]max(ifnull(alternativeplaycount.lastPlayed,0))[% ELSE %]max(ifnull(tracks_persistent.lastPlayed,0))[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minworktracks %] and count(tracks.id) >= [% minworktracks %][% END %]
 		[%- ELSIF minworktracks %]
@@ -195,7 +195,7 @@ create temporary table tmp_random_works_contribsel as
 			contributor_track.contributor = contributors.id and contributor_track.role in (1,5)
 		join tracks on
 			contributor_track.track = tracks.id
-		join tmp_random_works on (tracks.work = tmp_random_works.work and case when tmp_random_works.grouping is not null then tracks.grouping = tmp_random_works.grouping else 1 end)
+		join tmp_random_works on (tracks.work = tmp_random_works.work and case when tmp_random_works.performance is not null then tracks.performance = tmp_random_works.performance else 1 end)
 		left join dynamicplaylist_history on
 			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 		WHERE
@@ -208,7 +208,7 @@ create temporary table tmp_random_works_contribsel as
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select tracks.id, tracks.primary_artist from tracks
-	join tmp_random_works on ([% IF !includedartists %]tracks.album = tmp_random_works.album and [% END %]tracks.work = tmp_random_works.work and case when tmp_random_works.grouping is not null then tracks.grouping = tmp_random_works.grouping else 1 end)
+	join tmp_random_works on ([% IF !includedartists %]tracks.album = tmp_random_works.album and [% END %]tracks.work = tmp_random_works.work and case when tmp_random_works.performance is not null then tracks.performance = tmp_random_works.performance else 1 end)
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 	join library_track on

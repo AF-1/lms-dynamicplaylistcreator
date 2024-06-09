@@ -123,8 +123,8 @@
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_works;
 create temporary table tmp_random_works as
-	[% IF sortorder or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]select subselection.album as album, subselection.work as work, subselection.grouping as grouping from ([% END %]
-	select tracks.album as album, tracks.work as work, tracks.grouping as grouping[% IF sortorder %], [% IF useapcvalues %]avg(ifnull(alternativeplaycount.playCount,0))[% ELSE %]avg(ifnull(tracks_persistent.playCount,0))[% END %] as avgcount[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
+	[% IF sortorder or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]select subselection.album as album, subselection.work as work, subselection.performance as performance from ([% END %]
+	select tracks.album as album, tracks.work as work, tracks.performance as performance[% IF sortorder %], [% IF useapcvalues %]avg(ifnull(alternativeplaycount.playCount,0))[% ELSE %]avg(ifnull(tracks_persistent.playCount,0))[% END %] as avgcount[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
 		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 		join library_track on
@@ -266,7 +266,7 @@ create temporary table tmp_random_works as
 								genre_track.genre = genres.id and
 								genres.namesearch in ([% excludedgenres %]))
 		[%- END %]
-		group by case when tracks.grouping is not null then tracks.grouping else tracks.work end
+		group by case when tracks.performance is not null then tracks.performance else tracks.work end
 		[%- IF recentlyplayed and playedbefore != 1 %]
 		having [% IF useapcvalues %]max(ifnull(alternativeplaycount.lastPlayed,0))[% ELSE %]max(ifnull(tracks_persistent.lastPlayed,0))[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minworktracks %] and count(tracks.id) >= [% minworktracks %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %]
 		[%- ELSIF (request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed') and playedbefore != 1 %]
@@ -295,7 +295,7 @@ create temporary table tmp_random_works_contribsel as
 			contributor_track.contributor = contributors.id and contributor_track.role in (1,5)
 		join tracks on
 			contributor_track.track = tracks.id
-		join tmp_random_works on (tracks.work = tmp_random_works.work and case when tmp_random_works.grouping is not null then tracks.grouping = tmp_random_works.grouping else 1 end)
+		join tmp_random_works on (tracks.work = tmp_random_works.work and case when tmp_random_works.performance is not null then tracks.performance = tmp_random_works.performance else 1 end)
 		left join dynamicplaylist_history on
 			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 		WHERE
@@ -308,7 +308,7 @@ create temporary table tmp_random_works_contribsel as
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select tracks.id, tracks.primary_artist from tracks
-	join tmp_random_works on ([% IF !includedartists %]tracks.album = tmp_random_works.album and [% END %]tracks.work = tmp_random_works.work and case when tmp_random_works.grouping is not null then tracks.grouping = tmp_random_works.grouping else 1 end)
+	join tmp_random_works on ([% IF !includedartists %]tracks.album = tmp_random_works.album and [% END %]tracks.work = tmp_random_works.work and case when tmp_random_works.performance is not null then tracks.performance = tmp_random_works.performance else 1 end)
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 	join library_track on
