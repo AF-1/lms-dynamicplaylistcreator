@@ -109,8 +109,8 @@
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_contributors;
 create temporary table tmp_random_contributors as
-	[%- IF sortorder or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]select subselection.contributor as contributor from ([% END %]
-		select contributor_track.contributor as contributor[% IF sortorder %], [% IF useapcvalues %]avg(ifnull(alternativeplaycount.playCount,0))[% ELSE %]avg(ifnull(tracks_persistent.playCount,0))[% END %] as avgcount[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
+	[%- IF sortorder or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %] select subselection.contributor as contributor from ([% END %]
+		select contributor_track.contributor as contributor[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %][% IF useapcvalues %](ifnull(alternativeplaycount.playCount,0))[% ELSE %](ifnull(tracks_persistent.playCount,0))[% END %] as procplaycount[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
 		join contributor_track
 			on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
 		[%- # ------- VIRTUAL LIBRARY ------- %]
@@ -206,7 +206,7 @@ create temporary table tmp_random_contributors as
 		[%- IF partlyplayed and playedbefore != 1 %]
 		and [% IF useapcvalues %]min(ifnull(alternativeplaycount.playCount,0))[% ELSE %]min(ifnull(tracks_persistent.playCount,0))[% END %] = 0 and [% IF useapcvalues %]avg(ifnull(alternativeplaycount.playCount,0))[% ELSE %]avg(ifnull(tracks_persistent.playCount,0))[% END %] > 0
 		[%- END %]
-		order by [% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 %]avgcount desc, [% ELSIF sortorder == 2 %]avgcount asc, [% END %]random()
+		order by [% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %]random()
 		[%- IF sortorder or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]limit 30) as subselection
 	order by random()[% END %]
 	limit [% IF noofartists %][% noofartists %][% ELSE %]1[% END %];

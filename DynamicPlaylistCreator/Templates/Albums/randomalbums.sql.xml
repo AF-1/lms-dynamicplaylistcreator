@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Albums</name>
-		<templateversion>6</templateversion>
+		<templateversion>7</templateversion>
 		<description>Album template with options</description>
 		<playlistcategory>albums</playlistcategory>
 		<listweight>1</listweight>
@@ -23,7 +23,7 @@
 		<parameter type="number" id="noofalbums" name="Number of albums from which to get new tracks &lt;b&gt;per batch&lt;/b&gt;" value="1"/>
 		<parameter type="number" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value=""/>
 		<parameter type="optionalsinglelist" id="addedtime" name="Limit to &lt;b&gt;last added&lt;/b&gt; albums?" value="" data="604800=Added in the week before the last library import,1209600=Added in the 2 weeks before the last library import,2419200=Added in the 4 weeks before the last library import,7257600=Added in the 3 months before the last library import,14515200=Added in the 6 months before the last library import,29030399=Added in the 12 months before the last library import"/>
-		<parameter type="optionalsinglelist" id="sortorder" name="Album &lt;b&gt;sort order&lt;/b&gt;" value="" data="1=Most played albums first,2=Least played albums first"/>
+		<parameter type="optionalsinglelist" id="sortorder" name="Album &lt;b&gt;sort order&lt;/b&gt;" value="" data="1=Most played first (avg. count),2=Least played first (avg. count),3=Most played first (total count),4=Least played first (total count)"/>
 		<parameter type="optionalsinglelist" id="compis" name="Limit to or exclude &lt;b&gt;compilations&lt;/b&gt;" value="" data="1=Only compilations,2=No compilations"/>
 		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>

@@ -7,11 +7,11 @@
 [%- IF repeat %]
 -- PlaylistRepeat: 1
 [%- END %]
-[% IF sortorder == 1 %]
+[%- IF sortorder == 1 || sortorder == 3 %]
 -- PlaylistTrackOrder:ordereddescrandom
-[% ELSIF sortorder == 2 %]
+[%- ELSIF sortorder == 2 || sortorder == 4 %]
 -- PlaylistTrackOrder:orderedascrandom
-[% ELSIF sortorder != 3 %]
+[%- ELSIF sortorder != 5 %]
 -- PlaylistTrackOrder:ordered
 [%- END %]
 -- PlaylistLimitOption:unlimited
@@ -109,7 +109,7 @@
 drop table if exists tmp_staticplaylist_albums;
 create temporary table tmp_staticplaylist_albums as
 	[% IF sortorder or request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %]select subselection.album as album from ([% END %]
-	select tracks.album as album[% IF sortorder %], [% IF useapcvalues %]avg(ifnull(alternativeplaycount.playCount,0))[% ELSE %]avg(ifnull(tracks_persistent.playCount,0))[% END %] as avgcount[% END %][% IF request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
+	select tracks.album as album[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %][% IF useapcvalues %](ifnull(alternativeplaycount.playCount,0))[% ELSE %](ifnull(tracks_persistent.playCount,0))[% END %] as procplaycount[% END %][% IF request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
 		join playlist_track on
 			playlist_track.track = tracks.url and playlist_track.playlist = 'PlaylistParameter1'
 		[%- # ------- VIRTUAL LIBRARY ------- %]
@@ -211,7 +211,7 @@ create temporary table tmp_staticplaylist_albums as
 		[%- IF addedtime %]
 		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 		[%- END %]
-		order by [% IF request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 %]avgcount desc, [% ELSIF sortorder == 2 %]avgcount asc, [% END %]random()
+		order by [% IF request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %]random()
 		[% IF sortorder or request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %]limit 30) as subselection
 	order by random()[% END %]
 	limit 1;
@@ -334,5 +334,5 @@ select tracks.id, tracks.primary_artist from tracks
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 	[%- END %]
 	group by tracks.id
-	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]tmp_artist_albums.album, tracks.disc, tracks.tracknum[% END %];
+	[% IF sortorder != 5 %]order by [% IF sortorder %][% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 || sortorder == 3 %]desc[% ELSIF sortorder == 2 || sortorder == 4 %]asc[% END %], [% END %]tmp_staticplaylist_albums.album, tracks.disc, tracks.tracknum[% END %];
 drop table tmp_staticplaylist_albums;
