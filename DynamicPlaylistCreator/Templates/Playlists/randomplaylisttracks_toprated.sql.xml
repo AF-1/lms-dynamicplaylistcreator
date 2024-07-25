@@ -18,6 +18,8 @@
 		<parameter type="number" id="minplaylisttracks" name="Ignore playlists with &lt;b&gt;less&lt;/b&gt; tracks than" value="3"/>
 		<parameter type="number" id="noofplaylists" name="Number of &lt;b&gt;playlists&lt;/b&gt; from which to get new tracks" value="1"/>
 		<parameter type="number" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value="15"/>
+		<parameter type="optionalsinglelist" id="sortorder" name="Give preference to most/least &lt;b&gt;played&lt;/b&gt; static playlists" value="" data="1=Most played first (avg. count),2=Least played first (avg. count),3=Most played first (total count),4=Least played first (total count)"/>
+		<parameter type="singlelist" id="toprated" name="&lt;b&gt;Top rated&lt;/b&gt; calculated as" value="1" data="1=Average rating,2=Total rating"/>
 		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="checkbox" id="activevirtuallibrary" name="Limit to &lt;b&gt;currently selected&lt;/b&gt; virtual library on &lt;b&gt;player&lt;/b&gt;" value=""/>
@@ -25,3 +27,5 @@
 		<parameter type="functionoptionalsinglelist" id="customskipfilter" requireplugins="CustomSkip3::Plugin" name="&lt;b&gt;Custom Skip&lt;/b&gt; filter set" value="" data="Plugins::CustomSkip3::Plugin,getAvailableFilters"/>
 	</template>
 </dynamicplaylistcreator>
+
+

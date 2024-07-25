@@ -3,7 +3,7 @@
 	<template>
 		<name>Random Years / Decades</name>
 		<templateversion>3</templateversion>
-		<description>Years template with options (incl. top rated)</description>
+		<description>Years template with options</description>
 		<playlistcategory>years</playlistcategory>
 		<listweight>1</listweight>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your dynamic playlist"/>
@@ -16,7 +16,7 @@
 		<parameter type="number" id="minyeartracks" name="Ignore years with &lt;b&gt;less&lt;/b&gt; tracks than" value="3"/>
 		<parameter type="number" id="noofyears" name="Number of &lt;b&gt;years&lt;/b&gt; from which to get new tracks" value="1"/>
 		<parameter type="number" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value="15"/>
-		<parameter type="checkbox" id="toprated" name="Preference to &lt;b&gt;top&lt;/b&gt; rated years" value=""/>
+		<parameter type="optionalsinglelist" id="toprated" name="Give preference to &lt;b&gt;top rated&lt;/b&gt; years" value="" data="1=Average rating,2=Total rating"/>
 		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="contributorlistcachedall" id="excludedartists" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>

@@ -44,32 +44,29 @@
 drop table if exists tmp_random_years;
 create temporary table tmp_random_years as
 	select subselection.year as year from
-		(select tracks.year as year[% IF toprated %], avg(ifnull(tracks_persistent.rating,0)) as avgrating[% END %] from tracks
+		(select tracks.year as year[% IF toprated %], [% IF toprated == 1 %]avg[% ELSE %]sum[% END %](ifnull(tracks_persistent.rating,0)) as procrating[% END %] from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
 		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
-		join library_track on
-			library_track.track = tracks.id
-			and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
+		join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
 		[%- END %]
 		[%- # ------- (MULTIPLE) GENRES ------- %]
 		[%- IF includedgenres or request1fromuser == 'genre' or request1fromuser == 'multiplegenres' %]
-		join genre_track on
-			genre_track.track = tracks.id
+		join genre_track on genre_track.track = tracks.id
 			[%- IF request1fromuser == 'multiplegenres' %]
 			and genre_track.genre in ('PlaylistParameter1')
 			[%- ELSIF request1fromuser == 'genre' %]
 			and genre_track.genre = 'PlaylistParameter1'
 			[%- END %]
 		[%- IF includedgenres %]
-		join genres on
-			genres.id = genre_track.genre
+		join genres on genres.id = genre_track.genre and genres.namesearch in ([% includedgenres %])
 		[%- END %]
 		[%- END %]
-		left join dynamicplaylist_history on
-			dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-		[%- IF recentlyplayed or toprated %]
-		left join tracks_persistent on
-			tracks_persistent.urlmd5 = tracks.urlmd5
+		left join dynamicplaylist_history on dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+		[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or toprated %]
+		left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
+		[%- END %]
+		[%- IF useapcvalues and (recentlyplayed or playedbefore) %]
+		join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
 		[%- END %]
 		WHERE
 			tracks.audio = 1
@@ -78,9 +75,6 @@ create temporary table tmp_random_years as
 			and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
 		[%- ELSIF request1fromuser == 'multipledecades' %]
 			and ifnull(tracks.year, 0) in ('PlaylistParameter1')
-		[%- END %]
-		[%- IF includedgenres %]
-			and genres.namesearch in ([% includedgenres %])
 		[%- END %]
 		[%- IF excludedgenres %]
 			and not exists (select * from tracks t2,genre_track,genres
@@ -101,48 +95,40 @@ create temporary table tmp_random_years as
 		[%- END %]
 		group by tracks.year
 		[%- IF recentlyplayed %]
-		having max(ifnull(tracks_persistent.lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minyeartracks %] and count(tracks.id) >= [% minyeartracks %][% END %]
+		having max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minyeartracks %] and count(tracks.id) >= [% minyeartracks %][% END %]
 		[%- ELSIF minyeartracks %]
 		having count(tracks.id) >= [% minyeartracks %]
 		[%- END %]
-		order by [% IF toprated %]avgrating desc, [% END %]random()
+		order by [% IF toprated %]procrating desc, [% END %]random()
 		limit 30) as subselection
 	order by random()
 	limit [% IF noofyears %][% noofyears %][% ELSE %]1[% END %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select tracks.id, tracks.primary_artist from tracks
-	join tmp_random_years
-		on tmp_random_years.year = tracks.year
+	join tmp_random_years on tmp_random_years.year = tracks.year
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
-	join library_track on
-		library_track.track = tracks.id
-		and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
+	join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
 	[%- END %]
 	[%- # ------- (MULTIPLE) GENRES ------- %]
 	[%- IF includedgenres or request1fromuser == 'genre' or request1fromuser == 'multiplegenres' %]
-	join genre_track on
-		genre_track.track = tracks.id
+	join genre_track on genre_track.track = tracks.id
 		[%- IF request1fromuser == 'multiplegenres' %]
 		and genre_track.genre in ('PlaylistParameter1')
 		[%- ELSIF request1fromuser == 'genre' %]
 		and genre_track.genre = 'PlaylistParameter1'
 		[%- END %]
 	[%- IF includedgenres %]
-	join genres on
-		genres.id = genre_track.genre
+	join genres on genres.id = genre_track.genre and genres.namesearch in ([% includedgenres %])
 	[%- END %]
 	[%- END %]
 	[%- IF useapcvalues and (recentlyplayed or playedbefore) %]
-	join alternativeplaycount on
-		alternativeplaycount.urlmd5 = tracks.urlmd5
+	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF !useapcvalues and (recentlyplayed or playedbefore) %]
-	left join tracks_persistent on
-		tracks_persistent.urlmd5 = tracks.urlmd5
+	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
-	left join dynamicplaylist_history on
-		dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
+	left join dynamicplaylist_history on dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	WHERE
 		tracks.audio = 1
 		and dynamicplaylist_history.id is null
@@ -152,16 +138,13 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks.year, 0) in ('PlaylistParameter1')
 	[%- END %]
 	[%- IF playedbefore == 1 and !recentlyplayed %]
-		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0
 	[%- END %]
 	[%- IF playedbefore == 2 %]
-		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) > 0
 	[%- END %]
 	[%- IF recentlyplayed and playedbefore != 1 %]
-		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
-	[%- END %]
-	[%- IF includedgenres %]
-		and genres.namesearch in ([% includedgenres %])
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
 	[%- IF excludedartists %]
 		and not exists (select * from tracks t2,contributor_track,contributors
@@ -181,6 +164,5 @@ select tracks.id, tracks.primary_artist from tracks
 							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
 	group by tracks.id
-	order by random()
-	[% IF nooftracks %]limit [% nooftracks %][% END %];
+	order by random()[% IF nooftracks %] limit [% nooftracks %][% END %];
 drop table tmp_random_years;

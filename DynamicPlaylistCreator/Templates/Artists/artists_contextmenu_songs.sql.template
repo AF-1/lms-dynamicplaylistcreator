@@ -82,23 +82,17 @@
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select tracks.id, tracks.primary_artist from tracks
-	join contributor_track on
-		contributor_track.track = tracks.id and contributor_track.role in (1,5,6)
-		and contributor_track.contributor = 'PlaylistParameter1'
+	join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5,6) and contributor_track.contributor = 'PlaylistParameter1'
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF activevirtuallibrary %]
-	join library_track on
-		library_track.track = tracks.id
-		and library_track.library = 'PlaylistCurrentVirtualLibraryForClient'
+	join library_track on library_track.track = tracks.id and library_track.library = 'PlaylistCurrentVirtualLibraryForClient'
 	[%- END %]
 	[%- # ------- MISC ------- %]
 	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or (includedratings or includedratings == 0) or maxrating or sortorder or request2fromuser == 'addedtime' or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'addedtime' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
-	left join tracks_persistent on
-		tracks_persistent.urlmd5 = tracks.urlmd5
+	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
-	join alternativeplaycount on
-		alternativeplaycount.urlmd5 = tracks.urlmd5
+	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
 	WHERE
 		tracks.audio = 1
@@ -140,16 +134,16 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request2fromuser == 'exactRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
 	[%- IF playedbefore == 1 and !recentlyplayed %]
-		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0
 	[%- END %]
 	[%- IF playedbefore == 2 %]
-		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) > 0
 	[%- END %]
 	[%- IF recentlyplayed and playedbefore != 1 %]
-		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
 	[%- IF (request2fromuser == 'lastplayed' or request3fromuser == 'lastplayed') and playedbefore != 1 %]
-		and (strftime('%s', 'now') - [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %]) <= 'PlaylistParameter[% IF request2fromuser == 'lastplayed' %]2[% ELSE %]3[% END %]'
+		and (strftime('%s', 'now') - ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) <= 'PlaylistParameter[% IF request2fromuser == 'lastplayed' %]2[% ELSE %]3[% END %]'
 	[%- END %]
 	[%- IF maxskipcount %]
 		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
@@ -179,5 +173,5 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	group by tracks.id
 	[%- IF sortorder %]
-	order by [% IF useapcvalues %]alternativeplaycount.playCount[% ELSE %]tracks_persistent.playCount[% END %] [% IF sortorder == 1 %]desc[% ELSE %]asc[% END %]
+	order by [% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount [% IF sortorder == 1 %]desc[% ELSE %]asc[% END %]
 	[%- END %]
