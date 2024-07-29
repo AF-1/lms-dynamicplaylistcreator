@@ -8,10 +8,10 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_SETTINGS
 	EN	Various Settings
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT
-	EN	Click here to read the FAQ.
+	EN	Click here for more information (incl. FAQ).
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK
-	EN	https://github.com/AF-1/lms-dynamicplaylistcreator#faq
+	EN	https://github.com/AF-1/#-dynamic-playlist-creator
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH
 	EN	<u>Parent</u> folder path for folder <wbr>with&nbsp;your&nbsp;dynamic&nbsp;playlist&nbsp;definition&nbsp;files

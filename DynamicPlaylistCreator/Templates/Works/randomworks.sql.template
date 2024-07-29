@@ -124,7 +124,7 @@
 drop table if exists tmp_random_works;
 create temporary table tmp_random_works as
 	[% IF sortorder or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]select subselection.album as album, subselection.work as work, subselection.performance as performance from ([% END %]
-	select tracks.album as album, tracks.work as work, tracks.performance as performance[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) as procplaycount[% END %][% IF toprated %], [% IF toprated == 1 %]avg[% ELSE %]sum[% END %](ifnull(tracks_persistent.rating,0)) as procrating[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
+	select tracks.album as album, tracks.work as work, tracks.performance as performance[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF (sortorder == 3 || sortorder == 4) and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_track.role)[% END %] as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_track.role)[% END %] as procrating[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
 		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 		join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
@@ -144,7 +144,7 @@ create temporary table tmp_random_works as
 			[%- IF request1fromuser == 'artist' or request2fromuser == 'artist' %]
 			and contributor_track.contributor = 'PlaylistParameter[% IF request1fromuser == 'artist' %]1[% ELSE %]2[% END %]'
 			[%- ELSE %]
-			join contributors on contributors.id = contributor_track.contributor and contributors.namesearch in ([% includedartists %])
+		join contributors on contributors.id = contributor_track.contributor and contributors.namesearch in ([% includedartists %])
 			[%- END %]
 		[%- END %]
 		[%- # ------- (MULTIPLE) GENRES ------- %]
