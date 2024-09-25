@@ -25,7 +25,7 @@ The target group for this plugin is users who want to quickly and easily create 
 
 - LMS version >= **8**.0
 
-- LMS database = SQLite
+- LMS database = **SQLite**
 <br><br><br>
 
 
