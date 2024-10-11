@@ -93,7 +93,7 @@ sub postinitPlugin {
 		my $cachePluginVersion = $cache->get('dplc_pluginversion');
 		main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
-		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('dplc_contributorlist_all') || !$cache->get('dplc_contributorlist_albumartists') || !$cache->get('dplc_contributorlist_composers') || !$cache->get('dplc_genrelist') || !$cache->get('dplc_contenttypes') || ((Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) && !$cache->get('dplc_releasetypes')) || ((Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0) && !$cache->get('dplc_worklist')));
+		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('dplc_contributorlist_all') || !$cache->get('dplc_contributorlist_albumartists') || !$cache->get('dplc_contributorlist_composers') || !$cache->get('dplc_genrelist') || !$cache->get('dplc_contenttypes') || !$cache->get('dplc_releasetypes') || ((Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0) && !$cache->get('dplc_worklist')));
 	}
 }
 
@@ -309,14 +309,12 @@ sub refreshSQLCache {
 	$cache->set('dplc_contenttypes', $contentTypesList, 'never');
 	main::DEBUGLOG && $log->is_debug && $log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
 
-	if (Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) {
-		my $releaseTypesList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $releaseTypesSQL);
-		foreach my $releaseType (@{$releaseTypesList}) {
-			$releaseType->{'name'} = _releaseTypeName($releaseType->{'name'});
-		}
-		$cache->set('dplc_releasetypes', $releaseTypesList, 'never');
-		main::DEBUGLOG && $log->is_debug && $log->debug('releaseTypesList count = '.scalar(@{$releaseTypesList}));
+	my $releaseTypesList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $releaseTypesSQL);
+	foreach my $releaseType (@{$releaseTypesList}) {
+		$releaseType->{'name'} = _releaseTypeName($releaseType->{'name'});
 	}
+	$cache->set('dplc_releasetypes', $releaseTypesList, 'never');
+	main::DEBUGLOG && $log->is_debug && $log->debug('releaseTypesList count = '.scalar(@{$releaseTypesList}));
 
 	if (Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0) {
 		my $workList = Plugins::DynamicPlaylistCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $workSQL);
