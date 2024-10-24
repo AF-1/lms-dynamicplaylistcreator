@@ -23,7 +23,7 @@ The target group for this plugin is users who want to quickly and easily create 
 ## Requirements
 - <a href="https://github.com/AF-1/#-dynamic-playlists"><b>Dynamic Playlists</b></a> version **4**
 
-- LMS version >= **8**.0
+- LMS version >= 8.**4**
 
 - LMS database = **SQLite**
 <br><br><br>
