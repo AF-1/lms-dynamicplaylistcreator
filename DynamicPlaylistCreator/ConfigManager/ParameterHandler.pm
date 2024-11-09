@@ -465,7 +465,7 @@ sub getSQLTemplateData {
 			$sth->finish();
 		};
 		if ($@) {
-			warn "Database error: $DBI::errstr";
+			$log->warn("Database error: $DBI::errstr");
 			$self->criticalErrorCallback->("Running: $sql got error: <br>".$DBI::errstr);
 		}
 	}
@@ -484,7 +484,7 @@ sub getFunctionTemplateData {
 			no strict 'refs';
 			my $items = eval { &{$object.'::'.$function}() };
 			if ($@) {
-				warn "Function call error: $@";
+				$log->warn("Function call error: $@");
 			}
 			use strict 'refs';
 			if (defined($items)) {

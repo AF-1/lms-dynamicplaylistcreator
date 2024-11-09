@@ -282,7 +282,7 @@ sub webDeleteItem {
 
 	if (defined($dir) && -d $dir && $xmlFile && -e $xmlUrl) {
 		unlink($xmlUrl) or do {
-			warn "Unable to delete file: ".$xmlUrl.": $!";
+			$log->warn("Unable to delete file: ".$xmlUrl.": $!");
 		}
 	}
 
@@ -292,7 +292,7 @@ sub webDeleteItem {
 
 	if (defined($dir) && -d $dir && $sqlFile && -e $sqlFileUrl) {
 		unlink($sqlFileUrl) or do {
-			warn "Unable to delete dpl sql file: ".$sqlFileUrl.": $!";
+			$log->warn("Unable to delete dpl sql file: ".$sqlFileUrl.": $!");
 		}
 	}
 
