@@ -62,7 +62,7 @@ sub initPlugin {
 		Plugins::DynamicPlaylistCreator::Settings->new($class);
 	}
 
-	Slim::Control::Request::subscribe(\&refreshSQLCache, [['rescan'], ['done']]);
+	Slim::Control::Request::subscribe(\&_setRefreshCBTimer, [['rescan'], ['done']]);
 }
 
 sub initPrefs {
@@ -323,6 +323,23 @@ sub refreshSQLCache {
 	}
 
 	$cache->set('dplc_pluginversion', $pluginVersion);
+}
+
+sub _setRefreshCBTimer {
+	main::DEBUGLOG && $log->is_debug && $log->debug('Killing existing timers for post-scan refresh to prevent multiple calls');
+	Slim::Utils::Timers::killOneTimer(undef, \&delayedPostScanRefresh);
+	main::DEBUGLOG && $log->is_debug && $log->debug('Scheduling a delayed post-scan refresh');
+	Slim::Utils::Timers::setTimer(undef, time() + 5, \&delayedPostScanRefresh);
+}
+
+sub delayedPostScanRefresh {
+	if (Slim::Music::Import->stillScanning) {
+		main::DEBUGLOG && $log->is_debug && $log->debug('Scan in progress. Waiting for current scan to finish.');
+		_setRefreshCBTimer();
+	} else {
+		main::DEBUGLOG && $log->is_debug && $log->debug('Starting post-scan SQL cache refresh.');
+		refreshSQLCache();
+	}
 }
 
 sub _releaseTypeName {
