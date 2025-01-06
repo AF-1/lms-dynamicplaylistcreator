@@ -67,6 +67,12 @@ sub init {
 		'pluginVersion' => $self->pluginVersion,
 	);
 
+	# contentDirectoryHandler only required for exporting dpls to DPL4
+	$directoryHandlerParameters{'extension'} = "sql";
+	$directoryHandlerParameters{'parser'} = $self->contentParser;
+	$directoryHandlerParameters{'includeExtensionInIdentifier'} = undef;
+	$self->contentDirectoryHandler(Plugins::DynamicPlaylistCreator::ConfigManager::DirectoryLoader->new(\%directoryHandlerParameters));
+
 	$directoryHandlerParameters{'extension'} = "sql.xml";
 	$directoryHandlerParameters{'identifierExtension'} = "sql.xml";
 	$directoryHandlerParameters{'parser'} = $self->templateParser;
