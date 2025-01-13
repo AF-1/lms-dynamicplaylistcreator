@@ -36,8 +36,6 @@ use Time::Local;
 
 __PACKAGE__->mk_accessor(rw => qw(parameterPrefix criticalErrorCallback));
 
-my $newUnicodeHandling = 0;
-
 my $log = logger('plugin.dynamicplaylistcreator');
 my $cache = Slim::Utils::Cache->new();
 my $prefs = preferences('plugin.dynamicplaylistcreator');
@@ -48,9 +46,6 @@ sub new {
 	my $self = $class->SUPER::new();
 	$self->parameterPrefix($parameters->{'parameterPrefix'});
 	$self->criticalErrorCallback($parameters->{'criticalErrorCallback'});
-	if (UNIVERSAL::can("Slim::Utils::Unicode", "hasEDD")) {
-		$newUnicodeHandling = 1;
-	}
 	return $self;
 }
 
@@ -423,20 +418,20 @@ sub getSQLTemplateData {
 	my $dbh = Slim::Schema->dbh;
 
 	for my $sql (split(/[;]/, $sqlstatements)) {
-		main::DEBUGLOG && $log->is_debug && $log->debug("sql = ".Data::Dump::dump($sql));
+		main::DEBUGLOG && $log->is_debug && $log->debug('sql = '.Data::Dump::dump($sql));
 		eval {
 			$sql =~ s/^\s+//g;
 			$sql =~ s/\s+$//g;
 			next if !$sql;
 			my $sth = $dbh->prepare($sql);
-			main::DEBUGLOG && $log->is_debug && $log->debug("Executing: $sql");
+			main::DEBUGLOG && $log->is_debug && $log->debug('Executing: '.Data::Dump::dump($sql));
 			$sth->execute() or do {
-				$log->error("Error executing: $sql");
+				$log->error('Error executing: '.Data::Dump::dump($sql));
 				$sql = undef;
 			};
 
-			if ($sql =~ /^SELECT+/oi) {
-				main::DEBUGLOG && $log->is_debug && $log->debug("Executing and collecting: $sql");
+			if ($sql && $sql =~ /^SELECT+/oi) {
+				main::DEBUGLOG && $log->is_debug && $log->debug('Executing and collecting: '.Data::Dump::dump($sql));
 				my $id;
 				my $name;
 				my $value;
@@ -445,7 +440,7 @@ sub getSQLTemplateData {
 				$sth->bind_col(3, \$value);
 
 				while($sth->fetch()) {
-					if ($newUnicodeHandling) {
+					if (UNIVERSAL::can("Slim::Utils::Unicode", "hasEDD")) {
 						my %item = (
 							'id' => Slim::Utils::Unicode::utf8decode($id, 'utf8'),
 							'name' => Slim::Utils::Unicode::utf8decode($name, 'utf8'),
