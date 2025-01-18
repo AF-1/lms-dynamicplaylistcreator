@@ -8,6 +8,9 @@
 -- PlaylistRepeat: 1
 [%- END %]
 -- PlaylistUseCache: 1
+[%- IF request1fromuser == 'albumtitlecontains' || request1fromuser == 'tracktitlecontains' %]
+-- PlaylistNoVFD: 1
+[%- END %]
 [%- IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
 [%- ELSIF sortorder == 2 %]
@@ -86,6 +89,11 @@
 [%- # ----------- %]
 [%- ELSIF request1fromuser == 'maxRating' %]
 -- PlaylistParameter1:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTMAXRATING:10:0.5,20:1,30:1.5,40:2,50:2.5,60:3,70:3.5,80:4,90:4.5,100:5
+[%- ELSIF request1fromuser == 'albumtitlecontains' %]
+-- PlaylistParameter1:albumtitlecontains:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_TITLECONTAINS_ALBUM:
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'tracktitlecontains' %]
+-- PlaylistParameter1:tracktitlecontains:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_TITLECONTAINS_TRACK:
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 [%- IF request2fromuser == 'genre' %]
@@ -208,7 +216,7 @@ select tracks.id, tracks.primary_artist from tracks
 		[%- END %]
 	[%- END %]
 	[%- # ------- ALBUMS ------- %]
-	[%- IF albumsearchtitle1 or onlycompilation or notcompilation or includedreleasetypes %]
+	[%- IF albumsearchtitle1 or onlycompilation or notcompilation or includedreleasetypes or request1fromuser == 'albumtitlecontains' %]
 	join albums on albums.id = tracks.album
 	[%- END %]
 	[%- # ------- ARTISTS ------- %]
@@ -408,8 +416,10 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF request1fromuser == 'album' or request2fromuser == 'album' %]
 		and tracks.album = 'PlaylistParameter[% IF request1fromuser == 'album' %]1[% ELSE %]2[% END %]'
-	[%- ELSIF request1fromuser == 'year' or request2fromuser == 'year' %]
-		and ifnull(tracks.year, 0) = 'PlaylistParameter[% IF request1fromuser == 'year' %]1[% ELSE %]2[% END %]'
+	[%- ELSIF request1fromuser == 'albumtitlecontains' %]
+		and albums.titlesearch like '%%'PlaylistParameter1'%%'
+	[%- ELSIF request1fromuser == 'tracktitlecontains' %]
+		and tracks.titlesearch like '%%'PlaylistParameter1'%%'
 	[%- ELSIF request1fromuser == 'decade' or request2fromuser == 'decade' %]
 		and ifnull(tracks.year, 0) >= 'PlaylistParameter[% IF request1fromuser == 'decade' %]1[% ELSE %]2[% END %]' and ifnull(tracks.year, 0) < ('PlaylistParameter[% IF request1fromuser == 'decade' %]1[% ELSE %]2[% END %]' + 10)
 	[%- ELSIF request1fromuser == 'multipledecades' or request1fromuser == 'multipleyears' or request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' %]

@@ -7,6 +7,9 @@
 [%- IF repeat %]
 -- PlaylistRepeat: 1
 [%- END %]
+[%- IF request1fromuser == 'albumtitlecontains' %]
+-- PlaylistNoVFD: 1
+[%- END %]
 -- PlaylistTrackOrder:ordered
 [%- IF nooftracks %]
 -- PlaylistLimitOption:[% nooftracks %]
@@ -62,6 +65,9 @@
 [%- # ----------- %]
 [%- ELSIF request1fromuser == 'virtuallibrary' %]
 -- PlaylistParameter1:virtuallibrary:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTVLIB:
+[%- # ----------- %]
+[%- ELSIF request1fromuser == 'albumtitlecontains' %]
+-- PlaylistParameter1:albumtitlecontains:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_TITLECONTAINS_ALBUM:
 [%- # ----------- %]
 [%- ELSIF request1fromuser == 'addedtime' %]
 -- PlaylistParameter1:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTLASTADDEDPERIOD_SONGS:604800:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_1WEEK,1209600:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_2WEEKS,2419200:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_4WEEKS,7257600:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_3MONTHS,14515200:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_6MONTHS,29030399:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_12MONTHS
@@ -164,7 +170,7 @@ create temporary table tmp_random_albums as
 		[%- END %]
 		[%- END %]
 		[%- # ------- MISC ------- %]
-		[%- IF compis or albumsearchtitle1 or includedreleasetypes %]
+		[%- IF compis or albumsearchtitle1 or includedreleasetypes or request1fromuser == 'albumtitlecontains' %]
 		join albums on albums.id = tracks.album
 		[%- END %]
 		[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or partlyplayed)) or toprated or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
@@ -188,6 +194,9 @@ create temporary table tmp_random_albums as
 		[%- END %]
 		[%- IF includedreleasetypes %]
 			and albums.release_type in ([% includedreleasetypes %])
+		[%- END %]
+		[%- IF request1fromuser == 'albumtitlecontains' %]
+			and albums.titlesearch like '%%'PlaylistParameter1'%%'
 		[%- END %]
 		[%- IF includedcomposers %]
 			and exists (select * from tracks t2,contributor_track,contributors
