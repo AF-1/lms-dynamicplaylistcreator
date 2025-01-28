@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Albums</name>
-		<templateversion>8</templateversion>
+		<templateversion>9</templateversion>
 		<description>Album template with options</description>
 		<playlistcategory>albums</playlistcategory>
 		<listweight>1</listweight>

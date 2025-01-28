@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Tracks - Advanced</name>
-		<templateversion>10</templateversion>
+		<templateversion>11</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>2</listweight>
@@ -77,7 +77,7 @@
 		<parameter type="text" id="minfiletimestamp" name="File timestamp is &lt;b&gt;after or equal&lt;/b&gt; to" value="" placeholdervalue=" dd/mm/yyyy"/>
 		<parameter type="text" id="maxfiletimestamp" name="File timestamp is &lt;b&gt;before or equal&lt;/b&gt; to" value="" placeholdervalue=" dd/mm/yyyy"/>
 		<parameter type="searchtype" id="filepath1_searchtype" name="filepath1 search type" value=""/>
-		<parameter type="searchurl" id="filepath1" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
+		<parameter type="searchurl" id="filepath1" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path" tooltipvalue="Try to avoid special characters and spaces. If you run into problems, eliminate potentially problematic characters."/>
 		<parameter type="logop" id="filepath1_logop" name="" value=""/>
 		<parameter type="searchtype" id="filepath2_searchtype" name="filepath2 search type" value=""/>
 		<parameter type="searchurl" id="filepath2" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
