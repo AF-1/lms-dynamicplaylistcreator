@@ -163,6 +163,19 @@ body:
 - type: markdown
   attributes:
     value: "<br><br>"
+- type: dropdown
+  attributes:
+    label: Does the issue concern a custom dynamic playlist?
+    description: If the issue concern a dynamic playlist that you have created, please attach the **xml** and **sql** files below (esp. the sql file).
+    multiple: false
+    options:
+      - I have attached the **xml** and **sql** files of my custom dynamaic playlist.
+      - not applicable
+  validations:
+    required: true
+- type: markdown
+  attributes:
+    value: "<br><br>"
 - type: textarea
   attributes:
     label: Anything else?
