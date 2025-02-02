@@ -166,10 +166,10 @@ body:
 - type: dropdown
   attributes:
     label: Does the issue concern a custom dynamic playlist?
-    description: If the issue concern a dynamic playlist that you have created, please attach the **xml** and **sql** files below (esp. the sql file).
+    description: If the issue concerns a dynamic playlist that you have created, please attach the **xml** and **sql** files below (esp. the **sql** file).
     multiple: false
     options:
-      - I have attached the **xml** and **sql** files of my custom dynamaic playlist.
+      - I have attached the xml and sql files of my custom dynamic playlist.
       - not applicable
   validations:
     required: true
