@@ -213,4 +213,3 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLCUSTOMDIR
 PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_DPLFILENAMEALREADYEXISTS
 	EN	A dynamic playlist file with this name already exists in the <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span>.<br>Please <span class="emphbold">edit</span> the dynamic playlist you want to export and <span class="emphbold">change its <i>file</i> name</span>.
 	HU	Egy ilyen nevű dinamikus lejátszási lista fájl már létezik a <i>Dynamic Playlists</i> mappában <span class="emphbold">DPL-custom-lists</span> néven.<br>Kérjük, <span class="emphbold">szerkessze</span> az exportálni kívánt dinamikus lejátszási listát, és <span class="emphbold">módosítsa annak <i>fájl</i> nevét</span>.
-	
