@@ -251,7 +251,7 @@ select tracks.id, tracks.primary_artist from tracks
 	left join comments on comments.track = tracks.id
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or sortorder or recentlyplayed or playedbefore or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
+	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or sortorder or recentlyplayed or playedbefore or minplaycount or maxplaycount or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
@@ -599,6 +599,12 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF recentlyplayed and playedbefore != 1 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF minplaycount and playedbefore != 1 %]
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) >= [% minplaycount %]
+	[%- END %]
+	[%- IF maxplaycount and playedbefore != 1 %]
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) <= [% maxplaycount %]
 	[%- END %]
 	[%- IF (request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed') and playedbefore != 1 %]
 		[%- IF useapcvalues %]

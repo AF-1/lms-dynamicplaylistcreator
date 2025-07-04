@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Tracks - Advanced</name>
-		<templateversion>12</templateversion>
+		<templateversion>13</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>2</listweight>
@@ -19,6 +19,8 @@
 		<parameter type="multivaltext" id="excludedmultipleyears" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from these years" value="" placeholdervalue=" comma-separated list of years"/>
 		<parameter type="sqlmultiplelist" id="includeddecades" name="Only &lt;b&gt;include&lt;/b&gt; tracks from these &lt;b&gt;decades&lt;/b&gt;" value="" data="select cast(((ifnull(tracks.year,0)/10)*10) as int) as decade, cast(((tracks.year/10)*10) as int)||'s', cast(((ifnull(tracks.year,0)/10)*10) as int) from tracks where tracks.audio = 1 and ifnull(tracks.year,0) > 0 group by decade order by decade asc"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
+		<parameter type="number" id="minplaycount" name="Min. track &lt;b&gt;play count&lt;/b&gt;" value=""/>
+		<parameter type="number" id="maxplaycount" name="Max. track &lt;b&gt;play count&lt;/b&gt;" value=""/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;date last played&lt;/b&gt;" value="0"/>
 		<parameter type="number" requireplugins="AlternativePlayCount::Plugin" id="maxskipcount" name="Only include tracks with a &lt;b&gt;skip count&lt;/b&gt; of &lt;b&gt;less&lt;/b&gt; than" value=""/>
