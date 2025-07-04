@@ -32,8 +32,8 @@ body:
     label: Do you agree?
     description: Select "Yes" or "No".
     options:
-      - Yes
-      - No
+      - "Yes"
+      - "No"
   validations:
     required: true
 - type: input
@@ -46,7 +46,7 @@ body:
     required: false
   conditions:
     - field: yes-no-question
-      value: Yes
+      value: "Yes"
 - type: markdown
   attributes:
     value: "<br><br>"
