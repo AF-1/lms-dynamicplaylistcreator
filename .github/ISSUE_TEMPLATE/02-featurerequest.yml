@@ -26,21 +26,11 @@ body:
 - type: markdown
   attributes:
     value: "<br><br>"
-- type: dropdown
-  id: templaterelated
-  attributes:
-    label: Is this request for a particular DPLC template?
-    description: If you request this feature for a specific DPLC template (e.g. Random Tracks - Advanced), select "yes" and enter the name(s) of the template(s).
-    multiple: false
-    options:
-      - "Yes"
-      - "No"
-  validations:
-    required: true
 - type: input
   id: templatenames
   attributes:
-    label: Template name(s)
+    label: Is this request for one or more particular DPLC template(s)?
+    description: If you request this feature for a specific DPLC template (e.g. Random Tracks - Advanced), please enter the name(s) of the template(s).
     placeholder: e.g. Random Tracks - Advanced
   validations:
     required: false
