@@ -99,7 +99,6 @@ body:
       - Classic skin
       - jivelite (piCorePlayer, SqueezePlay, Touch, Radio)
       - not applicable
-    default: 0
   validations:
     required: true
 - type: checkboxes

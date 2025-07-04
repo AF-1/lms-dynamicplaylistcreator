@@ -31,6 +31,7 @@ body:
   attributes:
     label: Is this request for a particular DPLC template?
     description: If you request this feature for a specific DPLC template (e.g. Random Tracks - Advanced), select "yes" and enter the name(s) of the template(s).
+    multiple: false
     options:
       - "Yes"
       - "No"
