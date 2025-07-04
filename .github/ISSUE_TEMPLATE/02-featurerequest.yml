@@ -30,7 +30,7 @@ body:
   id: templaterelated
   attributes:
     label: Is this request for a particular DPLC template?
-    description: If you request this feature for a specific DPLC template (e.g. Random Tracks - Advanced), select "yes".
+    description: If you request this feature for a specific DPLC template (e.g. Random Tracks - Advanced), select "yes" and enter the name(s) of the template(s).
     options:
       - "Yes"
       - "No"
@@ -40,13 +40,9 @@ body:
   id: templatenames
   attributes:
     label: Template name(s)
-    description: Enter the name(s) of the template(s) for which you're requesting this feature.
     placeholder: e.g. Random Tracks - Advanced
   validations:
     required: false
-    conditions:
-      - field: templaterelated
-        value: "Yes"
 - type: markdown
   attributes:
     value: "<br><br>"
