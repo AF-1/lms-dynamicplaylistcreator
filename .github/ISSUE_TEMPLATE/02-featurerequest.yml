@@ -44,9 +44,9 @@ body:
     placeholder: Enter details here
   validations:
     required: false
-  conditions:
-    - field: yes-no-question
-      value: "Yes"
+    conditions:
+      - field: yes-no-question
+        value: "Yes"
 - type: markdown
   attributes:
     value: "<br><br>"
