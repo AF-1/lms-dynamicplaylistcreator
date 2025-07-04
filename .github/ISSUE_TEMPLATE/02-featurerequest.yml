@@ -27,26 +27,26 @@ body:
   attributes:
     value: "<br><br>"
 - type: dropdown
-  id: yes-no-question
-  attributes:
-    label: Do you agree?
-    description: Select "Yes" or "No".
-    options:
-      - "Yes"
-      - "No"
-  validations:
-    required: true
+    id: templaterelated
+    attributes:
+      label: Is this request for a particular DPLC template?
+      description: If you request this feature for a specific DPLC template (e.g. Random Tracks - Advanced), select yes.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
 - type: input
-  id: additional-info
-  attributes:
-    label: Additional Information
-    description: Provide more details if you selected "Yes".
-    placeholder: Enter details here
-  validations:
-    required: false
-    conditions:
-      - field: yes-no-question
-        value: "Yes"
+    id: templatenames
+    attributes:
+        label: Template name(s)
+        description: Enter the name(s) of the template(s) for which you're requesting this feature.
+        placeholder: e.g. Random Tracks - Advanced
+    validations:
+        required: false
+        conditions:
+          - field: templaterelated
+            value: "Yes"
 - type: markdown
   attributes:
     value: "<br><br>"
