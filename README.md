@@ -1,6 +1,6 @@
 # Dynamic Playlist Creator
 
-**Dynamic Playlist Creator**[^1] (DPLC) helps you create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
+**Dynamic Playlist Creator** (DPLC) helps you create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
 The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and do **not** want to work with raw SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
 <br><br>
 
@@ -15,7 +15,7 @@ The target group for this plugin is users who want to quickly and easily create 
 <br><br>
 
 
-## Screenshots[^2]
+## Screenshots[^1]
 <img src="screenshots/dplc.gif" width="100%">
 <br><br><br>
 
@@ -124,10 +124,9 @@ So please make sure that <b>LMS has read/write permissions (755) for the parent 
 You <b>can't</b> migrate dynamic playlist definitions from the <i>SQLPlayList</i> plugin to <i>Dynamic Playlist <b>Creator</b></i>. They are based on templates which are different from the ones that DPLC uses.
 </p></details><br>
 
-<details><summary>»<b>Can you translate DPLC into my language?</b>«</summary><br><p>
-This plugin will not be localized because the parameter and value names in the template are hard-coded. And a halfway localized version is worse than a non-localized one.
+<details><summary>»<b>Can this plugin be <i>displayed in my language?</b>«</summary><br><p>
+This plugin will not be localized because the parameter and value names in the templates are hard-coded. And a halfway localized version is worse than a non-localized one.
 </p></details><br>
 <br>
 
-[^1]:inspired by and based on Erland's SQLPlayList
-[^2]: The screenshots might not correspond to the UI of the latest release in every detail.
+[^1]: The screenshots might not correspond to the UI of the latest release in every detail.
