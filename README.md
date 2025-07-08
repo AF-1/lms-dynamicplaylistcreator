@@ -1,6 +1,6 @@
 # Dynamic Playlist Creator
 ![Min. LMS Version](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FAF-1%2Fsobras%2Fmain%2Frepos%2Flms%2Fpublic.xml&query=%2F%2F*%5Blocal-name()%3D'plugin'%20and%20%40name%3D'DynamicPlaylistCreator'%5D%2F%40minTarget&prefix=v&label=Min.%20LMS%20Version%20Required&color=darkgreen) &nbsp;
-![Min. DPL Version](https://img.shields.io/badge/Min._Dynamic_Playlists_Version_Required-4.0-red)<br>
+![Min. DPL Version](https://img.shields.io/badge/Min._Dynamic_Playlists_Version_Required-v4.0-red)<br>
 
 **Dynamic Playlist Creator** (DPLC) helps you create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
 The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and do **not** want to work with raw SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
