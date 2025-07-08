@@ -8,7 +8,7 @@ The target group for this plugin is users who want to quickly and easily create 
 
 > [!TIP]
 > The templates allow you to create dynamic playlists for many purposes, but of course they do not cover all conceivable use cases.<br>
-> Don't forget: the [**Dynamic Playlists**](https://github.com/AF-1/#-dynamic-playlists) plugin also allows you to use (raw) SQLite statements that you can customise exactly to your needs (see [DPL FAQ](https://github.com/AF-1/lms-dynamicplaylists#faq)).
+> Don't forget: the [**Dynamic Playlists**](https://github.com/AF-1/#-dynamic-playlists) plugin also allows you to use (raw) SQLite statements that you can customise exactly to your needs (see [Dynamics Playlists FAQ](https://github.com/AF-1/lms-dynamicplaylists#faq)).
 
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
