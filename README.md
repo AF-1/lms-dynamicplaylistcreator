@@ -23,15 +23,6 @@ The target group for this plugin is users who want to quickly and easily create 
 <br><br><br>
 
 
-## Requirements
-- <a href="https://github.com/AF-1/#-dynamic-playlists"><b>Dynamic Playlists</b></a> version **4**
-
-- LMS version >= 8.**4**
-
-- LMS database = **SQLite**
-<br><br><br>
-
-
 ## Installation
 
 **Dynamic Playlist Creator** is available from the LMS plugin library: **LMS > Settings > Manage Plugins**.<br>
