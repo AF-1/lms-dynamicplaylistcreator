@@ -15,8 +15,8 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT
 	HU	Kattints ide további információkért (beleértve a GYIK-et).
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK
-	EN	https://github.com/AF-1/#-dynamic-playlist-creator
-	HU	https://github.com/AF-1/#-dynamic-playlist-creator
+	EN	https://github.com/AF-1
+	HU	https://github.com/AF-1
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH
 	EN	<u>Parent</u> folder path for folder <wbr>with&nbsp;your&nbsp;dynamic&nbsp;playlist&nbsp;definition&nbsp;files
