@@ -3,7 +3,7 @@
 ![Min. DPL Version](https://img.shields.io/badge/Min._Dynamic_Playlists_Version_Required-v4.0-red)<br>
 
 <img src="screenshots/dplc_repo_icon.png" align="right" width="90px">**Dynamic Playlist Creator** (DPLC) helps you create *custom* dynamic playlists for the *Dynamic Playlists* plugin using templates.<br>
-The target group for this plugin is users who want to quickly and easily create custom dynamic playlists using **only** templates and do **not** want to work with raw SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
+The target group for this plugin is users who want to quickly and easily create custom dynamic playlists in a browser using **only** templates and do **not** want to work with raw SQLite statements. Accordingly, DPLC does not include the option to edit SQLite statements manually in the plugin (see [FAQ](#faq)).
 <br clear="right">
 
 🔎 The user interface and menus are here: `Home Menu > Extras > Dynamic Playlist Creator`<br>
