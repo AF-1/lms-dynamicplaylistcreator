@@ -3,7 +3,7 @@
 	<id>af82aa22-566e-5266-919e-9d90b5c0a5f2</id>
 	<name>PLUGIN_DYNAMICPLAYLISTCREATOR</name>
 	<module>Plugins::DynamicPlaylistCreator::Plugin</module>
-	<version>1.7.7</version>
+	<version>1.7.8</version>
 	<description>PLUGIN_DYNAMICPLAYLISTCREATOR_DESC</description>
 	<creator>AF</creator>
 	<optionsURL>plugins/DynamicPlaylistCreator/settings/settings.html</optionsURL>
