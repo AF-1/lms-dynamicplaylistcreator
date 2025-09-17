@@ -122,8 +122,8 @@
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_works;
-create temporary table tmp_random_works as
-	[% IF sortorder or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]select subselection.album as album, subselection.work as work, subselection.performance as performance from ([% END %]
+create temporary table tmp_random_works as 
+	[%- IF sortorder or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]select subselection.album as album, subselection.work as work, subselection.performance as performance from ([% END %]
 	select tracks.album as album, tracks.work as work, tracks.performance as performance[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF (sortorder == 3 || sortorder == 4) and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_track.role)[% END %] as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_track.role)[% END %] as procrating[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
 		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
@@ -251,20 +251,29 @@ create temporary table tmp_random_works as
 								genres.namesearch in ([% excludedgenres %]))
 		[%- END %]
 		group by case when tracks.performance is not null then tracks.performance else tracks.work end
-		[%- IF recentlyplayed and playedbefore != 1 %]
-		having max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minworktracks %] and count(tracks.id) >= [% minworktracks %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %]
-		[%- ELSIF (request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed') and playedbefore != 1 %]
-		having (strftime('%s', 'now') - ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %][% IF minworktracks %] and count(tracks.id) >= [% minworktracks %][% END %][% IF maxdpsv %] and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% END %][% IF mindpsv %] and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %]
-		[%- ELSIF maxdpsv or mindspv %]
-		having [% IF maxdpsv %]ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %][% IF mindpsv %] and [% END %][% END %][% IF mindpsv %]ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %][% END %][% IF minworktracks %] and count(tracks.id) >= [% minworktracks %][% END %]
-		[%- ELSIF minworktracks %]
-		having count(tracks.id) >= [% minworktracks %]
+		having
+			1 = 1
+		[%- IF playedbefore != 1 %]
+		[%- IF recentlyplayed %]
+			and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])
+		[%- ELSIF request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
+			and (strftime('%s', 'now') - ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
+		[%- END %]
+		[%- END %]
+		[%- IF maxdpsv %]
+			and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
+		[%- END %]
+		[%- IF mindspv %]
+			and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
+		[%- END %]
+		[%- IF minworktracks %]
+			and count(tracks.id) >= [% minworktracks %]
 		[%- END %]
 		[%- IF addedtime %]
-		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
+			and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 		[%- END %]
 		[%- IF partlyplayed and playedbefore != 1 %]
-		and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
+			and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
 		[%- END %]
 		order by [% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %][% IF toprated %]procrating desc, [% END %]random()
 		[%- IF sortorder or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]

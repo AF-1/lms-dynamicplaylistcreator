@@ -94,10 +94,13 @@ create temporary table tmp_random_years as
 								contributors.namesearch in ([% excludedartists %]))
 		[%- END %]
 		group by tracks.year
+		having
+			1 = 1
 		[%- IF recentlyplayed %]
-		having max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])[% IF minyeartracks %] and count(tracks.id) >= [% minyeartracks %][% END %]
-		[%- ELSIF minyeartracks %]
-		having count(tracks.id) >= [% minyeartracks %]
+			and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])
+		[%- END %]
+		[%- IF minyeartracks %]
+			and count(tracks.id) >= [% minyeartracks %]
 		[%- END %]
 		order by [% IF toprated %]procrating desc, [% END %]random()
 		limit 30) as subselection

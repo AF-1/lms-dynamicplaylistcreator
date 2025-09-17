@@ -17,14 +17,11 @@
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_virtual_library_albums;
-create temporary table tmp_random_virtual_library_albums as
-	[% IF sortorder or toprated %]select subselection.album as album from ([% END %]
-	select tracks.album as album[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0)) as procrating[% END %] from tracks
+create temporary table tmp_random_virtual_library_albums as 
+	[%- IF sortorder or toprated %]select subselection.album as album from ([% END %]
+	select tracks.album as album[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0)) as procrating[% END %][% IF minavgrating %], avg(ifnull(tracks_persistent.rating,0)) as procminavgrating[% END %][% IF minavgdpsv %], avg(ifnull(alternativeplaycount.dynPSval, 0)) as procminavgdpsv[% END %] from tracks
 		join library_track on library_track.track = tracks.id
-		[%- IF minmatch == 1 %]
-		and library_track.library = 'PlaylistVirtualLibraryID1'
-		[%- END %]
-		[%- IF (!useapcvalues and sortorder) or toprated %]
+		[%- IF (!useapcvalues and (recentlyplayed or sortorder)) or toprated or minavgrating %]
 		left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 		[%- END %]
 		[%- IF useapcvalues %]
@@ -35,7 +32,6 @@ create temporary table tmp_random_virtual_library_albums as
 			tracks.audio = 1
 			and dynamicplaylist_history.id is null
 		group by tracks.album
-		[%- IF minmatch == 2 %]
 		having
 			exists (
 				select 1
@@ -43,6 +39,7 @@ create temporary table tmp_random_virtual_library_albums as
 				where library_album.album = tracks.album
 				and library_album.library = 'PlaylistVirtualLibraryID1'
 			)
+		[%- IF minmatch == 2 %]
 			and not exists (
 				select 1
 				from tracks t
@@ -55,6 +52,15 @@ create temporary table tmp_random_virtual_library_albums as
 				)
 			)
 		[%- END %]
+		[%- IF recentlyplayed %]
+			and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])
+		[%- END %]
+		[%- IF minavgrating %]
+			and procminavgrating >= [% minavgrating %]
+		[%- END %]
+		[%- IF minavgdpsv %]
+			and procminavgdpsv >= [% IF minavgdpsv == 'zero' %]0[% ELSE %][% minavgdpsv %][% END %]
+		[%- END %]
 		order by [% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %][% IF toprated %]procrating desc, [% END %]random()
 		[%- IF sortorder or toprated %]
 		limit 30) as subselection
@@ -63,10 +69,16 @@ create temporary table tmp_random_virtual_library_albums as
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select tracks.id, tracks.primary_artist from tracks
 	join tmp_random_virtual_library_albums on tmp_random_virtual_library_albums.album = tracks.album
+	[%- IF recentlyskipped %]
+	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
 	left join dynamicplaylist_history on dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
 	WHERE
 		tracks.audio = 1
 		and dynamicplaylist_history.id is null
+	[%- IF recentlyskipped %]
+		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
+	[%- END %]
 	group by tracks.id
 	order by tmp_random_virtual_library_albums.album, tracks.disc, tracks.tracknum;
 drop table tmp_random_virtual_library_albums;
