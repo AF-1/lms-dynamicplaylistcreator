@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Tracks - Advanced</name>
-		<templateversion>14</templateversion>
+		<templateversion>15</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>2</listweight>
@@ -65,8 +65,7 @@
 		<parameter type="logop" id="albumsearchtitle2_logop" name="" value=""/>
 		<parameter type="searchtype" id="albumsearchtitle3_searchtype" name="albumsearchtitle3 search type" value=""/>
 		<parameter type="searchtext" id="albumsearchtitle3" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
-		<parameter type="checkbox" id="onlycompilation" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from compilation albums" value=""/>
-		<parameter type="checkbox" id="noncompilation" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from compilation albums" value=""/>
+		<parameter type="optionalsinglelist" id="compis" name="Limit to or exclude tracks from &lt;b&gt;compilations&lt;/b&gt;" value="" data="1=Only compilation tracks,2=No compilation tracks"/>
 		<parameter type="releasetypelistcached" id="includedreleasetypes" minlmsversion="8.4.0" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;release types&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="searchtype" id="tracksearchtitle1_searchtype" name="tracksearchtitle1 search type" value=""/>
 		<parameter type="searchtext" id="tracksearchtitle1" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
