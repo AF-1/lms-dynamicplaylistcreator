@@ -1,0 +1,87 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:Home extras menus
+-- PlaylistCategory:artists
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+-- PlaylistMenuListType:homeextrasmenu
+[%- IF virtuallibrary %]
+-- PlaylistVirtualLibraryID1:[% virtuallibrary %]
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+select contributor_track.contributor as contributor[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF sortorder == 3 || sortorder == 4 %]/count(distinct contributor_track.role)[% END %] as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 %]/count(distinct contributor_track.role)[% END %] as procrating[% END %] from tracks
+	join contributor_track on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
+	[%- # ------- VIRTUAL LIBRARIES ------- %]
+	[%- IF minmatch or activevirtuallibrary %]
+	join library_contributor on contributor_track.contributor = library_contributor.contributor_track[% IF activevirtuallibrary %] and library_contributor.library = [% activevirtuallibrary %][% END %]
+	[%- END %]
+	[%- # ------- (MULTIPLE) GENRES ------- %]
+	[%- IF includedgenres %]
+	join genre_track on genre_track.track = tracks.id
+	join genres on genres.id = genre_track.genre and genres.namesearch in ([% includedgenres %])
+	[%- END %]
+	[%- # ------- MISC ------- %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or partlyplayed)) or toprated %]
+	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
+	[%- END %]
+	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
+	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+	[%- IF excludedgenres %]
+		and not exists (select * from tracks t2,genre_track,genres
+						where
+							t2.id = tracks.id and
+							genre_track.track = tracks.id and
+							genre_track.genre = genres.id and
+							genres.namesearch in ([% excludedgenres %]))
+	[%- END %]
+	group by contributor_track.contributor
+	having
+		1 = 1
+	[%- IF !activevirtuallibrary %]
+	[%- IF minmatch == 1 %]
+		and exists (
+			select 1
+			from library_contributor
+			where library_contributor.contributor = contributor_track.contributor
+			and library_contributor.library = 'PlaylistVirtualLibraryID1'
+		)
+	[%- END %]
+	[%- IF minmatch == 2 %]
+		and not exists (
+			select 1
+			from tracks t
+			where t.album = tracks.album
+			and not exists (
+					select 1
+					from library_track lt
+					where lt.track = t.id
+					and lt.library = 'PlaylistVirtualLibraryID1'
+			)
+		)
+	[%- END %]
+	[%- END %]
+	[%- IF recentlyplayed %]
+		and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF includedmultipleyears %]
+		and ifnull(tracks.year, 0) in ([% includedmultipleyears %])
+	[%- END %]
+	[%- IF includeddecades %]
+		and ifnull(tracks.year, 0) in ([% includeddecades %])
+	[%- END %]
+	[%- IF maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
+	[%- END %]
+	[%- IF mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
+	[%- END %]
+	[%- IF minartisttracks %]
+		and count(tracks.id) >= [% minartisttracks %]
+	[%- END %]
+	[%- IF partlyplayed and playedbefore != 1 %]
+		and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
+	[%- END %]
+	order by [% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %][% IF toprated %]procrating desc, [% END %]random()

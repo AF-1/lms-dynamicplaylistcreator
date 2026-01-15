@@ -1,0 +1,121 @@
+<link href="[% webroot %]plugins/DynamicPlaylistCreator/html/dplc.css" rel="stylesheet" />
+[%- pagetitle = 'PLUGIN_DYNAMICPLAYLISTCREATOR' | string; pageicon = 'PLUGIN_DYNAMICPLAYLISTCREATOR' -%]
+[%- pwd_list = BLOCK -%]/
+	<a href="[% webroot %]plugins/DynamicPlaylistCreator/list.html">
+		[% "PLUGIN_DYNAMICPLAYLISTCREATOR" | string %]
+	</a>
+[% END -%]
+[%- pageHeaderInfo = BLOCK %]
+[% END -%]
+[% PROCESS pageheader.html %]
+<br>
+<form action="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_saveitem.html" name="editForm" method="post">
+	<table border="0">
+		<tr><td colspan="3"><b>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE" | string %]</b></td></tr>
+		<tr><td colspan="3">&nbsp;</td></tr>
+		[%- FOREACH parameter = pluginWebPageMethodsEditItemParameters %]
+			[% NEXT IF parameter.values.size == 0 %]
+			[% NEXT IF parameter.values.0.value == '' and parameter.values.size == 1 %]
+			[% IF parameter.type == 'searchtype' %] [% searchtype = parameter.value %] [% NEXT %] [% END %]
+			[% NEXT IF CTIenabled && (parameter.type == 'sqloptionalsinglelist' && (matches = (parameter.id.match('(in|ex)cludedcustomtagname(\d+)'))) || (parameter.type == 'singlelist' && (matches = parameter.id.match('(in|ex)cludedcustomtagsearchtype(\d+)'))) || (parameter.type == 'multivaltext' && (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')))) && matches.1 > customtagcount %]
+			[% NEXT IF CTIenabled && (parameter.type == 'logop' && (matches = parameter.id.match('includedcustomtag(\d+)_logop'))) && matches.0 > (customtagcount - 1) %]
+			[%- IF parameter.id == 'excludedcustomtagname1' %]
+			<tr><td>&nbsp;</td></tr>
+			[%- END %]
+			<tr>
+				<td>[% parameter.name %][% IF parameter.tooltipvalue %]&nbsp;&nbsp;<span class="icon-info-circle" title="[% parameter.tooltipvalue | html %]"></span>[% END %]</td>
+				<td>&nbsp;</td>
+				<td>
+				[% IF parameter.type == 'text' || parameter.type == 'number' || parameter.type == 'multivaltext' %]
+					<input type="[% IF CTIenabled && (parameter.type == 'sqloptionalsinglelist' && (matches = (parameter.id.match('(in|ex)cludedcustomtagname(\d+)'))) || (parameter.type == 'singlelist' && (matches = parameter.id.match('(in|ex)cludedcustomtagsearchtype(\d+)'))) || (parameter.type == 'multivaltext' && (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')))) && matches.1 > customtagcount %]hidden[% ELSE %]text[% END %]" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.type == 'number' %] inputmode="numeric" pattern="[0-9]*"[% END %][% IF parameter.placeholdervalue %] placeholder="[% parameter.placeholdervalue %]"[% END %][% IF parameter.id == 'playlistname' %] required[% END %]>
+				[% ELSIF parameter.type == 'searchtext' || parameter.type == 'searchurl' %]
+					<select class="rmargin" name="itemparameter_[% parameter.id %]_searchtype">
+						<option [% IF searchtype == "LIKE" %]selected[% END %] value="LIKE" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_CONTAINS" | string %]</option>
+						<option [% IF searchtype == "NOT LIKE" %]selected[% END %] value="NOT LIKE" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_CONTAIN" | string %]</option>
+						<option [% IF searchtype == "STARTS WITH" %]selected[% END %] value="STARTS WITH" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_STARTS_WITH" | string %]</option>
+						<option [% IF searchtype == "STARTS NOT WITH" %]selected[% END %] value="STARTS NOT WITH" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_START_WITH" | string %]</option>
+						[% IF parameter.id.match('commentssearchstring1') %]
+						<option [% IF searchtype == "HASVALUE" %]selected[% END %] value="HASVALUE" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_HASVALUE" | string %]</option>
+						<option [% IF searchtype == "NOVALUE" %]selected[% END %] value="NOVALUE" >[% "PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_HASNOVALUE" | string %]</option>
+						[% END %]
+					</select>
+					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.placeholdervalue %] placeholder="[% parameter.placeholdervalue %]"[% END %]>
+				[% ELSIF parameter.type == 'logop' %]
+					<select name="itemparameter_[% parameter.id %]">
+						[% FOREACH option = {
+							'and' => 'PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_AND',
+							'or' => 'PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_OR',
+						} %]
+							<option [% IF parameter.value == option.key %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						[%- END -%]
+					</select>
+				[% ELSIF parameter.type.match('singlelist') %]
+					<table border="0">
+						<tr><td>
+							<select name="itemparameter_[% parameter.id %]">
+							[%- FOREACH item = parameter.values %]
+								[%- itemid = item.id %]
+								<option name="[% itemid %]" id="[% itemid %]" value="[% itemid %]" [% IF item.selected %]selected[% END %]>[% item.name | html %]</option>
+							[%- END %]
+							</select>
+						</td></tr>
+					</table>
+				[% ELSIF parameter.type.match('multiplelist') || parameter.type == 'contributorlistcachedall' || parameter.type == 'contributorlistcachedalbumartists' || parameter.type == 'contributorlistcachedcomposers' || parameter.type == 'worklistcached' %]
+					<table border="0">
+						<tr><td>
+							<select name="itemparameter_[% parameter.id %]" multiple size="10">
+							[%- FOREACH item = parameter.values %]
+								[%- itemid = item.id %]
+								<option name="[% itemid %]" id="[% itemid %]" value="[% itemid %]" [% IF item.selected %]selected[% END %]>[% FILTER truncate(110, '&hellip;') %][% item.name | html %][% END %]</option>
+							[%- END %]
+							</select>
+						</td></tr>
+					</table>
+				[% ELSIF parameter.type == 'checkbox' %]
+					<input type="checkbox" name="itemparameter_[% parameter.id %]" id="itemparameter_[% parameter.id %]" value="1" [% parameter.value ? "checked" : "" %]>
+				[% ELSIF parameter.type.match('checkboxes') || parameter.type == 'genrelistcached' || parameter.type.match == 'contenttypelistcached' || parameter.type.match == 'releasetypelistcached' %]
+					<table border="0">[% USE table parameter.values, cols=3, pad=0 %]
+						[%- FOREACH itemrow = table.rows %]
+							<tr>
+							[%- FOREACH item = itemrow %]
+								[%- itemid = "itemparameter_" _ parameter.id _ "_" _ item.id %]
+								[%- IF not loop.first %]
+									<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+								[%- END %]
+								<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1" [% item.selected ? "checked" : "" %]>
+								<label for="[% itemid %]">[% item.name | html %]</label></td>
+							[%- END %]
+							</tr>
+						[%- END %]
+					</table>
+				[% END %]
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			[%- IF (matches = parameter.id.match('(in|ex)cludedcustomtagvalues(\d+)')) || parameter.id == 'clistartcmd4' %]
+			<tr><td>&nbsp;</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			[%- END %]
+			[% IF parameter.id == 'playlistname' && parameter.basetemplate %]
+			<tr>
+				<td>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE" | string %]</td>
+				<td>&nbsp;&nbsp;&nbsp;</td>
+				<td>[% parameter.basetemplate %][% IF parameter.dpltemplateversion %] ([% IF parameter.dpltemplateversion != parameter.templateversion %][% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_SAVED" | string %] [% END %][% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_VERSION" | string %]: [% parameter.dpltemplateversion %][% IF parameter.dpltemplateversion != parameter.templateversion %] -- [% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_NEWVERSION" | string %]: [% parameter.templateversion %][% END %])[% END %]</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			[% END %]
+		[%- END %]
+		<tr><td colspan="3">&nbsp;</td></tr>
+		<input type="hidden" name="file" value="[% pluginWebPageMethodsEditItemFileUnescaped %]">
+		<input type="hidden" name="itemtemplate" value="[% pluginWebPageMethodsEditItemTemplate %]">
+		<input type="hidden" name="sqltextdplonly" value="[% sqltextdplonly %]">
+		<tr><td><input class="inputbutton" type="button" value="[% "SAVE" | string %]" onclick='document.editForm.submit();'></td></tr>
+		[% IF pluginWebPageMethodsError %]
+		<tr><td colspan="3">
+			<br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br>
+		</td></tr>
+		[% END %]
+	</table>
+</form>
+<br>
+[% PROCESS pagefooter.html %]

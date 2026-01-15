@@ -1,0 +1,144 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:Home extras menus
+-- PlaylistCategory:albums
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+-- PlaylistMenuListType:homeextrasmenu
+[%- IF virtuallibrary %]
+-- PlaylistVirtualLibraryID1:[% virtuallibrary %]
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF (sortorder == 3 || sortorder == 4) and includedartists %]/count(distinct contributor_album.role)[% END %] as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 and includedartists %]/count(distinct contributor_album.role)[% END %] as procrating[% END %][% IF minavgrating %], avg(ifnull(tracks_persistent.rating,0)) as procminavgrating[% END %] from albums
+	join tracks on albums.id = tracks.album
+	[%- # ------- VIRTUAL LIBRARIES ------- %]
+	[%- IF minmatch or activevirtuallibrary %]
+	join library_album on albums.id = library_album.album[% IF activevirtuallibrary %] and library_album.library = [% activevirtuallibrary %][% END %]
+	[%- END %]
+	[%- # ------- ARTISTS ------- %]
+	[%- IF includedartists %]
+	join contributor_album on contributor_album.album = albums.id and contributor_album.role in (1,5)
+	join contributors on contributor_album.contributor = contributors.id and contributors.namesearch in ([% includedartists %])
+	[%- END %]
+	[%- # ------- (MULTIPLE) GENRES ------- %]
+	[%- IF includedgenres %]
+	join genre_track on genre_track.track = tracks.id
+	join genres on genres.id = genre_track.genre and genres.namesearch in ([% includedgenres %])
+	[%- END %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or partlyplayed)) or toprated or minavgrating or addedtime %]
+	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
+	[%- END %]
+	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
+	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+	[%- IF albumsearchtitle1 %]
+		and [% IF albumsearchtitle2 or albumsearchtitle3 %]([% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle1_searchtype.match('LIKE') %]%%[% END %][% albumsearchtitle1 %]%%'
+		[%- IF albumsearchtitle2 %]
+		[% IF albumsearchtitle2_searchtype.match('NOT') %]and [% ELSE %][% albumsearchtitle1_logop %] [% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'and' && albumsearchtitle2_logop == 'or' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle2_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle2_searchtype.match('LIKE') %]%%[% END %][% albumsearchtitle2 %]%%'[% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %])[% END %]
+		[%- IF albumsearchtitle3 %]
+		[% IF albumsearchtitle3_searchtype.match('NOT') %]and [% ELSE %][% albumsearchtitle2_logop %] [% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle3_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle3_searchtype.match('LIKE') %]%%[% END %][% albumsearchtitle3 %]%%'[% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'and' && albumsearchtitle2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF albumsearchtitle2 or albumsearchtitle3 %])[% END %]
+	[%- END %]
+	[%- IF includedreleasetypes %]
+		and albums.release_type in ([% includedreleasetypes %])
+	[%- END %]
+	[%- IF includedcomposers %]
+		and exists (select * from tracks t2,contributor_track,contributors
+						where
+							t2.id = tracks.id and
+							tracks.id = contributor_track.track and
+							contributors.id = contributor_track.contributor and
+							contributor_track.role = 2 and
+							contributors.namesearch in ([% includedcomposers %]))
+	[%- END %]
+	[%- IF excludedartists %]
+		and not exists (select * from tracks t2,contributor_track,contributors
+						where
+							t2.id = tracks.id and
+							tracks.id = contributor_track.track and
+							contributors.id = contributor_track.contributor and
+							contributor_track.role in (1,5,6) and
+							contributors.namesearch in ([% excludedartists %]))
+	[%- END %]
+	[%- IF excludedcomposers %]
+		and not exists (select * from tracks t2,contributor_track,contributors
+						where
+							t2.id = tracks.id and
+							tracks.id = contributor_track.track and
+							contributors.id = contributor_track.contributor and
+							contributor_track.role = 2 and
+							contributors.namesearch in ([% excludedcomposers %]))
+	[%- END %]
+	[%- IF excludedgenres %]
+		and not exists (select * from tracks t2, genre_track, genres
+						where
+							t2.id = tracks.id and
+							genre_track.track = tracks.id and
+							genre_track.genre = genres.id and
+							genres.namesearch in ([% excludedgenres %]))
+	[%- END %]
+	group by albums.id
+	having
+		1 = 1
+	[%- IF !activevirtuallibrary %]
+	[%- IF minmatch == 1 %]
+		and exists (
+			select 1
+			from library_album
+			where library_album.album = tracks.album
+			and library_album.library = 'PlaylistVirtualLibraryID1'
+		)
+	[%- END %]
+	[%- IF minmatch == 2 %]
+		and not exists (
+			select 1
+			from tracks t
+			where t.album = tracks.album
+			and not exists (
+					select 1
+					from library_track lt
+					where lt.track = t.id
+					and lt.library = 'PlaylistVirtualLibraryID1'
+			)
+		)
+	[%- END %]
+	[%- END %]
+	[%- IF multidisc %]
+		and ifnull(albums.discc, 0) > 1
+	[%- END %]
+	[%- IF includedmultipleyears %]
+		and ifnull(tracks.year, 0) in ([% includedmultipleyears %])
+	[%- END %]
+	[%- IF includeddecades %]
+		and ifnull(tracks.year, 0) in ([% includeddecades %])
+	[%- END %]
+	[%- IF minavgrating %]
+		and procminavgrating >= [% minavgrating %]
+	[%- END %]
+	[%- IF playedbefore != 1 %]
+	[%- IF recentlyplayed %]
+	and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- END %]
+	[%- IF minalbumtracks %]
+	and count(tracks.id) >= [% minalbumtracks %]
+	[%- END %]
+	[%- IF compis %]
+	and ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %]
+	[%- END %]
+	[%- IF maxdpsv %]
+	and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
+	[%- END %]
+	[%- IF mindpsv %]
+	and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
+	[%- END %]
+	[%- IF addedtime %]
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
+	[%- END %]
+	[%- IF partlyplayed and playedbefore != 1 %]
+	and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
+	[%- END %]
+	order by [% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %][% IF toprated %]procrating desc, [% END %]random()

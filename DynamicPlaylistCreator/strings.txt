@@ -1,0 +1,218 @@
+PLUGIN_DYNAMICPLAYLISTCREATOR
+	EN	Dynamic Playlist Creator
+	HU	Dinamikus Lejátszási Lista Készítő
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_DESC
+	EN	Helps you create custom smart playlists (dynamic playlists) for the Dynamic Playlists plugin using templates.
+	HU	Segít egyedi intelligens lejátszási listákat (dinamikus lejátszási listákat) létrehozni a Dynamic Playlists bővítményhez sablonok segítségével.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_SETTINGS
+	EN	Various Settings
+	HU	Különféle Beállítások
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT
+	EN	Click here for more information (incl. FAQ).
+	HU	Kattints ide további információkért (beleértve a GYIK-et).
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK
+	EN	https://github.com/AF-1
+	HU	https://github.com/AF-1
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH
+	EN	<u>Parent</u> folder path for folder <wbr>with&nbsp;your&nbsp;dynamic&nbsp;playlist&nbsp;definition&nbsp;files
+	HU	<u>Szülő</u> mappa elérési útja a dinamikus lejátszási lista definíciós fájlokat tartalmazó mappához
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_CUSTOMDIRPARENTFOLDERPATH_DESC
+	EN	Choose a location for the folder where to put the dynamic playlist definition files you've created.
+	HU	Válassz egy helyet a mappához, ahová a létrehozott dinamikus lejátszási lista definíciós fájlokat helyezni szeretnéd.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYEXPORTBTN
+	EN	Display Export button
+	HU	Export gomb megjelenítése
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYEXPORTBTN_DESC
+	EN	Unless you want to <b>edit the SQLite statement of a dynamic playlist</b> created with DPLC <b>manually</b>, you don't need the <i>Export</i> button.<br><br>Users familiar with SQLite can use the <b>Export</b> button to permanently move a dynamic playlist, that's currently managed by DPLC, to the <i>Dynamic Playlists</i> plugin's folder for custom dynamic playlists called <i>DPL-custom-lists</i>. There you can edit it like any other custom dynamic playlist with your favorite code editor.<br><br>Moved dynamic playlists are now managed by <i>Dynamic Playlists</i> only, no longer by DPLC. They are no longer listed in DPLC.
+	HU	Hacsak nem szeretnéd <b>manuálisan szerkeszteni a DPLC-vel létrehozott dinamikus lejátszási lista SQLite utasítását</b>, nincs szükséged az <i>Export</i> gombra.<br><br>Az SQLite-ban jártas felhasználók az <b>Export</b> gomb segítségével véglegesen áthelyezhetik a DPLC által kezelt dinamikus lejátszási listát a <i>Dynamic Playlists</i> bővítmény <i>DPL-custom-lists</i> nevű mappájába. Itt bármilyen más egyedi dinamikus lejátszási listához hasonlóan szerkesztheted a kedvenc kódszerkesztőddel.<br><br>Az áthelyezett dinamikus lejátszási listákat ezután csak a <i>Dynamic Playlists</i> kezeli, és már nem szerepelnek a DPLC-ben.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYPLAYBTN
+	EN	Display Play button
+	HU	Lejátszás gomb megjelenítése
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_DISPLAYPLAYBTN_DESC
+	EN	You can <b>only</b> start dynamic playlists directly in DPLC that do <b><u>not</u> ask for user input when started</b>. DPLC does not contain code to handle user-input parameters.<br>After you have created a <b>new</b> dynamic playlist that does not ask for user input, please wait a few seconds before you try to start it with the <i>Play</i> button. <i>Dynamic Playlists</i> needs a moment to update the list of available dynamic playlists.<br><br>Starting dynamic playlists without user-input parameters in DPLC is just a quick way to test a dynamic playlist. The <i>Dynamic Playlists</i> plugin is still where you start your mixes, not DPLC.
+	HU	<b>Csak</b> olyan dinamikus lejátszási listákat indíthatsz közvetlenül a DPLC-ben, amelyek <b><u>nem</u> kérnek felhasználói bemenetet indításkor</b>. A DPLC nem tartalmaz kódot a felhasználói bemeneti paraméterek kezelésére.<br>Miután létrehoztál egy <b>új</b> dinamikus lejátszási listát, amely nem kér felhasználói bemenetet, kérjük, várj néhány másodpercet, mielőtt megpróbálnád elindítani a <i>Lejátszás</i> gombbal. A <i>Dynamic Playlists</i> bővítménynek szüksége van néhány pillanatra, hogy frissítse az elérhető dinamikus lejátszási listák listáját.<br><br>A felhasználói bemeneti paraméterek nélküli dinamikus lejátszási listák indítása a DPLC-ben csak egy gyors módja a dinamikus lejátszási lista tesztelésének. A <i>Dynamic Playlists</i> bővítmény továbbra is az a hely, ahol elindíthatod a mixeket, nem a DPLC.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG
+	EN	Hide refresh message
+	HU	Frissítési üzenet elrejtése
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG_DESC
+	EN	If you create, edit, save, delete or export a dynamic playlist in DPLC, the DPLC web page listing your dynamic playlists will display a message to remind you that the <b>Dynamic Playlists</b> plugin may need a few seconds to update the list of available dynamic playlists. You can disable this message with this setting.
+	HU	Ha létrehozol, szerkesztesz, mentesz, törölsz vagy exportálsz egy dinamikus lejátszási listát a DPLC-ben, a DPLC weboldal, amely felsorolja a dinamikus lejátszási listáidat, megjelenít egy üzenetet, amely emlékeztet, hogy a <b>Dynamic Playlists</b> bővítménynek néhány másodpercre szüksége lehet az elérhető dinamikus lejátszási listák frissítéséhez. Ezt az üzenetet letilthatod ezzel a beállítással.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH
+	EN	Use exact album title search
+	HU	Pontos albumcím-keresés használata
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH_DESC
+	EN	By default, certain unicode and pattern matching characters are stripped from album title search terms to avoid problems with SQLite and XML (= recommended). However, in rare cases it may lead to false positives.<br><i>Example:</i> if you're searching for album titles that contain <i>[ENG]</i>, the square brackets are removed and the result set will include all albums containing <i>ENG</i> or <i>eng</i>, e.g. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>You can disable this here if you're absolutely certain that your search terms do not contain any problematic characters (esp. sqlite control characters like single or double quotes) and you want the search to adhere more strictly to the search terms.<br><br><b>This setting only applies to <i>album and track title</i> searches in a few selected templates</b>.<br>For names of <b>artists, composers and genres</b>, the plugin will <b>always</b> use the less strict but <b>safer search option</b>.
+	HU	Alapértelmezés szerint bizonyos unicode és mintaillesztési karakterek eltávolításra kerülnek az albumcím-keresési feltételekből, hogy elkerüljük az SQLite és XML problémáit (= ajánlott). Ritka esetekben azonban ez hamis pozitív eredményekhez vezethet.<br><i>Példa:</i> ha olyan albumcímeket keresel, amelyek tartalmazzák az <i>[ENG]</i> kifejezést, a szögletes zárójelek eltávolításra kerülnek, és az eredményhalmaz minden olyan albumot tartalmazni fog, amely tartalmazza az <i>ENG</i> vagy <i>eng</i> kifejezést, pl. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>Letilthatod ezt itt, ha teljesen biztos vagy benne, hogy a keresési feltételek nem tartalmaznak problémás karaktereket (különösen SQLite vezérlőkaraktereket, mint az egyszeres vagy dupla idézőjelek), és szeretnéd, hogy a keresés szigorúbban kövesse a keresési feltételeket.<br><br><b>Ez a beállítás csak néhány kiválasztott sablon <i>album- és számcím</i> kereséseire vonatkozik</b>.<br>A <b>előadók, szerzők és műfajok</b> neveire a bővítmény <b>mindig</b> a kevésbé szigorú, de <b>biztonságosabb keresési opciót</b> használja.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES
+	EN	Refresh plugin caches
+	HU	Bővítmény gyorsítótárának frissítése
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_DESC
+	EN	The <i>Dynamic Playlist Creator</i> plugin caches lists of artists, genres, composers and audio file types. They are automatically refreshed after an LMS rescan or a plugin update.<br><br>If you think there's a problem with the DPLC plugin caches (e.g. missing artists or genre lists in templates), this button allows you to force a refresh of all plugin caches.
+	HU	A <i>Dynamic Playlist Creator</i> bővítmény gyorsítótárazza az előadók, műfajok, szerzők és hangfájltípusok listáit. Ezek automatikusan frissülnek egy LMS újraellenőrzés vagy bővítményfrissítés után.<br><br>Ha úgy gondolod, hogy probléma van a DPLC bővítmény gyorsítótárával (pl. hiányzó előadók vagy műfajok listák a sablonokban), ez a gomb lehetővé teszi az összes bővítmény gyorsítótárának kényszerített frissítését.
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_BUTTON
+	EN	Refresh now
+	HU	Frissítés most
+
+SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_INPROGRESS
+	EN	Refreshing caches...
+	HU	Gyorsítótár frissítése folyamatban...
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
+	EN	<b>Custom dynamic playlists created with this plugin:</b>
+	HU	<b>Ezzel a bővítménnyel létrehozott egyedi dinamikus lejátszási listák:</b>
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NODPLSFOUND
+	EN	No dynamic playlist found
+	HU	Nincs dinamikus lejátszási lista
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_CONTEXTMENULIST
+	EN	context menu
+	HU	helyi menü
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_HOMEEXTRASMENU
+	EN	Material Home Extras Menu
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM
+	EN	Edit
+	HU	Szerkesztés
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM
+	EN	Create new dynamic playlist
+	HU	Új dinamikus lejátszási lista létrehozása
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_DPLREFRESHMSG
+	EN	<span class="emphbold"><i>Dynamic Playlists</i> is updating the list of available dynamic playlists...</span>
+	HU	<span class="emphbold"><i>Dynamic Playlists</i> frissíti az elérhető dinamikus lejátszási listák listáját...</span>
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_TYPES_TITLE
+	EN	Select a template on which to base your new dynamic playlist:
+	HU	Válassz egy sablont, amelyre az új dinamikus lejátszási listádat alapozod:
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_NAME
+	EN	Dynamic Playlist Name
+	HU	Dinamikus Lejátszási Lista Neve
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME
+	EN	File name (without extension)
+	HU	Fájlnév (kiterjesztés nélkül)
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM
+	EN	Export to Dynamic Playlists and delete in DPLC
+	HU	Exportálás a Dynamic Playlists-be és törlés a DPLC-ből
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM_INFO
+	EN	Do you want to export this dynamic playlist to the Dynamic Playlists folder for custom dynamic playlists called DPL-custom-lists and delete it from DPLC?
+	HU	Szeretnéd exportálni ezt a dinamikus lejátszási listát a Dynamic Playlists egyedi dinamikus lejátszási listákhoz használt DPL-custom-lists mappájába, és törölni a DPLC-ből?
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM
+	EN	Delete
+	HU	Törlés
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_REMOVE_ITEM_QUESTION
+	EN	Are you sure you want to delete this dynamic playlist?
+	HU	Biztosan törölni szeretnéd ezt a dinamikus lejátszási listát?
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_AND
+	EN	and
+	HU	és
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_OR
+	EN	or
+	HU	vagy
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_CONTAINS
+	EN	contains
+	HU	tartalmazza
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_CONTAIN
+	EN	does not contain
+	HU	nem tartalmazza
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_STARTS_WITH
+	EN	starts with
+	HU	ezzel kezdődik
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_DOESNT_START_WITH
+	EN	does not start with
+	HU	nem ezzel kezdődik
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_HASVALUE
+	EN	has a value
+	HU	értékkel rendelkezik
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_HASNOVALUE
+	EN	has no value
+	HU	nem rendelkezik értékkel
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_SAVE
+	EN	Save
+	HU	Mentés
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NEXT
+	EN	Next
+	HU	Következő
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_PARAMETERS_TITLE
+	EN	Please enter dynamic playlist parameters
+	HU	Adja meg a dinamikus lejátszási lista paramétereit
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE
+	EN	Edit dynamic playlist parameters
+	HU	A dinamikus lejátszási lista paramétereinek szerkesztése
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_OVERWRITE
+	EN	Overwrite existing&nbsp;&nbsp;&nbsp;
+	HU	Meglévő felülírása&nbsp;&nbsp;&nbsp;
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE
+	EN	Based on template
+	HU	Sablon alapján
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_SAVED
+	EN	saved
+	HU	mentve
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_VERSION
+	EN	version
+	HU	verzió
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE_NEWVERSION
+	EN	new version
+	HU	új verzió
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_SAVEFAILED
+	EN	Could not save dynamic playlist. Please check the server log for details.
+	HU	Nem sikerült menteni a dinamikus lejátszási listát. Ellenőrizze a szervernaplót a részletekért.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLNAME
+	EN	Please enter a name for your dynamic playlist
+	HU	Adjon nevet a dinamikus lejátszási listának
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_CUSTOMDIR
+	EN	Could not access the <i>DynamicPlaylistCreator</i> folder. Please read the <a href="https://github.com/AF-1/lms-dynamicplaylistcreator#faq">FAQ</a> and check the server log for details.
+	HU	Nem sikerült elérni a <i>DynamicPlaylistCreator</i> mappát. Kérjük, olvassa el a <a href="https://github.com/AF-1/lms-dynamicplaylistcreator#faq">GYIK-ot</a>, és ellenőrizze a szervernaplót a részletekért.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_MISSING_DPLCUSTOMDIR
+	EN	Could not find <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span> for custom dynamic playlists. Check the server log for details.
+	HU	Nem található a <i>Dynamic Playlists</i> mappa <span class="emphbold">DPL-custom-lists</span> néven az egyéni dinamikus lejátszási listák számára. Ellenőrizze a szervernaplót a részletekért.
+
+PLUGIN_DYNAMICPLAYLISTCREATOR_ERROR_DPLFILENAMEALREADYEXISTS
+	EN	A dynamic playlist file with this name already exists in the <i>Dynamic Playlists</i> folder called <span class="emphbold">DPL-custom-lists</span>.<br>Please <span class="emphbold">edit</span> the dynamic playlist you want to export and <span class="emphbold">change its <i>file</i> name</span>.
+	HU	Egy ilyen nevű dinamikus lejátszási lista fájl már létezik a <i>Dynamic Playlists</i> mappában <span class="emphbold">DPL-custom-lists</span> néven.<br>Kérjük, <span class="emphbold">szerkessze</span> az exportálni kívánt dinamikus lejátszási listát, és <span class="emphbold">módosítsa annak <i>fájl</i> nevét</span>.

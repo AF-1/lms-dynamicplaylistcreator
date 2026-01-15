@@ -1,0 +1,177 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistMenuListType:contextmenu
+-- PlaylistCategory:genres
+[%- IF repeat %]
+-- PlaylistRepeat: 1
+[%- END %]
+-- PlaylistUseCache: 1
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+-- PlaylistParameter1:year:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTYEAR:
+[%- # --------------- req param starts with 2 because context menu obj = param 1 ---------------------------------------- %]
+[%- IF request2fromuser == 'genre' %]
+	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+-- PlaylistParameter2:customgenre:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRE:select id,name,substr(namesort,1,1) from genres join library_genre on library_genre.genre = genres.id and library_genre.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] order by genres.namesort
+	[%- ELSE %]
+-- PlaylistParameter2:genre:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRE:
+	[%- END %]
+[%- ELSIF request2fromuser == 'multiplegenres' %]
+-- PlaylistParameter2:multiplegenres:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRES:
+[%- # ----------- %]
+[%- ELSIF request2fromuser == 'addedtime' %]
+-- PlaylistParameter2:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTLASTADDEDPERIOD_SONGS:604800:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_1WEEK,1209600:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_2WEEKS,2419200:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_4WEEKS,7257600:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_3MONTHS,14515200:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_6MONTHS,29030399:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_12MONTHS
+[%- # ----------- %]
+[%- ELSIF request2fromuser == 'lastplayed' %]
+-- PlaylistParameter2:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SONGS_LASTPLAYED:604800:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_1WEEK,1209600:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_2WEEKS,2592000:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_4WEEKS,7948800:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_3MONTHS,15811200:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_6MONTHS,31536000:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_12MONTHS
+[%- ELSIF request2fromuser == 'minRating' %]
+-- PlaylistParameter2:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTMINRATING:0:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_UNRATED,10:0.5,20:1,30:1.5,40:2,50:2.5,60:3,70:3.5,80:4,90:4.5,100:5
+[%- # ----------- %]
+[%- ELSIF request2fromuser == 'exactRating' %]
+-- PlaylistParameter2:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTEXACTRATING:10:0.5,20:1,30:1.5,40:2,50:2.5,60:3,70:3.5,80:4,90:4.5,100:5
+[%- # ----------- %]
+[%- ELSIF request2fromuser == 'maxRating' %]
+-- PlaylistParameter2:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTMAXRATING:10:0.5,20:1,30:1.5,40:2,50:2.5,60:3,70:3.5,80:4,90:4.5,100:5
+[%- END %]
+[%- # --------------------------------------------------------------------------------------------------------------- %]
+[%- IF request3fromuser == 'genre' %]
+	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+-- PlaylistParameter3:customgenre:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRE:select id,name,substr(namesort,1,1) from genres join library_genre on library_genre.genre = genres.id and library_genre.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] order by genres.namesort
+	[%- ELSE %]
+-- PlaylistParameter3:genre:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRE:
+	[%- END %]
+[%- ELSIF request3fromuser == 'multiplegenres' %]
+-- PlaylistParameter3:multiplegenres:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRES:
+[%- # ----------- %]
+[%- ELSIF request3fromuser == 'addedtime' %]
+-- PlaylistParameter3:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTLASTADDEDPERIOD_SONGS:604800:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_1WEEK,1209600:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_2WEEKS,2419200:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_4WEEKS,7257600:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_3MONTHS,14515200:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_6MONTHS,29030399:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTLASTADDEDPERIOD_12MONTHS
+[%- # ----------- %]
+[%- ELSIF request3fromuser == 'lastplayed' %]
+-- PlaylistParameter3:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SONGS_LASTPLAYED:604800:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_1WEEK,1209600:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_2WEEKS,2592000:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_4WEEKS,7948800:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_3MONTHS,15811200:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_6MONTHS,31536000:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_SELECTRECENTLYPLAYEDPERIOD_12MONTHS
+[%- ELSIF request3fromuser == 'minRating' %]
+-- PlaylistParameter3:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTMINRATING:0:PLUGIN_DYNAMICPLAYLISTS4_PARAMVALUENAME_UNRATED,10:0.5,20:1,30:1.5,40:2,50:2.5,60:3,70:3.5,80:4,90:4.5,100:5
+[%- # ----------- %]
+[%- ELSIF request3fromuser == 'exactRating' %]
+-- PlaylistParameter3:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTEXACTRATING:10:0.5,20:1,30:1.5,40:2,50:2.5,60:3,70:3.5,80:4,90:4.5,100:5
+[%- # ----------- %]
+[%- ELSIF request3fromuser == 'maxRating' %]
+-- PlaylistParameter3:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTMAXRATING:10:0.5,20:1,30:1.5,40:2,50:2.5,60:3,70:3.5,80:4,90:4.5,100:5
+[%- END %]
+[%- # ----------- %]
+[%- IF customskipfilter %]
+-- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
+-- PlaylistStopAction1:cli:customskip clearsecondaryfilter
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+select tracks.id, tracks.primary_artist from tracks
+	[%- # ------- VIRTUAL LIBRARY ------- %]
+	[%- IF activevirtuallibrary %]
+	join library_track on library_track.track = tracks.id and library_track.library = 'PlaylistCurrentVirtualLibraryForClient'
+	[%- END %]
+	[%- # ------- (MULTIPLE) GENRES ------- %]
+	[%- IF includedgenres or request2fromuser == 'genre' or request2fromuser == 'multiplegenres' or request3fromuser == 'genre' or request3fromuser == 'multiplegenres' %]
+	join genre_track on genre_track.track = tracks.id
+	[%- IF request2fromuser == 'multiplegenres' or request3fromuser == 'multiplegenres' %]
+	and genre_track.genre in ('PlaylistParameter[% IF request2fromuser == 'multiplegenres' %]2[% ELSE %]3[% END %]')
+	[%- ELSIF request2fromuser == 'genre' or request3fromuser == 'genre' %]
+	and genre_track.genre = 'PlaylistParameter[% IF request2fromuser == 'genre' %]2[% ELSE %]3[% END %]'
+	[%- END %]
+	[%- IF includedgenres %]
+	join genres on genres.id = genre_track.genre and genres.namesearch in ([% includedgenres %])
+	[%- END %]
+	[%- END %]
+	[%- # ------- MISC ------- %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or (includedratings or includedratings == 0) or maxrating or sortorder or request2fromuser == 'addedtime' or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'addedtime' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
+	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
+	[%- END %]
+	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
+	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+	[%- IF timespan == 1 %]
+		and ifnull(tracks.year, 0) = 'PlaylistParameter1'
+	[%- ELSIF timespan == 2 %]
+		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
+	[%- END %]
+	[%- IF maxlength %]
+		and tracks.secs < [% maxlength %]
+	[%- END %]
+	[%- IF minlength %]
+		and tracks.secs > [% minlength %]
+	[%- END %]
+	[%- IF excludedartists %]
+		and not exists (select * from tracks t2,contributor_track,contributors
+						where
+							t2.id = tracks.id and
+							tracks.id = contributor_track.track and
+							contributors.id = contributor_track.contributor and
+							contributor_track.role in (1,5,6) and
+							contributors.namesearch in ([% excludedartists %]))
+	[%- END %]
+	[%- IF excludedgenres %]
+		and not exists (select * from tracks t2,genre_track,genres
+						where
+							t2.id = tracks.id and
+							genre_track.track = tracks.id and
+							genre_track.genre = genres.id and
+							genres.namesearch in ([% excludedgenres %]))
+	[%- END %]
+	[%- IF maxyear %]
+		and tracks.year <= [% maxyear %]
+	[%- END %]
+	[%- IF minyear %]
+		and tracks.year >= [% minyear %]
+	[%- END %]
+	[%- IF minrating && !includedratings %]
+		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
+	[%- END %]
+	[%- IF request2fromuser == 'minRating' or request3fromuser == 'minRating' %]
+		and ifnull(tracks_persistent.rating, 0) >= 'PlaylistParameter[% IF request2fromuser == 'minRating' %]2[% ELSE %]3[% END %]'
+	[%- END %]
+	[%- IF maxrating && !includedratings %]
+		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
+	[%- END %]
+	[%- IF request2fromuser == 'maxRating' or request3fromuser == 'maxRating' %]
+		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request2fromuser == 'maxRating' %]2[% ELSE %]3[% END %]'
+	[%- END %]
+	[%- IF (includedratings or includedratings == 0) && !minrating && !maxrating && request1fromuser != 'exactRating' && request2fromuser != 'exactRating' %]
+		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
+	[%- END %]
+	[%- IF request2fromuser == 'exactRating' or request3fromuser == 'exactRating' %]
+		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request2fromuser == 'exactRating' %]2[% ELSE %]3[% END %]'
+	[%- END %]
+	[%- IF playedbefore == 1 and !recentlyplayed %]
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0
+	[%- END %]
+	[%- IF playedbefore == 2 %]
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) > 0
+	[%- END %]
+	[%- IF recentlyplayed and playedbefore != 1 %]
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF (request2fromuser == 'lastplayed' or request3fromuser == 'lastplayed') and playedbefore != 1 %]
+		and (strftime('%s', 'now') - ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) <= 'PlaylistParameter[% IF request2fromuser == 'lastplayed' %]2[% ELSE %]3[% END %]'
+	[%- END %]
+	[%- IF maxskipcount %]
+		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
+	[%- END %]
+	[%- IF recentlyskipped %]
+		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
+	[%- END %]
+	[%- IF maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
+	[%- END %]
+	[%- IF mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
+	[%- END %]
+	[%- IF (request2fromuser == 'addedtime' or request3fromuser == 'addedtime') && !addedtime %]
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - 'PlaylistParameter[% IF request2fromuser == 'addedtime' %]2[% ELSE %]3[% END %]')
+	[%- END %]
+	[%- IF addedtime && request2fromuser != 'addedtime' && request3fromuser != 'addedtime' %]
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
+	[%- END %]
+	group by tracks.id
+	[%- IF sortorder %]
+	order by [% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount [% IF sortorder == 1 %]desc[% ELSE %]asc[% END %]
+	[%- END %]
