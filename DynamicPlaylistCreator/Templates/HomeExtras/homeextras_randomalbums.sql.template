@@ -25,7 +25,7 @@ select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum
 	join genre_track on genre_track.track = tracks.id
 	join genres on genres.id = genre_track.genre and genres.namesearch in ([% includedgenres %])
 	[%- END %]
-	[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or partlyplayed)) or toprated or minavgrating or addedtime %]
+	[%- IF (!useapcvalues and (recentlyplayed or sortorder or partlyplayed)) or toprated or minavgrating or addedtime %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
@@ -118,10 +118,8 @@ select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum
 	[%- IF minavgrating %]
 		and procminavgrating >= [% minavgrating %]
 	[%- END %]
-	[%- IF playedbefore != 1 %]
 	[%- IF recentlyplayed %]
 	and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])
-	[%- END %]
 	[%- END %]
 	[%- IF minalbumtracks %]
 	and count(tracks.id) >= [% minalbumtracks %]
@@ -138,7 +136,7 @@ select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum
 	[%- IF addedtime %]
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 	[%- END %]
-	[%- IF partlyplayed and playedbefore != 1 %]
+	[%- IF partlyplayed %]
 	and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
 	[%- END %]
 	order by [% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %][% IF toprated %]procrating desc, [% END %]random()

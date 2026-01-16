@@ -1,0 +1,67 @@
+-- PlaylistName:[% playlistname %]
+-- PlaylistGroups:Home extras menus
+-- PlaylistCategory:playlists
+[%- IF basetemplate %]
+-- BaseTemplate:[% basetemplate %]
+[%- END %]
+-- PlaylistMenuListType:homeextrasmenu
+[%- IF virtuallibrary %]
+-- PlaylistVirtualLibraryID1:[% virtuallibrary %]
+[%- END %]
+[% # --------------------------------------------------------------------------------------------------------------- %]
+select playlist_track.playlist from playlist_track
+	join tracks on playlist_track.track = tracks.url
+	[%- # ------- ARTISTS ------- %]
+
+	[%- # ------- (MULTIPLE) GENRES ------- %]
+	[%- IF includedgenres %]
+	join genre_track on genre_track.track = tracks.id
+	join genres on genres.id = genre_track.genre and genres.namesearch in ([% includedgenres %])
+	[%- END %]
+	[%- IF (useapcvalues and (recentlyplayed or sortorder)) or maxdpsv or mindpsv%]
+	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
+	[%- IF (!useapcvalues and (recentlyplayed or sortorder)) or minrating %]
+	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+	[%- IF excludedgenres %]
+		and not exists (select * from tracks t2,genre_track,genres
+						where
+							t2.id = tracks.id and
+							genre_track.track = tracks.id and
+							genre_track.genre = genres.id and
+							genres.namesearch in ([% excludedgenres %]))
+	[%- END %]
+	group by playlist_track.playlist
+	having
+		1 = 1
+	[%- IF recentlyplayed %]
+		and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF includedmultipleyears %]
+		and ifnull(tracks.year, 0) in ([% includedmultipleyears %])
+	[%- END %]
+	[%- IF includeddecades %]
+		and ifnull(tracks.year, 0) in ([% includeddecades %])
+	[%- END %]
+	[%- IF maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
+	[%- END %]
+	[%- IF mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
+	[%- END %]
+	[%- IF minartisttracks %]
+		and count(tracks.id) >= [% minartisttracks %]
+	[%- END %]
+	[%- IF partlyplayed %]
+		and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
+	[%- END %]
+	[%- IF minrating %]
+		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
+	[%- END %]
+	[%- IF addedtime %]
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
+	[%- END %]
+	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]random()[% END %]

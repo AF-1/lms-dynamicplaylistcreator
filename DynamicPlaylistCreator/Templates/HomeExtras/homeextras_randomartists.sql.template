@@ -21,7 +21,7 @@ select contributor_track.contributor as contributor[% IF sortorder %], [% IF sor
 	join genres on genres.id = genre_track.genre and genres.namesearch in ([% includedgenres %])
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or partlyplayed)) or toprated %]
+	[%- IF (!useapcvalues and (recentlyplayed or sortorder or partlyplayed)) or toprated %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
@@ -81,7 +81,7 @@ select contributor_track.contributor as contributor[% IF sortorder %], [% IF sor
 	[%- IF minartisttracks %]
 		and count(tracks.id) >= [% minartisttracks %]
 	[%- END %]
-	[%- IF partlyplayed and playedbefore != 1 %]
+	[%- IF partlyplayed %]
 		and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
 	[%- END %]
 	order by [% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %][% IF toprated %]procrating desc, [% END %]random()
