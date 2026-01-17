@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Static Playlist Tracks</name>
-		<templateversion>5</templateversion>
+		<templateversion>6</templateversion>
 		<description>Random tracks from a static playlist</description>
 		<playlistcategory>playlists</playlistcategory>
 		<listweight>1</listweight>
