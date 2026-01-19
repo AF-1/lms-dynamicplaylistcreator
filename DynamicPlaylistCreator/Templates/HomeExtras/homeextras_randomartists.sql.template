@@ -5,15 +5,15 @@
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
 -- PlaylistMenuListType:homeextrasmenu
-[%- IF virtuallibrary %]
--- PlaylistVirtualLibraryID1:[% virtuallibrary %]
+[%- IF selectedvirtuallibrary && minmatch %]
+-- PlaylistVirtualLibraryID1:[% selectedvirtuallibrary %]
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select contributor_track.contributor as contributor[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF sortorder == 3 || sortorder == 4 %]/count(distinct contributor_track.role)[% END %] as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 %]/count(distinct contributor_track.role)[% END %] as procrating[% END %] from tracks
 	join contributor_track on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
 	[%- # ------- VIRTUAL LIBRARIES ------- %]
 	[%- IF minmatch or activevirtuallibrary %]
-	join library_contributor on contributor_track.contributor = library_contributor.contributor_track[% IF activevirtuallibrary %] and library_contributor.library = [% activevirtuallibrary %][% END %]
+	join library_contributor on contributor_track.contributor = library_contributor.contributor_track[% IF activevirtuallibrary %] and library_contributor.library = 'PlaylistCurrentVirtualLibraryForClient'[% END %]
 	[%- END %]
 	[%- # ------- (MULTIPLE) GENRES ------- %]
 	[%- IF includedgenres %]

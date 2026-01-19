@@ -11,7 +11,7 @@
 <br>
 <form action="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_saveitem.html" name="editForm" method="post">
 	<table border="0">
-		<tr><td colspan="3"><b>[% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE" | string %]</b></td></tr>
+		<tr><td colspan="3"><b>[% IF homeExtrasMenu %][% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_HEMENU_PARAMETERS_TITLE" | string %][% ELSE %][% "PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE" | string %][% END %]</b></td></tr>
 		<tr><td colspan="3">&nbsp;</td></tr>
 		[%- FOREACH parameter = pluginWebPageMethodsEditItemParameters %]
 			[% NEXT IF parameter.values.size == 0 %]
@@ -40,6 +40,8 @@
 						[% END %]
 					</select>
 					<input type="text" name="itemparameter_[% parameter.id %]" value="[% parameter.value | html %]"[% IF parameter.elementsize %] size="[% parameter.elementsize %]"[% END %][% IF parameter.placeholdervalue %] placeholder="[% parameter.placeholdervalue %]"[% END %]>
+				[% ELSIF parameter.type == 'info' %]
+					[% parameter.value | html %]
 				[% ELSIF parameter.type == 'logop' %]
 					<select name="itemparameter_[% parameter.id %]">
 						[% FOREACH option = {

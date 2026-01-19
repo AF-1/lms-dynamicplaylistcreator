@@ -5,15 +5,15 @@
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
 -- PlaylistMenuListType:homeextrasmenu
-[%- IF virtuallibrary %]
--- PlaylistVirtualLibraryID1:[% virtuallibrary %]
+[%- IF selectedvirtuallibrary && minmatch %]
+-- PlaylistVirtualLibraryID1:[% selectedvirtuallibrary %]
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF (sortorder == 3 || sortorder == 4) and includedartists %]/count(distinct contributor_album.role)[% END %] as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 and includedartists %]/count(distinct contributor_album.role)[% END %] as procrating[% END %][% IF minavgrating %], avg(ifnull(tracks_persistent.rating,0)) as procminavgrating[% END %] from albums
 	join tracks on albums.id = tracks.album
 	[%- # ------- VIRTUAL LIBRARIES ------- %]
 	[%- IF minmatch or activevirtuallibrary %]
-	join library_album on albums.id = library_album.album[% IF activevirtuallibrary %] and library_album.library = [% activevirtuallibrary %][% END %]
+	join library_album on albums.id = library_album.album[% IF activevirtuallibrary %] and library_album.library = 'PlaylistCurrentVirtualLibraryForClient'[% END %]
 	[%- END %]
 	[%- # ------- ARTISTS ------- %]
 	[%- IF includedartists %]

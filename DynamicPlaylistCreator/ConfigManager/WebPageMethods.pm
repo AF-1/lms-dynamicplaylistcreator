@@ -209,6 +209,7 @@ sub webEditItem {
 				$params->{'pluginWebPageMethodsEditItemTemplate'} = lc($templateData->{'id'});
 				$params->{'pluginWebPageMethodsEditItemFile'} = $itemId;
 				$params->{'pluginWebPageMethodsEditItemFileUnescaped'} = unescape($itemId);
+				$params->{'homeExtrasMenu'} = $template->{'homeextrasmenu'};
 				return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 			}
 		}
@@ -267,6 +268,7 @@ sub webNewItemParameters {
 		}
 		$params->{'pluginWebPageMethodsNewItemParameters'} = \@parametersToSelect;
 		$params->{'templateName'} = $template->{'name'};
+		$params->{'homeExtrasMenu'} = $template->{'homeextrasmenu'};
 	}
 	return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webNewItemParameters'}, $params);
 }

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dynamicplaylistcreator>
 	<template>
-		<name>Random Static Playlists (Material Home Extras)</name>
+		<name>Random Static Playlists</name>
 		<templateversion>1</templateversion>
-		<description>Static playlists based on selected criteria for the Material Home Extra menu</description>
+		<description>Static playlists based on selected criteria for a scrollable list (Material Home)</description>
 		<playlistcategory>playlists</playlistcategory>
 		<homeextrasmenu>1</homeextrasmenu>
 		<listweight>3</listweight>
-		<parameter type="text" id="playlistname" name="Material Home Extra &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your Material Home Extra menu definition"/>
+		<parameter type="info" id="info" name="⚠️ Please note" value="You can enable this scrollable list in the Dynamic Playlists plugin settings."/>
+		<parameter type="text" id="playlistname" name="Material Home Scrollable List &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your Material Home scrollable list"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;recently played&lt;/b&gt;" value="0"/>
 		<parameter type="multivaltext" id="includedmultipleyears" name="&lt;b&gt;In&lt;/b&gt;clude tracks with tracks from these years" value="" placeholdervalue=" comma-separated list of years"/>
