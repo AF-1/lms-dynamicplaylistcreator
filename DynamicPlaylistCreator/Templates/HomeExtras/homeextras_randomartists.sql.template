@@ -13,7 +13,7 @@ select contributor_track.contributor as contributor[% IF sortorder %], [% IF sor
 	join contributor_track on tracks.id = contributor_track.track and contributor_track.role in (1,5,6)
 	[%- # ------- VIRTUAL LIBRARIES ------- %]
 	[%- IF minmatch or activevirtuallibrary %]
-	join library_contributor on contributor_track.contributor = library_contributor.contributor_track[% IF activevirtuallibrary %] and library_contributor.library = 'PlaylistCurrentVirtualLibraryForClient'[% END %]
+	join library_contributor on contributor_track.contributor = library_contributor.contributor[% IF activevirtuallibrary %] and library_contributor.library = 'PlaylistCurrentVirtualLibraryForClient'[% END %]
 	[%- END %]
 	[%- # ------- (MULTIPLE) GENRES ------- %]
 	[%- IF includedgenres %]
@@ -30,7 +30,7 @@ select contributor_track.contributor as contributor[% IF sortorder %], [% IF sor
 	WHERE
 		tracks.audio = 1
 	[%- IF excludedgenres %]
-		and not exists (select * from tracks t2,genre_track,genres
+		and not exists (select 1 from tracks t2,genre_track,genres
 						where
 							t2.id = tracks.id and
 							genre_track.track = tracks.id and

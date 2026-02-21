@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Year Context Menu - Songs</name>
-		<templateversion>4</templateversion>
+		<templateversion>5</templateversion>
 		<description>Songs from selected year/decade</description>
 		<playlistcategory>years</playlistcategory>
 		<listweight>7</listweight>

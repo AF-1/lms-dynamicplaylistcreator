@@ -79,7 +79,7 @@
 [%- # ----------- %]
 [%- ELSIF request2fromuser == 'playlist' %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
--- PlaylistParameter2:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist.id,playlist.title,substr(playlist.titlesort,1,1) from tracks playlist join playlist_track on playlist.id = playlist_track.playlist join tracks on playlist_track.track = tracks.url join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] group by playlist.id order by playlist.titlesort
+-- PlaylistParameter2:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist_track.playlist order by tracks.titlesort
 	[%- ELSE %]
 -- PlaylistParameter2:playlist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:
 	[%- END %]
@@ -113,21 +113,35 @@
 [%- ELSIF request2fromuser == 'maxRating' %]
 -- PlaylistParameter2:list:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTMAXRATING:10:0.5,20:1,30:1.5,40:2,50:2.5,60:3,70:3.5,80:4,90:4.5,100:5
 [%- END %]
-[%- IF requestcustomtag && customtagname && customtaguserfriendlyname %]
--- PlaylistParameter[% IF request1fromuser && request2fromuser %]3[% ELSIF request1fromuser && !request2fromuser %]2[% ELSE %]1[% END %]:customtag:Select [% customtaguserfriendlyname %]:select customtagimporter_track_attributes.value,customtagimporter_track_attributes.value,substr(customtagimporter_track_attributes.value,1,1) from customtagimporter_track_attributes where customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% customtagname %]' group by customtagimporter_track_attributes.value order by customtagimporter_track_attributes.value
-[%- END %]
 [%- # ----------- %]
 [%- IF customskipfilter %]
 -- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+[% IF toprated %]
+drop table if exists tmp_rated_playlist;
+create temporary table tmp_rated_playlist as
+	select playlist_track.playlist as playlist from tracks
+		join playlist_track on playlist_track.track = tracks.url
+		join tracks pt on pt.id = playlist_track.playlist and pt.titlesearch in ([% includedstaticplaylists %])
+		left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
+	where tracks.audio = 1
+	group by playlist_track.playlist
+	order by [% IF toprated == 1 %]avg[% ELSE %]sum[% END %](ifnull(tracks_persistent.rating,0)) desc
+	limit 1;
+[% END %]
+[% # ------------------------------------------------------------------------------------- %]
+select distinct tracks.id, tracks.primary_artist from tracks
 	join playlist_track on playlist_track.track = tracks.url and
+		[%- IF toprated %]
+		playlist_track.playlist in (select playlist from tmp_rated_playlist)
+		[%- ELSE %]
 		playlist_track.playlist in (select max(playlist) from playlist_track, tracks where
 						playlist_track.playlist = tracks.id and
 						tracks.titlesearch in ([% includedstaticplaylists %])
 					group by playlist_track.playlist)
+		[%- END %]
 	[%- # ------- ARTISTS ------- %]
 	[%- IF request1fromuser == 'artist' or request2fromuser == 'artist' %]
 	join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5,6) and contributor_track.contributor = 'PlaylistParameter[% IF request1fromuser == 'artist' %]1[% ELSE %]2[% END %]'
@@ -145,10 +159,10 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- END %]
 	left join dynamicplaylist_history on dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- IF (useapcvalues and (recentlyplayed or sortorder or playedbefore)) or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
+	[%- IF (useapcvalues and (recentlyplayed or sortorder or playedbefore or request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed')) or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
 	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
 	[%- END %]
-	[%- IF (!useapcvalues and (recentlyplayed or sortorder or playedbefore)) or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or addedtime %]
+	[%- IF (!useapcvalues and (recentlyplayed or sortorder or playedbefore)) or request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or addedtime %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	WHERE
@@ -173,7 +187,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request1fromuser == 'exactRating' %]1[% ELSE %]2[% END %]'
 	[%- END %]
 	[%- IF maxskipcount %]
-		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
+		and ifnull(alternativeplaycount.skipCount,0) < [% maxskipcount %]
 	[%- END %]
 	[%- IF recentlyskipped %]
 		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
@@ -200,6 +214,9 @@ select tracks.id, tracks.primary_artist from tracks
 		and (strftime('%s', 'now')-ifnull(tracks_persistent.lastPlayed,0)) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
 		[%- END %]
 	[%- END %]
+	[%- IF (request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed') and playedbefore != 1 %]
+		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% IF request1fromuser == 'notrecentlyplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
+	[%- END %]
 	[%- IF (request1fromuser == 'addedtime' or request2fromuser == 'addedtime') && !addedtime %]
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 	[%- END %]
@@ -207,7 +224,7 @@ select tracks.id, tracks.primary_artist from tracks
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 	[%- END %]
 	[%- IF excludedgenres %]
-		and not exists (select * from tracks t2,genre_track,genres
+		and not exists (select 1 from tracks t2,genre_track,genres
 						where
 							t2.id = tracks.id and
 							genre_track.track = tracks.id and
@@ -215,3 +232,6 @@ select tracks.id, tracks.primary_artist from tracks
 							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
 	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %]playlist_track.position asc[% END %]
+[% IF toprated %] ;
+drop table tmp_rated_playlist;
+[% END %]

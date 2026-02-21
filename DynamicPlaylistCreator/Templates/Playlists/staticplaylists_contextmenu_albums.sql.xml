@@ -2,10 +2,10 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Playlist Context Menu - Albums</name>
-		<templateversion>7</templateversion>
+		<templateversion>8</templateversion>
 		<description>Albums from selected static playlist</description>
 		<playlistcategory>playlists</playlistcategory>
-		<listweight>8</listweight>
+		<listweight>9</listweight>
 		<contextmenu>1</contextmenu>
 		<parameter type="text" id="playlistname" name="Playlist &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Enter a name for your dynamic playlist"/>
 		<parameter type="checkbox" id="repeat" name="&lt;b&gt;Never&lt;/b&gt; stop" value="0" tooltipvalue="When all matching tracks have been played, the history and cache are deleted so that these tracks can be played again. You will end up with a dynamic playlist that will not stop playing as long as tracks are found that match the search criteria."/>

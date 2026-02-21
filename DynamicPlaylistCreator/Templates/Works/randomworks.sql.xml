@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Works</name>
-		<templateversion>4</templateversion>
+		<templateversion>5</templateversion>
 		<description>Work template with options</description>
 		<playlistcategory>works</playlistcategory>
 		<listweight>1</listweight>

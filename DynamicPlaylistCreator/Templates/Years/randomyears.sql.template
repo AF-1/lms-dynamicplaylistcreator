@@ -77,7 +77,7 @@ create temporary table tmp_random_years as
 			and ifnull(tracks.year, 0) in ('PlaylistParameter1')
 		[%- END %]
 		[%- IF excludedgenres %]
-			and not exists (select * from tracks t2,genre_track,genres
+			and not exists (select 1 from tracks t2,genre_track,genres
 							where
 								t2.id = tracks.id and
 								genre_track.track = tracks.id and
@@ -85,7 +85,7 @@ create temporary table tmp_random_years as
 								genres.namesearch in ([% excludedgenres %]))
 		[%- END %]
 		[%- IF excludedartists %]
-			and not exists (select * from tracks t2,contributor_track,contributors
+			and not exists (select 1 from tracks t2,contributor_track,contributors
 							where
 								t2.id = tracks.id and
 								tracks.id = contributor_track.track and
@@ -102,12 +102,18 @@ create temporary table tmp_random_years as
 		[%- IF minyeartracks %]
 			and count(tracks.id) >= [% minyeartracks %]
 		[%- END %]
+		[%- IF playedbefore == 1 and !recentlyplayed %]
+			and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0
+		[%- END %]
+		[%- IF playedbefore == 2 %]
+			and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
+		[%- END %]
 		order by [% IF toprated %]procrating desc, [% END %]random()
 		limit 30) as subselection
 	order by random()
 	limit [% IF noofyears %][% noofyears %][% ELSE %]1[% END %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+select distinct tracks.id, tracks.primary_artist from tracks
 	join tmp_random_years on tmp_random_years.year = tracks.year
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
@@ -150,7 +156,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
 	[%- IF excludedartists %]
-		and not exists (select * from tracks t2,contributor_track,contributors
+		and not exists (select 1 from tracks t2,contributor_track,contributors
 						where
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
@@ -159,13 +165,12 @@ select tracks.id, tracks.primary_artist from tracks
 							contributors.namesearch in ([% excludedartists %]))
 	[%- END %]
 	[%- IF excludedgenres %]
-		and not exists (select * from tracks t2, genre_track, genres
+		and not exists (select 1 from tracks t2, genre_track, genres
 						where
 							t2.id = tracks.id and
 							genre_track.track = tracks.id and
 							genre_track.genre = genres.id and
 							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
-	group by tracks.id
 	order by random()[% IF nooftracks %] limit [% nooftracks %][% END %];
 drop table tmp_random_years;

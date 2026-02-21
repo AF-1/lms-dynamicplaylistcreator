@@ -81,14 +81,14 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+select distinct tracks.id, tracks.primary_artist from tracks
 	join genre_track on genre_track.track = tracks.id and genre_track.genre = 'PlaylistParameter1'
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF activevirtuallibrary %]
 	join library_track on library_track.track = tracks.id and library_track.library = 'PlaylistCurrentVirtualLibraryForClient'
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or (includedratings or includedratings == 0) or maxrating or sortorder or request2fromuser == 'addedtime' or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'addedtime' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or (includedratings or includedratings == 0) or maxrating or sortorder or addedtime or request2fromuser == 'addedtime' or request2fromuser == 'lastplayed' or request2fromuser == 'minRating' or request2fromuser == 'exactRating' or request2fromuser == 'maxRating' or request3fromuser == 'addedtime' or request3fromuser == 'lastplayed' or request3fromuser == 'minRating' or request3fromuser == 'exactRating' or request3fromuser == 'maxRating' %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
@@ -97,7 +97,7 @@ select tracks.id, tracks.primary_artist from tracks
 	WHERE
 		tracks.audio = 1
 	[%- IF excludedartists %]
-		and not exists (select * from tracks t2,contributor_track,contributors
+		and not exists (select 1 from tracks t2,contributor_track,contributors
 						where
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
@@ -136,7 +136,7 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF request2fromuser == 'maxRating' or request3fromuser == 'maxRating' %]
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request2fromuser == 'maxRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
-	[%- IF (includedratings or includedratings == 0) && !minrating && !maxrating && request1fromuser != 'exactRating' && request2fromuser != 'exactRating' %]
+	[%- IF (includedratings or includedratings == 0) && !minrating && !maxrating && request2fromuser != 'exactRating' && request3fromuser != 'exactRating' %]
 		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
 	[%- END %]
 	[%- IF request2fromuser == 'exactRating' or request3fromuser == 'exactRating' %]
@@ -155,7 +155,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and (strftime('%s', 'now') - ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) <= 'PlaylistParameter[% IF request2fromuser == 'lastplayed' %]2[% ELSE %]3[% END %]'
 	[%- END %]
 	[%- IF maxskipcount %]
-		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
+		and ifnull(alternativeplaycount.skipCount,0) < [% maxskipcount %]
 	[%- END %]
 	[%- IF recentlyskipped %]
 		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
@@ -172,7 +172,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF addedtime && request2fromuser != 'addedtime' && request3fromuser != 'addedtime' %]
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 	[%- END %]
-	group by tracks.id
 	[%- IF sortorder %]
 	order by [% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount [% IF sortorder == 1 %]desc[% ELSE %]asc[% END %]
 	[%- END %]

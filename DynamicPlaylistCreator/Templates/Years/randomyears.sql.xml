@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Years / Decades</name>
-		<templateversion>4</templateversion>
+		<templateversion>5</templateversion>
 		<description>Years template with options</description>
 		<playlistcategory>years</playlistcategory>
 		<listweight>1</listweight>

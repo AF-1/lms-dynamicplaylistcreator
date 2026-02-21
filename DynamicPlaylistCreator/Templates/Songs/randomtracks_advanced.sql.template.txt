@@ -57,7 +57,7 @@
 [%- # ----------- %]
 [%- ELSIF request1fromuser == 'playlist' %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
--- PlaylistParameter1:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist.id order by playlist.titlesort
+-- PlaylistParameter1:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist_track.playlist order by tracks.titlesort
 	[%- ELSE %]
 -- PlaylistParameter1:playlist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:
 	[%- END %]
@@ -202,7 +202,7 @@
 [%- END %]
 
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+select distinct tracks.id, tracks.primary_artist from tracks
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
 	join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
@@ -230,9 +230,10 @@ select tracks.id, tracks.primary_artist from tracks
 	join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5,6)
 		[%- IF request1fromuser == 'artist' or request2fromuser == 'artist' %]
 		and contributor_track.contributor = 'PlaylistParameter[% IF request1fromuser == 'artist' %]1[% ELSE %]2[% END %]'
-		[%- ELSE %]
-		join contributors on contributors.id = contributor_track.contributor and contributors.namesearch in ([% includedartists %])
 		[%- END %]
+	[%- IF includedartists %]
+	join contributors on contributors.id = contributor_track.contributor and contributors.namesearch in ([% includedartists %])
+	[%- END %]
 	[%- END %]
 	[%- # ------- (MULTIPLE) GENRES ------- %]
 	[%- IF includedgenres or request1fromuser == 'genre' or request2fromuser == 'genre' or request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
@@ -251,7 +252,7 @@ select tracks.id, tracks.primary_artist from tracks
 	left join comments on comments.track = tracks.id
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or sortorder or recentlyplayed or playedbefore or minplaycount or maxplaycount or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
+	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or (!useapcvalues and (sortorder or recentlyplayed or playedbefore or minplaycount or maxplaycount)) or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
@@ -262,76 +263,85 @@ select tracks.id, tracks.primary_artist from tracks
 		tracks.audio = 1
 		and dynamicplaylist_history.id is null
 	[%- IF excludevirtuallibrary %]
-		and not exists(select * from library_track
+		and not exists(select 1 from library_track
 			where
 				library_track.track = tracks.id and
 				library_track.library = 'PlaylistVirtualLibraryID2')
 	[%- END %]
+	[%- IF requestcustomtag %]
+		and exists (
+			select 1 from customtagimporter_track_attributes
+			where customtagimporter_track_attributes.track = tracks.id
+			and customtagimporter_track_attributes.type = 'customtag'
+			and customtagimporter_track_attributes.attr = '[% customtagname %]'
+			and customtagimporter_track_attributes.value = ''PlaylistParameter[% IF request1fromuser && request2fromuser %]3[% ELSIF request1fromuser %]2[% ELSE %]1[% END %]''
+		)
+	[%- END %]
 	[%- IF includedcustomtagname1 %]
 		and
 		[% IF includedcustomtagname2 && includedcustomtag1_logop == 'or' %] ([% END %]
-			exists (select * from tracks t2,customtagimporter_track_attributes
-						where t2.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname1 %]'[% IF includedcustomtagsearchtype1 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues1 %] and [% IF includedcustomtagsearchtype1 == 'lt' or includedcustomtagsearchtype1 == 'le' or includedcustomtagsearchtype1 == 'gt' or includedcustomtagsearchtype1 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype1 == 'lt' or includedcustomtagsearchtype1 == 'le' or includedcustomtagsearchtype1 == 'gt' or includedcustomtagsearchtype1 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype1 == 'lt' %]< [% ELSIF includedcustomtagsearchtype1 == 'le' %]<= [% ELSIF includedcustomtagsearchtype1 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype1 == 'gt' %]> [% ELSIF includedcustomtagsearchtype1 == 'contains' %]like [% ELSIF includedcustomtagsearchtype1 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype1 == 'contains' %]'%%[% includedcustomtagvalues1 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues1 %][% END %][% IF includedcustomtagsearchtype1 == 'oneof' %])[% END %][% END %])
+			exists (select 1 from tracks t1,customtagimporter_track_attributes
+						where t1.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname1 %]'[% IF includedcustomtagsearchtype1 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues1 %] and [% IF includedcustomtagsearchtype1 == 'lt' or includedcustomtagsearchtype1 == 'le' or includedcustomtagsearchtype1 == 'gt' or includedcustomtagsearchtype1 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype1 == 'lt' or includedcustomtagsearchtype1 == 'le' or includedcustomtagsearchtype1 == 'gt' or includedcustomtagsearchtype1 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype1 == 'lt' %]< [% ELSIF includedcustomtagsearchtype1 == 'le' %]<= [% ELSIF includedcustomtagsearchtype1 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype1 == 'gt' %]> [% ELSIF includedcustomtagsearchtype1 == 'contains' %]like [% ELSIF includedcustomtagsearchtype1 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype1 == 'contains' %]'%%[% includedcustomtagvalues1 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues1 %][% END %][% IF includedcustomtagsearchtype1 == 'oneof' %])[% END %][% END %])
 		[%- IF includedcustomtagname2 %]
 		[% includedcustomtag1_logop %]
 		[%- IF includedcustomtagname3 && includedcustomtag1_logop == 'and' && includedcustomtag2_logop == 'or' %] ([% END %]
-			exists (select * from tracks t2,customtagimporter_track_attributes
+			exists (select 1 from tracks t2,customtagimporter_track_attributes
 						where t2.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname2 %]'[% IF includedcustomtagsearchtype2 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues2 %] and [% IF includedcustomtagsearchtype2 == 'lt' or includedcustomtagsearchtype2 == 'le' or includedcustomtagsearchtype2 == 'gt' or includedcustomtagsearchtype2 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype2 == 'lt' or includedcustomtagsearchtype2 == 'le' or includedcustomtagsearchtype2 == 'gt' or includedcustomtagsearchtype2 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype2 == 'lt' %]< [% ELSIF includedcustomtagsearchtype2 == 'le' %]<= [% ELSIF includedcustomtagsearchtype2 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype2 == 'gt' %]> [% ELSIF includedcustomtagsearchtype2 == 'contains' %]like [% ELSIF includedcustomtagsearchtype2 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype2 == 'contains' %]'%%[% includedcustomtagvalues2 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues2 %][% END %][% IF includedcustomtagsearchtype2 == 'oneof' %])[% END %][% END %])
 		[%- IF includedcustomtag1_logop == 'or' and ((includedcustomtagname3 and includedcustomtag2_logop == 'and') or !includedcustomtagname3) %] )[% END %]
 		[%- END %]
 		[%- IF includedcustomtagname3 %]
 		[% includedcustomtag2_logop %]
 		[%- IF includedcustomtagname4 && includedcustomtag2_logop == 'and' && includedcustomtag3_logop == 'or' %] ([% END %]
-			exists (select * from tracks t2,customtagimporter_track_attributes
-						where t2.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname3 %]'[% IF includedcustomtagsearchtype3 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues3 %] and [% IF includedcustomtagsearchtype3 == 'lt' or includedcustomtagsearchtype3 == 'le' or includedcustomtagsearchtype3 == 'gt' or includedcustomtagsearchtype3 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype3 == 'lt' or includedcustomtagsearchtype3 == 'le' or includedcustomtagsearchtype3 == 'gt' or includedcustomtagsearchtype3 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype3 == 'lt' %]< [% ELSIF includedcustomtagsearchtype3 == 'le' %]<= [% ELSIF includedcustomtagsearchtype3 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype3 == 'gt' %]> [% ELSIF includedcustomtagsearchtype3 == 'contains' %]like [% ELSIF includedcustomtagsearchtype3 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype3 == 'contains' %]'%%[% includedcustomtagvalues3 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues3 %][% END %][% IF includedcustomtagsearchtype3 == 'oneof' %])[% END %][% END %])
+			exists (select 1 from tracks t3,customtagimporter_track_attributes
+						where t3.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname3 %]'[% IF includedcustomtagsearchtype3 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues3 %] and [% IF includedcustomtagsearchtype3 == 'lt' or includedcustomtagsearchtype3 == 'le' or includedcustomtagsearchtype3 == 'gt' or includedcustomtagsearchtype3 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype3 == 'lt' or includedcustomtagsearchtype3 == 'le' or includedcustomtagsearchtype3 == 'gt' or includedcustomtagsearchtype3 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype3 == 'lt' %]< [% ELSIF includedcustomtagsearchtype3 == 'le' %]<= [% ELSIF includedcustomtagsearchtype3 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype3 == 'gt' %]> [% ELSIF includedcustomtagsearchtype3 == 'contains' %]like [% ELSIF includedcustomtagsearchtype3 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype3 == 'contains' %]'%%[% includedcustomtagvalues3 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues3 %][% END %][% IF includedcustomtagsearchtype3 == 'oneof' %])[% END %][% END %])
 		[%- IF includedcustomtag2_logop == 'or' and ((includedcustomtagname4 and includedcustomtag3_logop == 'and') or !includedcustomtagname4) %] )[% END %]
 		[%- END %]
 		[%- IF includedcustomtagname4 %]
 		[% includedcustomtag3_logop %]
 		[%- IF includedcustomtagname5 && includedcustomtag3_logop == 'and' && includedcustomtag4_logop == 'or' %] ([% END %]
-			exists (select * from tracks t2,customtagimporter_track_attributes
-						where t2.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname4 %]'[% IF includedcustomtagsearchtype4 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues4 %] and [% IF includedcustomtagsearchtype4 == 'lt' or includedcustomtagsearchtype4 == 'le' or includedcustomtagsearchtype4 == 'gt' or includedcustomtagsearchtype4 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype4 == 'lt' or includedcustomtagsearchtype4 == 'le' or includedcustomtagsearchtype4 == 'gt' or includedcustomtagsearchtype4 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype4 == 'lt' %]< [% ELSIF includedcustomtagsearchtype4 == 'le' %]<= [% ELSIF includedcustomtagsearchtype4 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype4 == 'gt' %]> [% ELSIF includedcustomtagsearchtype4 == 'contains' %]like [% ELSIF includedcustomtagsearchtype4 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype4 == 'contains' %]'%%[% includedcustomtagvalues4 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues4 %][% END %][% IF includedcustomtagsearchtype4 == 'oneof' %])[% END %][% END %])
+			exists (select 1 from tracks t4,customtagimporter_track_attributes
+						where t4.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname4 %]'[% IF includedcustomtagsearchtype4 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues4 %] and [% IF includedcustomtagsearchtype4 == 'lt' or includedcustomtagsearchtype4 == 'le' or includedcustomtagsearchtype4 == 'gt' or includedcustomtagsearchtype4 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype4 == 'lt' or includedcustomtagsearchtype4 == 'le' or includedcustomtagsearchtype4 == 'gt' or includedcustomtagsearchtype4 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype4 == 'lt' %]< [% ELSIF includedcustomtagsearchtype4 == 'le' %]<= [% ELSIF includedcustomtagsearchtype4 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype4 == 'gt' %]> [% ELSIF includedcustomtagsearchtype4 == 'contains' %]like [% ELSIF includedcustomtagsearchtype4 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype4 == 'contains' %]'%%[% includedcustomtagvalues4 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues4 %][% END %][% IF includedcustomtagsearchtype4 == 'oneof' %])[% END %][% END %])
 		[%- IF includedcustomtag3_logop == 'or' and ((includedcustomtagname5 and includedcustomtag4_logop == 'and') or !includedcustomtagname5) %] )[% END %]
 		[%- END %]
 		[%- IF includedcustomtagname5 %]
 		[% includedcustomtag4_logop %]
 		[%- IF includedcustomtagname6 && includedcustomtag4_logop == 'and' && includedcustomtag5_logop == 'or' %] ([% END %]
-			exists (select * from tracks t2,customtagimporter_track_attributes
-						where t2.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname5 %]'[% IF includedcustomtagsearchtype5 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues5 %] and [% IF includedcustomtagsearchtype5 == 'lt' or includedcustomtagsearchtype5 == 'le' or includedcustomtagsearchtype5 == 'gt' or includedcustomtagsearchtype5 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype5 == 'lt' or includedcustomtagsearchtype5 == 'le' or includedcustomtagsearchtype5 == 'gt' or includedcustomtagsearchtype5 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype5 == 'lt' %]< [% ELSIF includedcustomtagsearchtype5 == 'le' %]<= [% ELSIF includedcustomtagsearchtype5 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype5 == 'gt' %]> [% ELSIF includedcustomtagsearchtype5 == 'contains' %]like [% ELSIF includedcustomtagsearchtype5 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype5 == 'contains' %]'%%[% includedcustomtagvalues5 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues5 %][% END %][% IF includedcustomtagsearchtype5 == 'oneof' %])[% END %][% END %])
+			exists (select 1 from tracks t5,customtagimporter_track_attributes
+						where t5.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname5 %]'[% IF includedcustomtagsearchtype5 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues5 %] and [% IF includedcustomtagsearchtype5 == 'lt' or includedcustomtagsearchtype5 == 'le' or includedcustomtagsearchtype5 == 'gt' or includedcustomtagsearchtype5 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype5 == 'lt' or includedcustomtagsearchtype5 == 'le' or includedcustomtagsearchtype5 == 'gt' or includedcustomtagsearchtype5 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype5 == 'lt' %]< [% ELSIF includedcustomtagsearchtype5 == 'le' %]<= [% ELSIF includedcustomtagsearchtype5 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype5 == 'gt' %]> [% ELSIF includedcustomtagsearchtype5 == 'contains' %]like [% ELSIF includedcustomtagsearchtype5 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype5 == 'contains' %]'%%[% includedcustomtagvalues5 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues5 %][% END %][% IF includedcustomtagsearchtype5 == 'oneof' %])[% END %][% END %])
 		[%- IF includedcustomtag4_logop == 'or' and ((includedcustomtagname6 and includedcustomtag5_logop == 'and') or !includedcustomtagname6) %] )[% END %]
 		[%- END %]
 		[%- IF includedcustomtagname6 %]
 		[% includedcustomtag5_logop %]
 		[%- IF includedcustomtagname7 && includedcustomtag5_logop == 'and' && includedcustomtag6_logop == 'or' %] ([% END %]
-			exists (select * from tracks t2,customtagimporter_track_attributes
-						where t2.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname6 %]'[% IF includedcustomtagsearchtype6 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues6 %] and [% IF includedcustomtagsearchtype6 == 'lt' or includedcustomtagsearchtype6 == 'le' or includedcustomtagsearchtype6 == 'gt' or includedcustomtagsearchtype6 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype6 == 'lt' or includedcustomtagsearchtype6 == 'le' or includedcustomtagsearchtype6 == 'gt' or includedcustomtagsearchtype6 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype6 == 'lt' %]< [% ELSIF includedcustomtagsearchtype6 == 'le' %]<= [% ELSIF includedcustomtagsearchtype6 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype6 == 'gt' %]> [% ELSIF includedcustomtagsearchtype6 == 'contains' %]like [% ELSIF includedcustomtagsearchtype6 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype6 == 'contains' %]'%%[% includedcustomtagvalues6 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues6 %][% END %][% IF includedcustomtagsearchtype6 == 'oneof' %])[% END %][% END %])
+			exists (select 1 from tracks t6,customtagimporter_track_attributes
+						where t6.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname6 %]'[% IF includedcustomtagsearchtype6 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues6 %] and [% IF includedcustomtagsearchtype6 == 'lt' or includedcustomtagsearchtype6 == 'le' or includedcustomtagsearchtype6 == 'gt' or includedcustomtagsearchtype6 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype6 == 'lt' or includedcustomtagsearchtype6 == 'le' or includedcustomtagsearchtype6 == 'gt' or includedcustomtagsearchtype6 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype6 == 'lt' %]< [% ELSIF includedcustomtagsearchtype6 == 'le' %]<= [% ELSIF includedcustomtagsearchtype6 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype6 == 'gt' %]> [% ELSIF includedcustomtagsearchtype6 == 'contains' %]like [% ELSIF includedcustomtagsearchtype6 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype6 == 'contains' %]'%%[% includedcustomtagvalues6 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues6 %][% END %][% IF includedcustomtagsearchtype6 == 'oneof' %])[% END %][% END %])
 		[%- IF includedcustomtag5_logop == 'or' and ((includedcustomtagname7 and includedcustomtag6_logop == 'and') or !includedcustomtagname7) %] )[% END %]
 		[%- END %]
 		[%- IF includedcustomtagname7 %]
 		[% includedcustomtag6_logop %]
 		[%- IF includedcustomtagname8 && includedcustomtag6_logop == 'and' && includedcustomtag7_logop == 'or' %] ([% END %]
-			exists (select * from tracks t2,customtagimporter_track_attributes
-						where t2.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname7 %]'[% IF includedcustomtagsearchtype7 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues7 %] and [% IF includedcustomtagsearchtype7 == 'lt' or includedcustomtagsearchtype7 == 'le' or includedcustomtagsearchtype7 == 'gt' or includedcustomtagsearchtype7 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype7 == 'lt' or includedcustomtagsearchtype7 == 'le' or includedcustomtagsearchtype7 == 'gt' or includedcustomtagsearchtype7 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype7 == 'lt' %]< [% ELSIF includedcustomtagsearchtype7 == 'le' %]<= [% ELSIF includedcustomtagsearchtype7 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype7 == 'gt' %]> [% ELSIF includedcustomtagsearchtype7 == 'contains' %]like [% ELSIF includedcustomtagsearchtype7 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype7 == 'contains' %]'%%[% includedcustomtagvalues7 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues7 %][% END %][% IF includedcustomtagsearchtype7 == 'oneof' %])[% END %][% END %])
+			exists (select 1 from tracks t7,customtagimporter_track_attributes
+						where t7.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname7 %]'[% IF includedcustomtagsearchtype7 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues7 %] and [% IF includedcustomtagsearchtype7 == 'lt' or includedcustomtagsearchtype7 == 'le' or includedcustomtagsearchtype7 == 'gt' or includedcustomtagsearchtype7 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype7 == 'lt' or includedcustomtagsearchtype7 == 'le' or includedcustomtagsearchtype7 == 'gt' or includedcustomtagsearchtype7 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype7 == 'lt' %]< [% ELSIF includedcustomtagsearchtype7 == 'le' %]<= [% ELSIF includedcustomtagsearchtype7 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype7 == 'gt' %]> [% ELSIF includedcustomtagsearchtype7 == 'contains' %]like [% ELSIF includedcustomtagsearchtype7 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype7 == 'contains' %]'%%[% includedcustomtagvalues7 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues7 %][% END %][% IF includedcustomtagsearchtype7 == 'oneof' %])[% END %][% END %])
 		[%- IF includedcustomtag6_logop == 'or' and ((includedcustomtagname8 and includedcustomtag7_logop == 'and') or !includedcustomtagname8) %] )[% END %]
 		[%- END %]
 		[%- IF includedcustomtagname8 %]
 		[% includedcustomtag7_logop %]
-			exists (select * from tracks t2,customtagimporter_track_attributes
-						where t2.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname8 %]'[% IF includedcustomtagsearchtype8 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues8 %] and [% IF includedcustomtagsearchtype8 == 'lt' or includedcustomtagsearchtype8 == 'le' or includedcustomtagsearchtype8 == 'gt' or includedcustomtagsearchtype8 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype8 == 'lt' or includedcustomtagsearchtype8 == 'le' or includedcustomtagsearchtype8 == 'gt' or includedcustomtagsearchtype8 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype8 == 'lt' %]< [% ELSIF includedcustomtagsearchtype8 == 'le' %]<= [% ELSIF includedcustomtagsearchtype8 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype8 == 'gt' %]> [% ELSIF includedcustomtagsearchtype8 == 'contains' %]like [% ELSIF includedcustomtagsearchtype8 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype8 == 'contains' %]'%%[% includedcustomtagvalues8 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues8 %][% END %][% IF includedcustomtagsearchtype8 == 'oneof' %])[% END %][% END %])
+			exists (select 1 from tracks t8,customtagimporter_track_attributes
+						where t8.id = tracks.id and customtagimporter_track_attributes.track = tracks.id and customtagimporter_track_attributes.type = 'customtag' and customtagimporter_track_attributes.attr = '[% includedcustomtagname8 %]'[% IF includedcustomtagsearchtype8 == 'hasvalue' %] and customtagimporter_track_attributes.value is not null[% ELSIF includedcustomtagvalues8 %] and [% IF includedcustomtagsearchtype8 == 'lt' or includedcustomtagsearchtype8 == 'le' or includedcustomtagsearchtype8 == 'gt' or includedcustomtagsearchtype8 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF includedcustomtagsearchtype8 == 'lt' or includedcustomtagsearchtype8 == 'le' or includedcustomtagsearchtype8 == 'gt' or includedcustomtagsearchtype8 == 'ge' %] as numeric)[% END %] [% IF includedcustomtagsearchtype8 == 'lt' %]< [% ELSIF includedcustomtagsearchtype8 == 'le' %]<= [% ELSIF includedcustomtagsearchtype8 == 'ge' %]>= [% ELSIF includedcustomtagsearchtype8 == 'gt' %]> [% ELSIF includedcustomtagsearchtype8 == 'contains' %]like [% ELSIF includedcustomtagsearchtype8 == 'oneof' %]in ([% ELSE %]= [% END %][% IF includedcustomtagsearchtype8 == 'contains' %]'%%[% includedcustomtagvalues8 FILTER remove('\'') %]%%'[% ELSE %][% includedcustomtagvalues8 %][% END %][% IF includedcustomtagsearchtype8 == 'oneof' %])[% END %][% END %])
 		[%- IF includedcustomtag7_logop == 'or' %])[% END %]
 		[%- END %]
 	[%- END %]
 		[%- IF excludedcustomtagname1 %]
-		and not exists (select * from tracks t2,customtagimporter_track_attributes
+		and not exists (select 1 from tracks t1,customtagimporter_track_attributes
 						where
-							t2.id = tracks.id and
+							t1.id = tracks.id and
 							customtagimporter_track_attributes.track = tracks.id and
 							customtagimporter_track_attributes.type = 'customtag' and
 							customtagimporter_track_attributes.attr = '[% excludedcustomtagname1 %]'
 							[% IF excludedcustomtagvalues1 && excludedcustomtagsearchtype1 != 'hasvalue' %]and [% IF excludedcustomtagsearchtype1 == 'lt' or excludedcustomtagsearchtype1 == 'le' or excludedcustomtagsearchtype1 == 'gt' or excludedcustomtagsearchtype1 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF excludedcustomtagsearchtype1 == 'lt' or excludedcustomtagsearchtype1 == 'le' or excludedcustomtagsearchtype1 == 'gt' or excludedcustomtagsearchtype1 == 'ge' %] as numeric)[% END %] [% IF excludedcustomtagsearchtype1 == 'lt' %]< [% ELSIF excludedcustomtagsearchtype1 == 'le' %]<= [% ELSIF excludedcustomtagsearchtype1 == 'ge' %]>= [% ELSIF excludedcustomtagsearchtype1 == 'gt' %]> [% ELSIF excludedcustomtagsearchtype1 == 'contains' %]like [% ELSIF excludedcustomtagsearchtype1 == 'oneof' %]in ([% ELSE %]= [% END %][% IF excludedcustomtagsearchtype1 == 'contains' %]'%%[% excludedcustomtagvalues1 FILTER remove('\'') %]%%'[% ELSE %][% excludedcustomtagvalues1 %][% END %][% IF excludedcustomtagsearchtype1 == 'oneof' %])[% END %][% END %])
 		[% END %]
 		[%- IF excludedcustomtagname2 %]
-		and not exists (select * from tracks t2,customtagimporter_track_attributes
+		and not exists (select 1 from tracks t2,customtagimporter_track_attributes
 						where
 							t2.id = tracks.id and
 							customtagimporter_track_attributes.track = tracks.id and
@@ -340,7 +350,7 @@ select tracks.id, tracks.primary_artist from tracks
 							[% IF excludedcustomtagvalues2 && excludedcustomtagsearchtype2 != 'hasvalue' %]and [% IF excludedcustomtagsearchtype2 == 'lt' or excludedcustomtagsearchtype2 == 'le' or excludedcustomtagsearchtype2 == 'gt' or excludedcustomtagsearchtype2 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF excludedcustomtagsearchtype2 == 'lt' or excludedcustomtagsearchtype2 == 'le' or excludedcustomtagsearchtype2 == 'gt' or excludedcustomtagsearchtype2 == 'ge' %] as numeric)[% END %] [% IF excludedcustomtagsearchtype2 == 'lt' %]< [% ELSIF excludedcustomtagsearchtype2 == 'le' %]<= [% ELSIF excludedcustomtagsearchtype2 == 'ge' %]>= [% ELSIF excludedcustomtagsearchtype2 == 'gt' %]> [% ELSIF excludedcustomtagsearchtype2 == 'contains' %]like [% ELSIF excludedcustomtagsearchtype2 == 'oneof' %]in ([% ELSE %]= [% END %][% IF excludedcustomtagsearchtype2 == 'contains' %]'%%[% excludedcustomtagvalues2 FILTER remove('\'') %]%%'[% ELSE %][% excludedcustomtagvalues2 %][% END %][% IF excludedcustomtagsearchtype2 == 'oneof' %])[% END %][% END %])
 		[% END %]
 		[%- IF excludedcustomtagname3 %]
-		and not exists (select * from tracks t3,customtagimporter_track_attributes
+		and not exists (select 1 from tracks t3,customtagimporter_track_attributes
 						where
 							t3.id = tracks.id and
 							customtagimporter_track_attributes.track = tracks.id and
@@ -349,7 +359,7 @@ select tracks.id, tracks.primary_artist from tracks
 							[% IF excludedcustomtagvalues3 && excludedcustomtagsearchtype3 != 'hasvalue' %]and [% IF excludedcustomtagsearchtype3 == 'lt' or excludedcustomtagsearchtype3 == 'le' or excludedcustomtagsearchtype3 == 'gt' or excludedcustomtagsearchtype3 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF excludedcustomtagsearchtype3 == 'lt' or excludedcustomtagsearchtype3 == 'le' or excludedcustomtagsearchtype3 == 'gt' or excludedcustomtagsearchtype3 == 'ge' %] as numeric)[% END %] [% IF excludedcustomtagsearchtype3 == 'lt' %]< [% ELSIF excludedcustomtagsearchtype3 == 'le' %]<= [% ELSIF excludedcustomtagsearchtype3 == 'ge' %]>= [% ELSIF excludedcustomtagsearchtype3 == 'gt' %]> [% ELSIF excludedcustomtagsearchtype3 == 'contains' %]like [% ELSIF excludedcustomtagsearchtype3 == 'oneof' %]in ([% ELSE %]= [% END %][% IF excludedcustomtagsearchtype3 == 'contains' %]'%%[% excludedcustomtagvalues3 FILTER remove('\'') %]%%'[% ELSE %][% excludedcustomtagvalues3 %][% END %][% IF excludedcustomtagsearchtype3 == 'oneof' %])[% END %][% END %])
 		[% END %]
 		[%- IF excludedcustomtagname4 %]
-		and not exists (select * from tracks t4,customtagimporter_track_attributes
+		and not exists (select 1 from tracks t4,customtagimporter_track_attributes
 						where
 							t4.id = tracks.id and
 							customtagimporter_track_attributes.track = tracks.id and
@@ -358,7 +368,7 @@ select tracks.id, tracks.primary_artist from tracks
 							[% IF excludedcustomtagvalues4 && excludedcustomtagsearchtype4 != 'hasvalue' %]and [% IF excludedcustomtagsearchtype4 == 'lt' or excludedcustomtagsearchtype4 == 'le' or excludedcustomtagsearchtype4 == 'gt' or excludedcustomtagsearchtype4 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF excludedcustomtagsearchtype4 == 'lt' or excludedcustomtagsearchtype4 == 'le' or excludedcustomtagsearchtype4 == 'gt' or excludedcustomtagsearchtype4 == 'ge' %] as numeric)[% END %] [% IF excludedcustomtagsearchtype4 == 'lt' %]< [% ELSIF excludedcustomtagsearchtype4 == 'le' %]<= [% ELSIF excludedcustomtagsearchtype4 == 'ge' %]>= [% ELSIF excludedcustomtagsearchtype4 == 'gt' %]> [% ELSIF excludedcustomtagsearchtype4 == 'contains' %]like [% ELSIF excludedcustomtagsearchtype4 == 'oneof' %]in ([% ELSE %]= [% END %][% IF excludedcustomtagsearchtype4 == 'contains' %]'%%[% excludedcustomtagvalues4 FILTER remove('\'') %]%%'[% ELSE %][% excludedcustomtagvalues4 %][% END %][% IF excludedcustomtagsearchtype4 == 'oneof' %])[% END %][% END %])
 		[% END %]
 		[%- IF excludedcustomtagname5 %]
-		and not exists (select * from tracks t5,customtagimporter_track_attributes
+		and not exists (select 1 from tracks t5,customtagimporter_track_attributes
 						where
 							t5.id = tracks.id and
 							customtagimporter_track_attributes.track = tracks.id and
@@ -367,7 +377,7 @@ select tracks.id, tracks.primary_artist from tracks
 							[% IF excludedcustomtagvalues5 && excludedcustomtagsearchtype5 != 'hasvalue' %]and [% IF excludedcustomtagsearchtype5 == 'lt' or excludedcustomtagsearchtype5 == 'le' or excludedcustomtagsearchtype5 == 'gt' or excludedcustomtagsearchtype5 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF excludedcustomtagsearchtype5 == 'lt' or excludedcustomtagsearchtype5 == 'le' or excludedcustomtagsearchtype5 == 'gt' or excludedcustomtagsearchtype5 == 'ge' %] as numeric)[% END %] [% IF excludedcustomtagsearchtype5 == 'lt' %]< [% ELSIF excludedcustomtagsearchtype5 == 'le' %]<= [% ELSIF excludedcustomtagsearchtype5 == 'ge' %]>= [% ELSIF excludedcustomtagsearchtype5 == 'gt' %]> [% ELSIF excludedcustomtagsearchtype5 == 'contains' %]like [% ELSIF excludedcustomtagsearchtype5 == 'oneof' %]in ([% ELSE %]= [% END %][% IF excludedcustomtagsearchtype5 == 'contains' %]'%%[% excludedcustomtagvalues5 FILTER remove('\'') %]%%'[% ELSE %][% excludedcustomtagvalues5 %][% END %][% IF excludedcustomtagsearchtype5 == 'oneof' %])[% END %][% END %])
 		[% END %]
 		[%- IF excludedcustomtagname6 %]
-		and not exists (select * from tracks t6,customtagimporter_track_attributes
+		and not exists (select 1 from tracks t6,customtagimporter_track_attributes
 						where
 							t6.id = tracks.id and
 							customtagimporter_track_attributes.track = tracks.id and
@@ -376,7 +386,7 @@ select tracks.id, tracks.primary_artist from tracks
 							[% IF excludedcustomtagvalues6 && excludedcustomtagsearchtype6 != 'hasvalue' %]and [% IF excludedcustomtagsearchtype6 == 'lt' or excludedcustomtagsearchtype6 == 'le' or excludedcustomtagsearchtype6 == 'gt' or excludedcustomtagsearchtype6 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF excludedcustomtagsearchtype6 == 'lt' or excludedcustomtagsearchtype6 == 'le' or excludedcustomtagsearchtype6 == 'gt' or excludedcustomtagsearchtype6 == 'ge' %] as numeric)[% END %] [% IF excludedcustomtagsearchtype6 == 'lt' %]< [% ELSIF excludedcustomtagsearchtype6 == 'le' %]<= [% ELSIF excludedcustomtagsearchtype6 == 'ge' %]>= [% ELSIF excludedcustomtagsearchtype6 == 'gt' %]> [% ELSIF excludedcustomtagsearchtype6 == 'contains' %]like [% ELSIF excludedcustomtagsearchtype6 == 'oneof' %]in ([% ELSE %]= [% END %][% IF excludedcustomtagsearchtype6 == 'contains' %]'%%[% excludedcustomtagvalues6 FILTER remove('\'') %]%%'[% ELSE %][% excludedcustomtagvalues6 %][% END %][% IF excludedcustomtagsearchtype6 == 'oneof' %])[% END %][% END %])
 		[% END %]
 		[%- IF excludedcustomtagname7 %]
-		and not exists (select * from tracks t7,customtagimporter_track_attributes
+		and not exists (select 1 from tracks t7,customtagimporter_track_attributes
 						where
 							t7.id = tracks.id and
 							customtagimporter_track_attributes.track = tracks.id and
@@ -385,7 +395,7 @@ select tracks.id, tracks.primary_artist from tracks
 							[% IF excludedcustomtagvalues7 && excludedcustomtagsearchtype7 != 'hasvalue' %]and [% IF excludedcustomtagsearchtype7 == 'lt' or excludedcustomtagsearchtype7 == 'le' or excludedcustomtagsearchtype7 == 'gt' or excludedcustomtagsearchtype7 == 'ge' %]cast([% END %]customtagimporter_track_attributes.value[% IF excludedcustomtagsearchtype7 == 'lt' or excludedcustomtagsearchtype7 == 'le' or excludedcustomtagsearchtype7 == 'gt' or excludedcustomtagsearchtype7 == 'ge' %] as numeric)[% END %] [% IF excludedcustomtagsearchtype7 == 'lt' %]< [% ELSIF excludedcustomtagsearchtype7 == 'le' %]<= [% ELSIF excludedcustomtagsearchtype7 == 'ge' %]>= [% ELSIF excludedcustomtagsearchtype7 == 'gt' %]> [% ELSIF excludedcustomtagsearchtype7 == 'contains' %]like [% ELSIF excludedcustomtagsearchtype7 == 'oneof' %]in ([% ELSE %]= [% END %][% IF excludedcustomtagsearchtype7 == 'contains' %]'%%[% excludedcustomtagvalues7 FILTER remove('\'') %]%%'[% ELSE %][% excludedcustomtagvalues7 %][% END %][% IF excludedcustomtagsearchtype7 == 'oneof' %])[% END %][% END %])
 		[% END %]
 		[%- IF excludedcustomtagname8 %]
-		and not exists (select * from tracks t8,customtagimporter_track_attributes
+		and not exists (select 1 from tracks t8,customtagimporter_track_attributes
 						where
 							t8.id = tracks.id and
 							customtagimporter_track_attributes.track = tracks.id and
@@ -422,6 +432,8 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF request1fromuser == 'album' or request2fromuser == 'album' %]
 		and tracks.album = 'PlaylistParameter[% IF request1fromuser == 'album' %]1[% ELSE %]2[% END %]'
+	[%- ELSIF request1fromuser == 'year' or request2fromuser == 'year' %]
+	and ifnull(tracks.year, 0) = 'PlaylistParameter[% IF request1fromuser == 'year' %]1[% ELSE %]2[% END %]'
 	[%- ELSIF request1fromuser == 'albumtitlecontains' %]
 		and albums.titlesearch like '%%'PlaylistParameter1'%%'
 	[%- ELSIF request1fromuser == 'tracktitlecontains' %]
@@ -525,7 +537,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 		[%- IF includedcomposers %]
-			and exists (select * from tracks t2,contributor_track,contributors
+			and exists (select 1 from tracks t2,contributor_track,contributors
 							where
 								t2.id = tracks.id and
 								tracks.id = contributor_track.track and
@@ -534,7 +546,7 @@ select tracks.id, tracks.primary_artist from tracks
 								contributors.namesearch in ([% includedcomposers %]))
 		[%- END %]
 	[%- IF excludedartists %]
-		and not exists (select * from tracks t2,contributor_track,contributors
+		and not exists (select 1 from tracks t2,contributor_track,contributors
 						where
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
@@ -543,7 +555,7 @@ select tracks.id, tracks.primary_artist from tracks
 							contributors.namesearch in ([% excludedartists %]))
 	[%- END %]
 	[%- IF excludedcomposers %]
-		and not exists (select * from tracks t2,contributor_track,contributors
+		and not exists (select 1 from tracks t2,contributor_track,contributors
 						where
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
@@ -552,7 +564,7 @@ select tracks.id, tracks.primary_artist from tracks
 							contributors.namesearch in ([% excludedcomposers %]))
 	[%- END %]
 	[%- IF excludedgenres %]
-		and not exists (select * from tracks t2,genre_track,genres
+		and not exists (select 1 from tracks t2,genre_track,genres
 						where
 							t2.id = tracks.id and
 							genre_track.track = tracks.id and
@@ -560,7 +572,7 @@ select tracks.id, tracks.primary_artist from tracks
 							genres.namesearch in ([% excludedgenres %]))
 	[%- END %]
 	[%- IF excludedstaticplaylists %]
-		and not exists (select * from tracks t2,playlist_track
+		and not exists (select 1 from tracks t2,playlist_track
 						where
 							t2.id = tracks.id and
 							playlist_track.track = tracks.url and
@@ -583,7 +595,7 @@ select tracks.id, tracks.primary_artist from tracks
 		[%- END %]
 	[%- END %]
 	[%- IF maxskipcount %]
-		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
+		and ifnull(alternativeplaycount.skipCount,0) < [% maxskipcount %]
 	[%- END %]
 	[%- IF recentlyskipped %]
 		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
@@ -623,7 +635,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF addedtime && request1fromuser != 'addedtime' && request2fromuser != 'addedtime' %]
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 	[%- END %]
-	group by tracks.id
 	[%- IF sortorder %]
 	order by [% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount [% IF sortorder == 1 %]desc[% ELSE %]asc[% END %]
 	[%- END %]

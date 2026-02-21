@@ -46,7 +46,7 @@ select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum
 		and albums.release_type in ([% includedreleasetypes %])
 	[%- END %]
 	[%- IF includedcomposers %]
-		and exists (select * from tracks t2,contributor_track,contributors
+		and exists (select 1 from tracks t2,contributor_track,contributors
 						where
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
@@ -55,7 +55,7 @@ select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum
 							contributors.namesearch in ([% includedcomposers %]))
 	[%- END %]
 	[%- IF excludedartists %]
-		and not exists (select * from tracks t2,contributor_track,contributors
+		and not exists (select 1 from tracks t2,contributor_track,contributors
 						where
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
@@ -64,7 +64,7 @@ select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum
 							contributors.namesearch in ([% excludedartists %]))
 	[%- END %]
 	[%- IF excludedcomposers %]
-		and not exists (select * from tracks t2,contributor_track,contributors
+		and not exists (select 1 from tracks t2,contributor_track,contributors
 						where
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
@@ -73,7 +73,7 @@ select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum
 							contributors.namesearch in ([% excludedcomposers %]))
 	[%- END %]
 	[%- IF excludedgenres %]
-		and not exists (select * from tracks t2, genre_track, genres
+		and not exists (select 1 from tracks t2, genre_track, genres
 						where
 							t2.id = tracks.id and
 							genre_track.track = tracks.id and
@@ -128,10 +128,10 @@ select albums.id[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum
 	and ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %]
 	[%- END %]
 	[%- IF maxdpsv %]
-	and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
+	and max(ifnull(alternativeplaycount.dynPSval, 0)) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
 	[%- END %]
 	[%- IF mindpsv %]
-	and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
+	and min(ifnull(alternativeplaycount.dynPSval, 0)) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	[%- IF addedtime %]
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])

@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Top Rated Static Playlists</name>
-		<templateversion>3</templateversion>
+		<templateversion>4</templateversion>
 		<description>Random tracks from top rated static playlists</description>
 		<playlistcategory>playlists</playlistcategory>
 		<listweight>2</listweight>
