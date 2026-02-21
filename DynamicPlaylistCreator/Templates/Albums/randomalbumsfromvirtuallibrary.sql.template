@@ -17,14 +17,14 @@
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_virtual_library_albums;
-create temporary table tmp_random_virtual_library_albums as 
+create temporary table tmp_random_virtual_library_albums as
 	[%- IF sortorder or toprated %]select subselection.album as album from ([% END %]
 	select tracks.album as album[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0)) as procrating[% END %][% IF minavgrating %], avg(ifnull(tracks_persistent.rating,0)) as procminavgrating[% END %][% IF minavgdpsv %], avg(ifnull(alternativeplaycount.dynPSval, 0)) as procminavgdpsv[% END %] from tracks
 		join library_track on library_track.track = tracks.id
 		[%- IF (!useapcvalues and (recentlyplayed or sortorder)) or toprated or minavgrating %]
 		left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 		[%- END %]
-		[%- IF useapcvalues %]
+		[%- IF useapcvalues or minavgdpsv %]
 		join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
 		[%- END %]
 		left join dynamicplaylist_history on dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
@@ -67,7 +67,7 @@ create temporary table tmp_random_virtual_library_albums as
 		[%- END %]
 	limit [% IF noofalbums %][% noofalbums %][% ELSE %]1[% END %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+select distinct tracks.id, tracks.primary_artist from tracks
 	join tmp_random_virtual_library_albums on tmp_random_virtual_library_albums.album = tracks.album
 	[%- IF recentlyskipped %]
 	join alternativeplaycount on alternativeplaycount.urlmd5 = tracks.urlmd5
@@ -79,6 +79,5 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF recentlyskipped %]
 		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
 	[%- END %]
-	group by tracks.id
 	order by tmp_random_virtual_library_albums.album, tracks.disc, tracks.tracknum;
 drop table tmp_random_virtual_library_albums;

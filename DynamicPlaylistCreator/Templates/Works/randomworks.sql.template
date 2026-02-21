@@ -40,7 +40,7 @@
 [%- # ----------- %]
 [%- ELSIF request1fromuser == 'playlist' %]
 [%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
--- PlaylistParameter1:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist.id order by playlist.titlesort
+-- PlaylistParameter1:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist_track.playlist order by tracks.titlesort
 [%- ELSE %]
 -- PlaylistParameter1:playlist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:
 [%- END %]
@@ -93,7 +93,7 @@
 [%- # ----------- %]
 [%- ELSIF request2fromuser == 'playlist' %]
 [%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
--- PlaylistParameter2:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist.id order by playlist.titlesort
+-- PlaylistParameter2:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist_track.playlist order by tracks.titlesort
 [%- ELSE %]
 -- PlaylistParameter2:playlist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:
 [%- END %]
@@ -122,7 +122,7 @@
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_works;
-create temporary table tmp_random_works as 
+create temporary table tmp_random_works as
 	[%- IF sortorder or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]select subselection.album as album, subselection.work as work, subselection.performance as performance from ([% END %]
 	select tracks.album as album, tracks.work as work, tracks.performance as performance[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF (sortorder == 3 || sortorder == 4) and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_track.role)[% END %] as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_track.role)[% END %] as procrating[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
@@ -143,9 +143,10 @@ create temporary table tmp_random_works as
 		join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5)
 			[%- IF request1fromuser == 'artist' or request2fromuser == 'artist' %]
 			and contributor_track.contributor = 'PlaylistParameter[% IF request1fromuser == 'artist' %]1[% ELSE %]2[% END %]'
-			[%- ELSE %]
-		join contributors on contributors.id = contributor_track.contributor and contributors.namesearch in ([% includedartists %])
 			[%- END %]
+		[%- IF includedartists %]
+		join contributors on contributors.id = contributor_track.contributor and contributors.namesearch in ([% includedartists %])
+		[%- END %]
 		[%- END %]
 		[%- # ------- (MULTIPLE) GENRES ------- %]
 		[%- IF includedgenres or request1fromuser == 'genre' or request2fromuser == 'genre' or request1fromuser == 'multiplegenres' or request2fromuser == 'multiplegenres' %]
@@ -184,7 +185,7 @@ create temporary table tmp_random_works as
 			[%- END %][% IF worksearchtitle2 or worksearchtitle3 %])[% END %]
 		[%- END %]
 		[%- IF includedcomposers %]
-			and exists (select * from tracks t2,contributor_track,contributors
+			and exists (select 1 from tracks t2,contributor_track,contributors
 							where
 								t2.id = tracks.id and
 								tracks.id = contributor_track.track and
@@ -193,14 +194,14 @@ create temporary table tmp_random_works as
 								contributors.namesearch in ([% includedcomposers %]))
 		[%- END %]
 		[%- IF excludedworks %]
-			and not exists (select * from tracks t2, works
+			and not exists (select 1 from tracks t2, works
 							where
 								t2.id = tracks.id and
 								works.id = tracks.work and
 								works.titlesearch in ([% excludedworks %]))
 		[%- END %]
 		[%- IF excludedartists %]
-			and not exists (select * from tracks t2,contributor_track,contributors
+			and not exists (select 1 from tracks t2,contributor_track,contributors
 							where
 								t2.id = tracks.id and
 								tracks.id = contributor_track.track and
@@ -209,7 +210,7 @@ create temporary table tmp_random_works as
 								contributors.namesearch in ([% excludedartists %]))
 		[%- END %]
 		[%- IF excludedcomposers %]
-			and not exists (select * from tracks t2,contributor_track,contributors
+			and not exists (select 1 from tracks t2,contributor_track,contributors
 							where
 								t2.id = tracks.id and
 								tracks.id = contributor_track.track and
@@ -243,7 +244,7 @@ create temporary table tmp_random_works as
 		and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 		[%- END %]
 		[%- IF excludedgenres %]
-			and not exists (select * from tracks t2, genre_track, genres
+			and not exists (select 1 from tracks t2, genre_track, genres
 							where
 								t2.id = tracks.id and
 								genre_track.track = tracks.id and
@@ -257,20 +258,20 @@ create temporary table tmp_random_works as
 		[%- IF recentlyplayed %]
 			and max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) < (strftime('%s', 'now') - [% recentlyplayed %])
 		[%- ELSIF request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
-			and (strftime('%s', 'now') - ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
+			and (strftime('%s', 'now') - max(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0))) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
 		[%- END %]
 		[%- END %]
 		[%- IF maxdpsv %]
-			and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
+			and max(ifnull(alternativeplaycount.dynPSval, 0)) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
 		[%- END %]
-		[%- IF mindspv %]
-			and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
+		[%- IF mindpsv %]
+			and min(ifnull(alternativeplaycount.dynPSval, 0)) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 		[%- END %]
 		[%- IF minworktracks %]
 			and count(tracks.id) >= [% minworktracks %]
 		[%- END %]
 		[%- IF addedtime %]
-			and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
+			and max(ifnull(tracks_persistent.added, 0)) >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
 		[%- END %]
 		[%- IF partlyplayed and playedbefore != 1 %]
 			and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
@@ -298,7 +299,7 @@ create temporary table tmp_random_works_contribsel as
 		limit 1;
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+select distinct tracks.id, tracks.primary_artist from tracks
 	join tmp_random_works on ([% IF !includedartists %]tracks.album = tmp_random_works.album and [% END %]tracks.work = tmp_random_works.work and case when tmp_random_works.performance is not null then tracks.performance = tmp_random_works.performance else 1 end)
 	[%- # ------- VIRTUAL LIBRARY ------- %]
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
@@ -335,7 +336,7 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
@@ -358,7 +359,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and (strftime('%s', 'now') - ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) <= [% IF request1fromuser == 'lastplayed' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %]
 	[%- END %]
 	[%- IF maxskipcount %]
-		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
+		and ifnull(alternativeplaycount.skipCount,0) < [% maxskipcount %]
 	[%- END %]
 	[%- IF recentlyskipped %]
 		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
@@ -374,7 +375,7 @@ select tracks.id, tracks.primary_artist from tracks
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
 	[%- END %]
 	[%- IF excludedgenres %]
-		and not exists (select * from tracks t2, genre_track, genres
+		and not exists (select 1 from tracks t2, genre_track, genres
 						where
 							t2.id = tracks.id and
 							genre_track.track = tracks.id and
@@ -387,7 +388,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF mindpsv %]
 		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
-	group by tracks.id
 	order by [% IF includedartists %]tracks.album[% ELSE %]tmp_random_works.album[% END %], tracks.disc, tracks.tracknum;
 drop table tmp_random_works;
 [%- IF includedartists %]

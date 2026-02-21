@@ -49,7 +49,7 @@ create temporary table tmp_preselection_contributors as
 limit 1;
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+select distinct tracks.id, tracks.primary_artist from tracks
 	join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5,6)[% IF source == 1 %] and contributor_track.contributor in ('PlaylistPreselectedArtists')[% END %]
 	[%- IF source == 2 %]
 	join tmp_preselection_contributors on tmp_preselection_contributors.contributor = contributor_track.contributor
@@ -84,7 +84,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
 	[%- IF request1fromuser == 'lastplayed' and playedbefore != 1 %]
-		and (strftime('%s', 'now') - ifnull(tracks_persistent.lastPlayed,0)) <= 'PlaylistParameter1'
+		and (strftime('%s', 'now') - ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) <= 'PlaylistParameter1'
 	[%- END %]
 	[%- IF recentlyplayed and playedbefore != 1 %]
 		and ifnull(tracks_persistent.lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
@@ -95,7 +95,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF playedbefore == 2 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) > 0
 	[%- END %]
-	group by tracks.id
 	[% IF sortorder %]order by [% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %][% END %]
 	[% IF nooftracks && source == 2 %]limit [% nooftracks %][% END %];
 [%- IF source == 2 %]

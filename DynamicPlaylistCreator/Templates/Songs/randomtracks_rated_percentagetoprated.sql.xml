@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Rated Tracks</name>
-		<templateversion>3</templateversion>
+		<templateversion>4</templateversion>
 		<description>Some basic options, set percentage of top rated tracks.</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>3</listweight>

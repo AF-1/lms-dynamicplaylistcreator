@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Tracks - Basic</name>
-		<templateversion>3</templateversion>
+		<templateversion>4</templateversion>
 		<description>Some basic options</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>1</listweight>

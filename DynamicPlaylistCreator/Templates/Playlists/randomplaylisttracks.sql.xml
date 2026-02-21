@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Static Playlist Tracks</name>
-		<templateversion>5</templateversion>
+		<templateversion>7</templateversion>
 		<description>Random tracks from a static playlist</description>
 		<playlistcategory>playlists</playlistcategory>
 		<listweight>1</listweight>
@@ -10,8 +10,8 @@
 		<parameter type="text" id="playlistgroups" name="Playlist &lt;b&gt;group&lt;/b&gt;" value="Dynamic Playlist Creator"/>
 		<parameter type="checkbox" id="repeat" name="&lt;b&gt;Never&lt;/b&gt; stop" value="0" tooltipvalue="When all matching tracks have been played, the history and cache are deleted so that these tracks can be played again. You will end up with a dynamic playlist that will not stop playing as long as tracks are found that match the search criteria."/>
 		<parameter type="sqlmultiplelist" id="includedstaticplaylists" name="Select &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
-		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter 1&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,addedtime=Last added time,lastplayed=Last played time,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
-		<parameter type="optionalsinglelist" id="request2fromuser" name="&lt;b&gt;Request parameter 2&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,addedtime=Last added time,lastplayed=Last played time,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
+		<parameter type="optionalsinglelist" id="request1fromuser" name="&lt;b&gt;Request parameter 1&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,addedtime=Last added time,lastplayed=Last played time,notrecentlyplayed=Not recently played,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
+		<parameter type="optionalsinglelist" id="request2fromuser" name="&lt;b&gt;Request parameter 2&lt;/b&gt; from user" value="" data="album=Album,artist=Artist,genre=Genre,multiplegenres=Multiple Genres,decade=Decade,multipledecades=Multiple Decades,year=Year,multipleyears=Multiple Years,addedtime=Last added time,lastplayed=Last played time,notrecentlyplayed=Not recently played,minRating=Minimum rating,maxRating=Maximum rating,exactRating=Exact rating"/>
 		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
 		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
 		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;recently played&lt;/b&gt;" value="0"/>

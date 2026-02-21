@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Genre Context Menu - Albums</name>
-		<templateversion>7</templateversion>
+		<templateversion>8</templateversion>
 		<description>Albums from selected genre</description>
 		<playlistcategory>genres</playlistcategory>
 		<listweight>8</listweight>

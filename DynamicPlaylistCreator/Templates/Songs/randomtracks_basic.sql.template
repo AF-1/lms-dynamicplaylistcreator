@@ -42,7 +42,7 @@
 [%- # ----------- %]
 [%- ELSIF request1fromuser == 'playlist' %]
 [%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
--- PlaylistParameter1:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist.id order by playlist.titlesort
+-- PlaylistParameter1:customplaylist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:select playlist_track.playlist, tracks.title, substr(tracks.titlesort,1,1) from tracks, playlist_track join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] where playlist_track.track = tracks.url and tracks.id = playlist_track.playlist group by playlist_track.playlist order by tracks.titlesort
 [%- ELSE %]
 -- PlaylistParameter1:playlist:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTPLAYLIST:
 [%- END %]
@@ -59,7 +59,7 @@
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+select distinct tracks.id, tracks.primary_artist from tracks
 	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 	join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
 	[%- END %]
@@ -68,7 +68,7 @@ select tracks.id, tracks.primary_artist from tracks
 		playlist_track.playlist = 'PlaylistParameter1'
 	[%- ELSIF request1fromuser == 'artist' %]
 	join contributor_track on contributor_track.track = tracks.id and
-		contributor_track.contributor = 'PlaylistParameter1'
+		contributor_track.role in (1,5,6) and contributor_track.contributor = 'PlaylistParameter1'
 	[%- END %]
 	[%- IF includedgenres or request1fromuser == 'genre' %]
 	join genre_track on genre_track.track = tracks.id
@@ -80,7 +80,7 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- END %]
 	left join dynamicplaylist_history on dynamicplaylist_history.id = tracks.id and dynamicplaylist_history.client = 'PlaylistPlayer'
-	[%- IF recentlyplayed or playedbefore or minrating or maxrating %]
+	[%- IF (!useapcvalues and (recentlyplayed or playedbefore)) or minrating or maxrating %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or mindpsv or maxdpsv %]
@@ -97,7 +97,7 @@ select tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks.year, 0) >= 'PlaylistParameter1' and ifnull(tracks.year, 0) < ('PlaylistParameter1' + 10)
 	[%- END %]
 	[%- IF excludedgenres %]
-		and not exists (select * from tracks t2,genre_track,genres
+		and not exists (select 1 from tracks t2,genre_track,genres
 						where
 							t2.id = tracks.id and
 							genre_track.track = tracks.id and
@@ -125,4 +125,3 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF recentlyplayed and playedbefore != 1 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
-	group by tracks.id

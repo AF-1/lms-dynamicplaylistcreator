@@ -3,7 +3,7 @@
 	<requireplugins>CustomTagImporter::Plugin</requireplugins>
 	<template>
 		<name>Random Tracks for Custom Tags</name>
-		<templateversion>6</templateversion>
+		<templateversion>7</templateversion>
 		<description>Random tracks for custom tags with specified values</description>
 		<playlistcategory>tracks</playlistcategory>
 		<listweight>50</listweight>

@@ -10,11 +10,11 @@
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]
 [%- END %]
-[% IF sortorder == 1 %]
+[%- IF sortorder == 1 %]
 -- PlaylistTrackOrder:ordereddescrandom
-[% ELSIF sortorder == 2 %]
+[%- ELSIF sortorder == 2 %]
 -- PlaylistTrackOrder:orderedascrandom
-[% ELSIF sortorder != 3 %]
+[%- ELSIF sortorder != 3 %]
 -- PlaylistTrackOrder:ordered
 [%- END %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
@@ -32,7 +32,7 @@ create temporary table tmp_preselection_albums as
 limit 1;
 [%- END %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
-select tracks.id, tracks.primary_artist from tracks
+select distinct tracks.id, tracks.primary_artist from tracks
 	[%- IF source == 2 %]
 	join tmp_preselection_albums on tmp_preselection_albums.album = tracks.album
 	[%- END %]
@@ -64,7 +64,6 @@ select tracks.id, tracks.primary_artist from tracks
 	[%- IF mindpsv %]
 		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
 	[%- END %]
-	group by tracks.id
 	[% IF sortorder != 3 %]order by [% IF sortorder == 1 || sortorder == 2 %][% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount [% IF sortorder == 1 %]desc[% ELSIF sortorder == 2 %]asc[% END %], [% END %][% IF source == 2 %]tmp_preselection_albums.album, tracks.disc, tracks.tracknum[% ELSE %]tracks.album, tracks.disc, tracks.tracknum[% END %][% END %];
 [%- IF source == 2 %]
 drop table tmp_preselection_albums;
