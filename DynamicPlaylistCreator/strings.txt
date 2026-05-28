@@ -3,7 +3,7 @@ PLUGIN_DYNAMICPLAYLISTCREATOR
 	HU	Dinamikus Lejátszási Lista Készítő
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_DESC
-	EN	Helps you create custom smart playlists (dynamic playlists) for the Dynamic Playlists plugin using templates.
+	EN	Helps you create custom smart playlists (dynamic playlists) for the Dynamic Playlists plugin.
 	HU	Segít egyedi intelligens lejátszási listákat (dinamikus lejátszási listákat) létrehozni a Dynamic Playlists bővítményhez sablonok segítségével.
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_SETTINGS
