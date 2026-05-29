@@ -119,10 +119,10 @@ You <b>can't</b> migrate dynamic playlist definitions from the <i>SQLPlayList</i
 This plugin will not be localized because the parameter and value names in the templates are hard-coded. And a halfway localized version is worse than a non-localized one.
 </p></details><br>
 <br><br>
+
 ---
 
 If this project was useful to you, you can star the repository using the <img src="screenshots/githubstar.png" width="20" height="20" alt="star" /> button in the top-right corner of this page.
-
-<br><br><br><br>
+<br><br><br>
 
 [^1]: The screenshots might not correspond to the UI of the latest release in every detail.
