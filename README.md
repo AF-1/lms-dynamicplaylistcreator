@@ -115,7 +115,7 @@ So please make sure that <b>LMS has read/write permissions (755) for the parent 
 You <b>can't</b> migrate dynamic playlist definitions from the <i>SQLPlayList</i> plugin to <i>Dynamic Playlist <b>Creator</b></i>. They are based on templates which are different from the ones that DPLC uses.
 </p></details><br>
 
-<details><summary>»<b>Can this plugin be <i>displayed in my language?</b>«</summary><br><p>
+<details><summary>»<b>Can this plugin be <i>displayed in my language?</i>«</summary><br><p>
 This plugin will not be localized because the parameter and value names in the templates are hard-coded. And a halfway localized version is worse than a non-localized one.
 </p></details><br>
 <br><br>
