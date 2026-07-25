@@ -444,7 +444,7 @@ sub getSQLTemplateData {
 			$sth->finish();
 		};
 		if ($@) {
-			$log->warn("Database error: $DBI::errstr");
+			$log->warn("Database error: $@");
 			$self->criticalErrorCallback->("Running: $sql got error: <br>".$DBI::errstr);
 		}
 	}
