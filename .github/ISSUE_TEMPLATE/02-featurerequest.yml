@@ -2,9 +2,6 @@ name: 💡 Feature request
 description: Suggest an idea for this project
 title: "[FEATURE REQUEST] your title here"
 labels: ["feature request / enhancement"]
-assignees:
-  - AF-1
-
 body:
 - type: checkboxes
   attributes:
