@@ -41,7 +41,6 @@
 					[% PROCESS ExportDynamicPlaylistLink %]
 					[%- END %]
 					[% PROCESS RemoveDynamicPlaylistLink %]
-				[% END %]
 					[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/DynamicPlaylistCreator/webpagemethods_edititem.html?item=[% playlist.id | uri %]"[% END %]
 				[% END %]
 				[%- WRAPPER contentitem controls='controls' %]
