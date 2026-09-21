@@ -1,5 +1,5 @@
 -- PlaylistName:[% playlistname %]
--- PlaylistMenuListType:contextmenu
+-- PlaylistIsContextMenu:1
 -- PlaylistCategory:playlists
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]

@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Artist Context Menu - Songs</name>
-		<templateversion>5</templateversion>
+		<templateversion>6</templateversion>
 		<description>Songs from selected artist</description>
 		<playlistcategory>artists</playlistcategory>
 		<listweight>7</listweight>

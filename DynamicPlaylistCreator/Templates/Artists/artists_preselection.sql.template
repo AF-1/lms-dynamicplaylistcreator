@@ -1,11 +1,12 @@
 -- PlaylistName:[% playlistname %]
 -- PlaylistGroups:[% playlistgroups %]
 -- PlaylistCategory:artists
+-- PlaylistUsesPreselection:1
 [%- IF repeat %]
 -- PlaylistRepeat: 1
 [%- END %]
 [%- IF source == 1 %]
--- PlaylistUseCache: 1
+-- PlaylistUseCache:1
 [%- END %]
 [%- IF basetemplate %]
 -- BaseTemplate:[% basetemplate %]

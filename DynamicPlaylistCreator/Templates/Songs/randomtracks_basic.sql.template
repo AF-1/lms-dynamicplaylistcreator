@@ -7,7 +7,7 @@
 [%- IF repeat %]
 -- PlaylistRepeat: 1
 [%- END %]
--- PlaylistUseCache: 1
+-- PlaylistUseCache:1
 [%- IF virtuallibrary %]
 -- PlaylistVirtualLibraryID1:[% virtuallibrary %]
 [%- END %]

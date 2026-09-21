@@ -8,7 +8,7 @@
 -- PlaylistRepeat: 1
 [%- END %]
 [%- IF percentage == 'zero' %]
--- PlaylistUseCache: 1
+-- PlaylistUseCache:1
 [%- END %]
 [%- IF nooftracks && percentage != 'zero' %]
 -- PlaylistLimitOption:[% nooftracks %]
