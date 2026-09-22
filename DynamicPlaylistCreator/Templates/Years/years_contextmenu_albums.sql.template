@@ -72,7 +72,7 @@
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_years_albums;
 create temporary table tmp_years_albums as
-	[%- IF sortorder or request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %]select subselection.album as album from ([% END %]
+	[%- IF sortorder or request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %] select subselection.album as album from ([% END %]
 	select tracks.album as album[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) as procplaycount[% END %][% IF request2fromuser == 'addedtime' or request3fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %] from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
 		[%- IF activevirtuallibrary %]

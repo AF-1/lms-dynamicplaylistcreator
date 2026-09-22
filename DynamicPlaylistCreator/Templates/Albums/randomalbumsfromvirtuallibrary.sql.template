@@ -18,7 +18,7 @@
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_virtual_library_albums;
 create temporary table tmp_random_virtual_library_albums as
-	[%- IF sortorder or toprated %]select subselection.album as album from ([% END %]
+	[%- IF sortorder or toprated %] select subselection.album as album from ([% END %]
 	select tracks.album as album[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0)) as procrating[% END %][% IF minavgrating %], avg(ifnull(tracks_persistent.rating,0)) as procminavgrating[% END %][% IF minavgdpsv %], avg(ifnull(alternativeplaycount.dynPSval, 0)) as procminavgdpsv[% END %] from tracks
 		join library_track on library_track.track = tracks.id
 		[%- IF (!useapcvalues and (recentlyplayed or sortorder)) or toprated or minavgrating %]
