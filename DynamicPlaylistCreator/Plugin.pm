@@ -87,7 +87,6 @@ sub postinitPlugin {
 	my $cachePluginVersion = $cache->get('dplc_pluginversion');
 	main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
-	# the work list cache only exists on LMS 9.0 and newer
 	my @cacheKeys = values %cachedListKeys;
 	@cacheKeys = grep {$_ ne 'dplc_worklist'} @cacheKeys if Slim::Utils::Versions->compareVersions($::VERSION, '9.0') < 0;
 	refreshSQLCache() if !$cachePluginVersion || $cachePluginVersion ne $pluginVersion || grep {!$cache->get($_)} @cacheKeys;
@@ -140,7 +139,6 @@ sub handleWebList {
 
 	$playLists = readPlaylistValues();
 
-	# tell DPL to refresh its list of dynamic playlists
 	if (defined($client)) {
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&refreshDPLplaylists);
 	}
@@ -333,7 +331,6 @@ sub handleWebSavePlaylist {
 
 	checkFilePaths($params); # add host and slashes to beginning of file paths if necessary
 
-	## build sql statement
 	my %templateParameters = ();
 	for my $p (@{_getUsableParameters($template)}) {
 		$p = buildParameterFormField($p) if parameterIsSpecified($params, $p);
@@ -425,28 +422,9 @@ sub handleWebExportPlaylist {
 
 
 
-### templates (read-only, loaded once via initPlugin/_getTemplates)
-
-sub readTemplateConfiguration {
-	my %result = ();
-
-	for my $pluginDir (Slim::Utils::OSDetect::dirsFor('Plugins')) {
-		my $templateDir = catdir($pluginDir, 'DynamicPlaylistCreator', 'Templates');
-		main::DEBUGLOG && $log->is_debug && $log->debug('Checking for dir: '.$templateDir);
-		next unless -d $templateDir;
-		_readConfigFiles($templateDir, 'sql.xml', 1, sub {
-			my ($item, $content) = @_;
-			eval { _parseTemplate($item, $content, \%result) };
-			return $@;
-		});
-	}
-	return \%result;
-}
-
 ### dynamic playlist values (rebuilt on every list.html view)
 
-# returns the full saved values (same shape _loadTemplateValues returns) of every dynamic
-# playlist, keyed by file name; skips playlists whose template no longer exists
+# returns the full saved values (same shape _loadTemplateValues returns) of every dynamic playlist, keyed by file name. Skips playlists whose template no longer exists
 sub readPlaylistValues {
 	_getTemplates();
 	my %result = ();
@@ -469,7 +447,7 @@ sub _getTemplates {
 	return $templates;
 }
 
-# calls the callback for every file with the given extension (incl. subfolders); a true return value of the callback is logged as error
+# calls the callback for every file with the given extension (incl. subfolders). A true return value of the callback is logged as error
 sub _readConfigFiles {
 	my ($dir, $extension, $keepExtension, $parseCallback) = @_;
 
@@ -507,7 +485,7 @@ sub _decodeContent {
 	return Slim::Utils::Unicode::utf8decode($content, 'utf8');
 }
 
-# reads a file from the folder for custom dynamic playlists
+# reads a file from the folder for custom DPLC dynamic playlists
 sub _readDataFile {
 	my $fileName = shift;
 
@@ -548,7 +526,7 @@ sub _parseTemplate {
 		return;
 	}
 
-	# enable/disable complete(!) template, not just individual params
+	# enable/disable complete template, not just individual params
 	my $include = 1;
 	if (defined($xml->{'requireplugins'})) {
 		$include = Slim::Utils::PluginManager->isEnabled('Plugins::'.$xml->{'requireplugins'}) ? 1 : 0;
@@ -588,7 +566,7 @@ sub _playlistDisplayName {
 
 	for my $p (@{$templateData->{'parameter'} || []}) {
 		next unless $p->{'id'} eq 'playlistname';
-		# an empty <value></value> element parses to a hashref, not a string; skip it
+		# an empty <value></value> element parses to a hashref, not a string. Skip it
 		my ($v) = grep { ref($_) ne 'HASH' } @{$p->{'value'} || []};
 		return encode_entities($v, '&<>') if defined($v) && $v ne '';
 		last;
@@ -711,7 +689,7 @@ sub _setNoUserInput {
 	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_requestcustomtag'} && $templateId !~ /_preselection/;
 }
 
-# writes the values file ($url) and the sql file ($customUrl) of a dynamic playlist; returns 1 on success, sets an error message otherwise
+# writes the values file ($url) and the sql file ($customUrl) of a dynamic playlist. Returns 1 on success, sets an error message otherwise
 sub _saveSimpleItem {
 	my ($params, $url, $templateId, $customUrl) = @_;
 	main::DEBUGLOG && $log->is_debug && $log->debug('Start saveSimpleItem');
@@ -1137,6 +1115,23 @@ sub trimLeadTail {
 
 
 ### Template Toolkit (sql templates)
+
+# templates (read-only, loaded once via initPlugin/_getTemplates)
+sub readTemplateConfiguration {
+	my %result = ();
+
+	for my $pluginDir (Slim::Utils::OSDetect::dirsFor('Plugins')) {
+		my $templateDir = catdir($pluginDir, 'DynamicPlaylistCreator', 'Templates');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Checking for dir: '.$templateDir);
+		next unless -d $templateDir;
+		_readConfigFiles($templateDir, 'sql.xml', 1, sub {
+			my ($item, $content) = @_;
+			eval { _parseTemplate($item, $content, \%result) };
+			return $@;
+		});
+	}
+	return \%result;
+}
 
 sub _getTemplateHandler {
 	if (!defined($templateHandler)) {
