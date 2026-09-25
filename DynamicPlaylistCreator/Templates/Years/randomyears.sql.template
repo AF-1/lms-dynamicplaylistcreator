@@ -13,9 +13,10 @@
 [%- IF virtuallibrary %]
 -- PlaylistVirtualLibraryID1:[% virtuallibrary %]
 [%- END %]
+[%- SET useVirtualLibrary = (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 [%- # --------------------------------------------------------------------------------------------------------------- %]
 [%- IF request1fromuser == 'genre' %]
-[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+[%- IF useVirtualLibrary %]
 -- PlaylistParameter1:customgenre:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRE:select id,name,substr(namesort,1,1) from genres join library_genre on library_genre.genre = genres.id and library_genre.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] order by genres.namesort
 [%- ELSE %]
 -- PlaylistParameter1:genre:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRE:
@@ -24,7 +25,7 @@
 -- PlaylistParameter1:multiplegenres:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTGENRES:
 [%- # ----------- %]
 [%- ELSIF request1fromuser == 'decade' %]
-[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+[%- IF useVirtualLibrary %]
 -- PlaylistParameter1:customdecade:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTDECADE:select cast(((tracks.year/10)*10) as int) as decade,case when tracks.year > 0 then cast(((tracks.year/10)*10) as int)||'s' else 'Unknown' end from tracks,library_track where library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %] and tracks.audio = 1 group by decade order by decade desc
 [%- ELSE %]
 -- PlaylistParameter1:customdecade:PLUGIN_DYNAMICPLAYLISTS4_PARAMNAME_SELECTDECADE:select cast(((tracks.year/10)*10) as int) as decade,case when tracks.year > 0 then cast(((tracks.year/10)*10) as int)||'s' else 'Unknown' end from tracks where tracks.audio = 1 group by decade order by decade desc
@@ -46,7 +47,7 @@ create temporary table tmp_random_years as
 	select subselection.year as year from
 		(select tracks.year as year[% IF toprated %], [% IF toprated == 1 %]avg[% ELSE %]sum[% END %](ifnull(tracks_persistent.rating,0)) as procrating[% END %] from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
-		[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
+		[%- IF useVirtualLibrary or request1fromuser == 'virtuallibrary' %]
 		join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
 		[%- END %]
 		[%- # ------- (MULTIPLE) GENRES ------- %]
@@ -102,7 +103,7 @@ create temporary table tmp_random_years as
 		[%- IF minyeartracks %]
 			and count(tracks.id) >= [% minyeartracks %]
 		[%- END %]
-		[%- IF playedbefore == 1 and !recentlyplayed %]
+		[%- IF playedbefore == 1 %]
 			and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0
 		[%- END %]
 		[%- IF playedbefore == 2 %]
@@ -116,7 +117,7 @@ create temporary table tmp_random_years as
 select distinct tracks.id, tracks.primary_artist from tracks
 	join tmp_random_years on tmp_random_years.year = tracks.year
 	[%- # ------- VIRTUAL LIBRARY ------- %]
-	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) or request1fromuser == 'virtuallibrary' %]
+	[%- IF useVirtualLibrary or request1fromuser == 'virtuallibrary' %]
 	join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
 	[%- END %]
 	[%- # ------- (MULTIPLE) GENRES ------- %]
@@ -146,7 +147,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- ELSIF request1fromuser == 'multipledecades' %]
 		and ifnull(tracks.year, 0) in ('PlaylistParameter1')
 	[%- END %]
-	[%- IF playedbefore == 1 and !recentlyplayed %]
+	[%- IF playedbefore == 1 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0
 	[%- END %]
 	[%- IF playedbefore == 2 %]

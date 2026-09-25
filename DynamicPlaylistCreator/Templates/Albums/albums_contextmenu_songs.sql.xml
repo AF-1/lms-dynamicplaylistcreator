@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Album Context Menu - Songs</name>
-		<templateversion>5</templateversion>
+		<templateversion>6</templateversion>
 		<description>Songs from selected album</description>
 		<playlistcategory>albums</playlistcategory>
 		<listweight>7</listweight>

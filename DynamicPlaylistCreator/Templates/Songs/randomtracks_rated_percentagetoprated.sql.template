@@ -21,13 +21,14 @@
 -- PlaylistStartAction1:cli:customskip setsecondaryfilter [% customskipfilter %]
 -- PlaylistStopAction1:cli:customskip clearsecondaryfilter
 [%- END %]
+[%- SET useVirtualLibrary = (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
 [% # --------------------------------------------------------------------------------------------------------------- %]
 [%- IF percentage != 'zero' %]
 drop table if exists randomweightedratingslow;
 drop table if exists randomweightedratingshigh;
 drop table if exists randomweightedratingscombined;
 create temporary table randomweightedratingslow as select distinct tracks.id, tracks.primary_artist from tracks
-	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+	[%- IF useVirtualLibrary %]
 	join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
 	[%- END %]
 	[%- IF includedgenres %]
@@ -58,7 +59,7 @@ create temporary table randomweightedratingslow as select distinct tracks.id, tr
 	limit [% percentage %];
 [% # --------------------------------------------------------------------------------------------------------------- %]
 create temporary table randomweightedratingshigh as [% END %]select distinct tracks.id, tracks.primary_artist from tracks
-	[%- IF (virtuallibrary and !activevirtuallibrary) or (!virtuallibrary and activevirtuallibrary) %]
+	[%- IF useVirtualLibrary %]
 	join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
 	[%- END %]
 	[%- IF includedgenres %]

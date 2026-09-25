@@ -129,7 +129,7 @@ create temporary table tmp_genre_albums as
 		[%- ELSIF request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' or request3fromuser == 'multipledecades' or request3fromuser == 'multipleyears' %]
 			and ifnull(tracks.year, 0) in ('PlaylistParameter[% IF request2fromuser == 'multipledecades' or request2fromuser == 'multipleyears' %]2[% ELSE %]3[% END %]')
 		[%- END %]
-		[%- IF playedbefore == 1 and !recentlyplayed %]
+		[%- IF playedbefore == 1 %]
 			and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0
 		[%- END %]
 		[%- IF playedbefore == 2 %]
@@ -234,7 +234,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- IF request2fromuser == 'exactRating' or request3fromuser == 'exactRating' %]
 		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request2fromuser == 'exactRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
-	[%- IF playedbefore == 1 and !recentlyplayed %]
+	[%- IF playedbefore == 1 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0
 	[%- END %]
 	[%- IF playedbefore == 2 %]

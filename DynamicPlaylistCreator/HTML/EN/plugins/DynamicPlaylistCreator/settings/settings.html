@@ -1,10 +1,16 @@
+[% page = "PLUGIN_DYNAMICPLAYLISTCREATOR" %]
+[% PROCESS settings/header.html %]
 <style>.faqlink{padding-left:22px;}
 @-webkit-keyframes Pulse{from{color:#630030;-webkit-text-shadow:0 0 2px transparent}50%{color:#e33100;-webkit-text-shadow:0 0 5px #e33100}to{color:#630030;-webkit-text-shadow:0 0 2px transparent}}@keyframes Pulse{from{color:#630030;text-shadow:0 0 2px transparent}50%{color:#e33100;text-shadow:0 0 5px #e33100}to{color:#630030;text-shadow:0 0 2px transparent}}.inprogress{padding-left:15px;-webkit-animation-name:Pulse;animation-name:Pulse;-webkit-animation-duration:2s;animation-duration:2s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}
 .status{visibility:hidden;}
 </style>
-
-[% page = "PLUGIN_DYNAMICPLAYLISTCREATOR" %]
-[% PROCESS settings/header.html %]
+<script type="text/javascript">
+	function inprogress(id) {
+		var el = document.getElementById(id);
+		el.style.visibility = 'visible';
+		el.className += ' inprogress';
+	}
+</script>
 <br>
 <span[% IF systemSkin != "material" %] class="faqlink"[% END %]><a href="[% "SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK" | string %]" target="_blank" rel="noopener noreferrer"><b>[% "SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT" | string %]</b></a></span>
 <br><br>

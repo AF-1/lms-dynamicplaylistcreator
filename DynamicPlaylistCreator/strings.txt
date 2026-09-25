@@ -6,10 +6,6 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_DESC
 	EN	Helps you create custom smart playlists (dynamic playlists) for the Dynamic Playlists plugin.
 	HU	Segít egyedi intelligens lejátszási listákat (dinamikus lejátszási listákat) létrehozni a Dynamic Playlists bővítményhez sablonok segítségével.
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_SETTINGS
-	EN	Various Settings
-	HU	Különféle Beállítások
-
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_FAQ_LINK_TEXT
 	EN	Click here for more information (incl. FAQ).
 	HU	Kattints ide további információkért (beleértve a GYIK-et).
@@ -86,10 +82,6 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_CONTEXTMENULIST
 	EN	context menu
 	HU	helyi menü
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM
-	EN	Edit
-	HU	Szerkesztés
-
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM
 	EN	Create new dynamic playlist
 	HU	Új dinamikus lejátszási lista létrehozása
@@ -101,14 +93,6 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_DPLREFRESHMSG
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_TYPES_TITLE
 	EN	Select a template on which to base your new dynamic playlist:
 	HU	Válassz egy sablont, amelyre az új dinamikus lejátszási listádat alapozod:
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_NAME
-	EN	Dynamic Playlist Name
-	HU	Dinamikus Lejátszási Lista Neve
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_FILENAME
-	EN	File name (without extension)
-	HU	Fájlnév (kiterjesztés nélkül)
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_EXPORT_ITEM
 	EN	Export to Dynamic Playlists and delete in DPLC
@@ -158,14 +142,6 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_LANG_STRINGS_SEARCH_HASNOVALUE
 	EN	has no value
 	HU	nem rendelkezik értékkel
 
-PLUGIN_DYNAMICPLAYLISTCREATOR_SAVE
-	EN	Save
-	HU	Mentés
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_NEXT
-	EN	Next
-	HU	Következő
-
 PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_PARAMETERS_TITLE
 	EN	Please enter dynamic playlist parameters
 	HU	Adja meg a dinamikus lejátszási lista paramétereit
@@ -173,10 +149,6 @@ PLUGIN_DYNAMICPLAYLISTCREATOR_NEW_ITEM_PARAMETERS_TITLE
 PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_PARAMETERS_TITLE
 	EN	Edit dynamic playlist parameters
 	HU	A dinamikus lejátszási lista paramétereinek szerkesztése
-
-PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_OVERWRITE
-	EN	Overwrite existing&nbsp;&nbsp;&nbsp;
-	HU	Meglévő felülírása&nbsp;&nbsp;&nbsp;
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_EDIT_ITEM_BASETEMPLATE
 	EN	Based on template

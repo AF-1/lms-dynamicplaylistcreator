@@ -53,7 +53,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- IF recentlyplayed and playedbefore != 1 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
 	[%- END %]
-	[%- IF playedbefore == 1 and !recentlyplayed %]
+	[%- IF playedbefore == 1 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0
 	[%- END %]
 	[%- IF playedbefore == 2 %]
