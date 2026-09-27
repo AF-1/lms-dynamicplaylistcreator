@@ -29,8 +29,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'ERROR',
 	'description' => 'PLUGIN_DYNAMICPLAYLISTCREATOR',
 });
-my $cache = Slim::Utils::Cache->new();
-
 my $pluginVersion;
 my $templates; # cached template definitions
 my $playLists; # cached dynamic playlists created with DPLC
@@ -40,7 +38,6 @@ my $unsafeChars = "&<>'\"";
 my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 filepath1 filepath2 filepath3 clistartcmd1 clistartcmd2 clistartcmd3 clistartcmd4 clistopcmd1 clistopcmd2 clistopcmd3 clistopcmd4);
 my %mediumFields = map {$_ => 35} qw(commentssearchstring1 commentssearchstring2 commentssearchstring3);
 my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minsamplesize maxsamplesize minbpm maxbpm skipcount maxskipcount minplaycount maxplaycount);
-my %cachedListKeys;
 
 sub initPlugin {
 	my $class = shift;
@@ -53,8 +50,6 @@ sub initPlugin {
 		Plugins::DynamicPlaylistCreator::Settings->new($class);
 		_getTemplates();
 	}
-
-	Slim::Control::Request::subscribe(\&_setRefreshCBTimer, [['rescan'], ['done']]);
 }
 
 sub initPrefs {
@@ -68,28 +63,6 @@ sub initPrefs {
 		return if (!$_[1] || !(-d $_[1]) || (main::ISWINDOWS && !(-d Win32::GetANSIPathName($_[1]))) || !(-d Slim::Utils::Unicode::encode_locale($_[1])));
 		return createCustomPlaylistFolder($_[1]);
 	}, 'customdirparentfolderpath');
-
-	# parameter types whose values come from the plugin caches
-	%cachedListKeys = (
-		'contributorlistcachedall' => 'dplc_contributorlist_all',
-		'contributorlistcachedalbumartists' => 'dplc_contributorlist_albumartists',
-		'contributorlistcachedcomposers' => 'dplc_contributorlist_composers',
-		'genrelistcached' => 'dplc_genrelist',
-		'contenttypelistcached' => 'dplc_contenttypes',
-		'releasetypelistcached' => 'dplc_releasetypes',
-		'worklistcached' => 'dplc_worklist',
-	);
-}
-
-sub postinitPlugin {
-	return unless Slim::Schema::hasLibrary() && !Slim::Music::Import->stillScanning;
-
-	my $cachePluginVersion = $cache->get('dplc_pluginversion');
-	main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
-
-	my @cacheKeys = values %cachedListKeys;
-	@cacheKeys = grep {$_ ne 'dplc_worklist'} @cacheKeys if Slim::Utils::Versions->compareVersions($::VERSION, '9.0') < 0;
-	refreshSQLCache() if !$cachePluginVersion || $cachePluginVersion ne $pluginVersion || grep {!$cache->get($_)} @cacheKeys;
 }
 
 sub createCustomPlaylistFolder {
@@ -110,7 +83,6 @@ sub refreshDPLplaylists {
 	main::DEBUGLOG && $log->is_debug && $log->debug('Tell DPL to refresh list of dynamic playlists');
 	$client->execute(['dynamicplaylist', 'refreshplaylists'])->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
 }
-
 
 
 ### web pages
@@ -421,11 +393,10 @@ sub handleWebExportPlaylist {
 }
 
 
-
 ### dynamic playlist values (rebuilt on every list.html view)
 
-# returns the full saved values (same shape _loadTemplateValues returns) of every dynamic playlist, keyed by file name. Skips playlists whose template no longer exists
 sub readPlaylistValues {
+	# returns the full saved values (same shape _loadTemplateValues returns) of every dynamic playlist, keyed by file name. Skips playlists whose template no longer exists
 	_getTemplates();
 	my %result = ();
 	my $dir = $prefs->get('customplaylistfolder');
@@ -447,8 +418,8 @@ sub _getTemplates {
 	return $templates;
 }
 
-# calls the callback for every file with the given extension (incl. subfolders). A true return value of the callback is logged as error
 sub _readConfigFiles {
+	# calls the callback for every file with the given extension (incl. subfolders). A true return value of the callback is logged as error
 	my ($dir, $extension, $keepExtension, $parseCallback) = @_;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Loading configuration from: $dir");
@@ -485,8 +456,8 @@ sub _decodeContent {
 	return Slim::Utils::Unicode::utf8decode($content, 'utf8');
 }
 
-# reads a file from the folder for custom DPLC dynamic playlists
 sub _readDataFile {
+	# reads a file from the folder for custom DPLC dynamic playlists
 	my $fileName = shift;
 
 	my $dir = $prefs->get('customplaylistfolder');
@@ -515,8 +486,8 @@ sub _loadTemplateValues {
 	return $xml->{'template'};
 }
 
-# parses a template definition file (*.sql.xml) and adds it to $result
 sub _parseTemplate {
+	# parses a template definition file (*.sql.xml) and adds it to $result
 	my ($item, $content, $result) = @_;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('XMLin part');
@@ -540,8 +511,8 @@ sub _parseTemplate {
 	$result->{$item} = $xml->{'template'};
 }
 
-# parses one saved playlist's full values (same shape _loadTemplateValues returns) into $result. Values are raw/unescaped. See _playlistDisplayName for safe display.
 sub _parsePlaylistValues {
+	# parses one saved playlist's full values (same shape _loadTemplateValues returns) into $result. Values are raw/unescaped. See _playlistDisplayName for safe display.
 	my ($item, $content, $result) = @_;
 
 	my $valuesXml = eval { XMLin($content, forcearray => ['parameter', 'value'], keyattr => []) };
@@ -560,8 +531,8 @@ sub _parsePlaylistValues {
 	return;
 }
 
-# derives a safe display name for list.html from a playlist's parsed values, falling back to the file name itself if no playlist name was saved.
 sub _playlistDisplayName {
+	# derives a safe display name for list.html from a playlist's parsed values, falling back to the file name itself if no playlist name was saved.
 	my ($item, $templateData) = @_;
 
 	for my $p (@{$templateData->{'parameter'} || []}) {
@@ -575,12 +546,14 @@ sub _playlistDisplayName {
 }
 
 
-
 ### editing, saving and deleting dynamic playlists
 
-# returns the template parameters that are usable with the current plugins and LMS version
+my %parameterListCache; # page-scoped memoization for getSQLTemplateData/getFunctionTemplateData
+
 sub _getUsableParameters {
+	# returns the template parameters that are usable with the current plugins and LMS version
 	my $template = shift;
+	%parameterListCache = ();
 
 	my $parameters = $template->{'parameter'};
 	return [] if !defined($parameters);
@@ -599,8 +572,8 @@ sub _getUsableParameters {
 	return \@usable;
 }
 
-# builds a fresh per-request form field from a read-only parameter definition plus its current value(s), if any. Never writes to $p itself.
 sub buildParameterFormField {
+	# builds a fresh per-request form field from a read-only parameter definition plus its current value(s), if any. Never writes to $p itself.
 	my ($p, $currentValues) = @_;
 	my %field = %$p;
 
@@ -633,8 +606,6 @@ sub buildParameterFormField {
 			}
 		}
 		$field{'values'} = $listValues;
-	} elsif ($cachedListKeys{$field{'type'}}) {
-		$field{'values'} = $cache->get($cachedListKeys{$field{'type'}}) || [];
 	} elsif ($field{'type'} =~ /list$/ || $field{'type'} =~ /checkboxes$/) {
 		my @listValues = ();
 		for my $value (split(/,/, $field{'data'})) {
@@ -650,7 +621,7 @@ sub buildParameterFormField {
 	}
 
 	if (defined($currentValues)) {
-		if ($field{'type'} =~ /^sql/ || $field{'type'} =~ /function/ || $field{'type'} =~ /list$/ || $field{'type'} =~ /checkboxes$/ || $field{'type'} =~ /listcached/) {
+		if ($field{'type'} =~ /^sql/ || $field{'type'} =~ /function/ || $field{'type'} =~ /list$/ || $field{'type'} =~ /checkboxes$/) {
 			for my $v (@{$field{'values'}}) {
 				if (($field{'id'} eq 'includedratings' || $field{'id'} eq 'exactrating') && defined($currentValues->{$v->{'value'}})) {
 					$v->{'selected'} = 1;
@@ -669,8 +640,8 @@ sub buildParameterFormField {
 	return \%field;
 }
 
-# the number of custom tags is needed by the web page if CustomTagImporter is enabled
 sub _setCustomTagInfo {
+	# the number of custom tags is needed by the web page if CustomTagImporter is enabled
 	my $params = shift;
 
 	$params->{'CTIenabled'} = Slim::Utils::PluginManager->isEnabled('Plugins::CustomTagImporter::Plugin');
@@ -682,15 +653,15 @@ sub _setCustomTagInfo {
 	}
 }
 
-# check if dpl requires user input
 sub _setNoUserInput {
+	# check if dpl requires user input
 	my ($params, $templateId) = @_;
 
 	$params->{'nouserinput'} = 1 if !$params->{'itemparameter_request1fromuser'} && !$params->{'itemparameter_request2fromuser'} && !$params->{'itemparameter_requestcustomtag'} && $templateId !~ /_preselection/;
 }
 
-# writes the values file ($url) and the sql file ($customUrl) of a dynamic playlist. Returns 1 on success, sets an error message otherwise
 sub _saveSimpleItem {
+	# writes the values file ($url) and the sql file ($customUrl) of a dynamic playlist. Returns 1 on success, sets an error message otherwise
 	my ($params, $url, $templateId, $customUrl) = @_;
 	main::DEBUGLOG && $log->is_debug && $log->debug('Start saveSimpleItem');
 
@@ -772,7 +743,6 @@ sub _deleteItemFiles {
 	my $dir = $prefs->get('customplaylistfolder');
 	return unless defined($dir) && -d $dir;
 
-	# delete values file and SQLite file
 	for my $extension ('customvalues.xml', 'sql') {
 		my $file = catfile($dir, unescape($itemId).'.'.$extension);
 		next unless -e $file;
@@ -810,7 +780,6 @@ sub setFilePathPrefix {
 }
 
 
-
 ### template parameter handling
 
 sub quoteValue {
@@ -823,12 +792,12 @@ sub _emptyListValue {
 	return {'id' => '', 'name' => '', 'value' => ''};
 }
 
-# returns the selected values of a multiple list or checkboxes parameter
 sub _getSelectedValues {
+	# returns the selected values of a multiple list or checkboxes parameter
 	my ($params, $parameter) = @_;
 
 	my $paramName = 'itemparameter_'.$parameter->{'id'};
-	if ($parameter->{'type'} =~ /multiplelist$/ || $parameter->{'type'} eq 'contributorlistcachedall' || $parameter->{'type'} eq 'contributorlistcachedalbumartists' || $parameter->{'type'} eq 'contributorlistcachedcomposers' || $parameter->{'type'} eq 'worklistcached') {
+	if ($parameter->{'type'} =~ /multiplelist$/) {
 		return getMultipleListQueryParameter($params, $paramName);
 	}
 	return getCheckBoxesQueryParameter($params, $paramName);
@@ -837,7 +806,7 @@ sub _getSelectedValues {
 sub parameterIsSpecified {
 	my ($params, $parameter) = @_;
 
-	if ($parameter->{'type'} =~ /multiplelist$/ || $parameter->{'type'} =~ /checkboxes$/ || $parameter->{'type'} =~ /listcached/) {
+	if ($parameter->{'type'} =~ /multiplelist$/ || $parameter->{'type'} =~ /checkboxes$/) {
 		return 1 if scalar(keys %{_getSelectedValues($params, $parameter)}) > 0;
 	} elsif ($parameter->{'type'} =~ /singlelist$/) {
 		return 1 if defined($params->{'itemparameter_'.$parameter->{'id'}});
@@ -851,7 +820,7 @@ sub getValueOfTemplateParameter {
 	my ($params, $parameter) = @_;
 
 	my $result = '';
-	if ($parameter->{'type'} =~ /multiplelist$/ || $parameter->{'type'} =~ /checkboxes$/ || $parameter->{'type'} =~ /listcached/) {
+	if ($parameter->{'type'} =~ /multiplelist$/ || $parameter->{'type'} =~ /checkboxes$/) {
 		my $selectedValues = _getSelectedValues($params, $parameter);
 		main::DEBUGLOG && $log->is_debug && $log->debug('Got '.scalar(keys %{$selectedValues}).' values for '.$parameter->{'id'});
 		for my $item (@{$parameter->{'values'}}) {
@@ -930,7 +899,7 @@ sub getXMLValueOfTemplateParameter {
 	my ($params, $parameter) = @_;
 
 	my $result = '';
-	if ($parameter->{'type'} =~ /multiplelist$/ || $parameter->{'type'} =~ /checkboxes$/ || $parameter->{'type'} =~ /listcached/) {
+	if ($parameter->{'type'} =~ /multiplelist$/ || $parameter->{'type'} =~ /checkboxes$/) {
 		my $selectedValues = _getSelectedValues($params, $parameter);
 		main::DEBUGLOG && $log->is_debug && $log->debug('Got '.scalar(keys %{$selectedValues}).' values for '.$parameter->{'id'}.' to convert to XML');
 		for my $item (@{$parameter->{'values'}}) {
@@ -1007,6 +976,7 @@ sub getCheckBoxesQueryParameter {
 
 sub getSQLTemplateData {
 	my $sqlstatements = shift;
+	return [ map { { %$_ } } @{$parameterListCache{$sqlstatements}} ] if $parameterListCache{$sqlstatements};
 
 	my @result = ();
 	my $dbh = Slim::Schema->dbh;
@@ -1032,10 +1002,11 @@ sub getSQLTemplateData {
 				$sth->bind_col(3, \$value);
 
 				while ($sth->fetch()) {
+					next unless defined($id);
 					push @result, {
 						'id' => Slim::Utils::Unicode::utf8decode($id, 'utf8'),
-						'name' => Slim::Utils::Unicode::utf8decode($name, 'utf8'),
-						'value' => Slim::Utils::Unicode::utf8decode($value, 'utf8'),
+						'name' => Slim::Utils::Unicode::utf8decode($name // '', 'utf8'),
+						'value' => Slim::Utils::Unicode::utf8decode($value // '', 'utf8'),
 					};
 				}
 			}
@@ -1045,11 +1016,13 @@ sub getSQLTemplateData {
 			$log->warn('Database error running '.(defined($sql) ? $sql : 'sql statement').": $@");
 		}
 	}
-	return \@result;
+	$parameterListCache{$sqlstatements} = \@result;
+	return [ map { { %$_ } } @result ];
 }
 
 sub getFunctionTemplateData {
 	my $data = shift;
+	return [ map { { %$_ } } @{$parameterListCache{$data}} ] if $parameterListCache{$data};
 
 	my @params = split(/\,/, $data);
 	my @result = ();
@@ -1068,7 +1041,8 @@ sub getFunctionTemplateData {
 	} else {
 		$log->warn("Error getting values for: $data, incorrect number of parameters ".scalar(@params));
 	}
-	return \@result;
+	$parameterListCache{$data} = \@result;
+	return [ map { { %$_ } } @result ];
 }
 
 sub handleSearchURL {
@@ -1113,11 +1087,10 @@ sub trimLeadTail {
 }
 
 
-
 ### Template Toolkit (sql templates)
 
-# templates (read-only, loaded once via initPlugin/_getTemplates)
 sub readTemplateConfiguration {
+	# templates (read-only, loaded once via initPlugin/_getTemplates)
 	my %result = ();
 
 	for my $pluginDir (Slim::Utils::OSDetect::dirsFor('Plugins')) {
@@ -1182,8 +1155,8 @@ sub fillTemplate {
 sub fileURLFromPathUri {
 	my $path = shift;
 
-	# percent-encode using the same character set tracks.url itself uses (matches
-	# URI::file, not the much more aggressive default of uri_escape_utf8)
+	# percent-encode using the same character set tracks.url itself uses
+	# matches URI::file, not the much more aggressive default of uri_escape_utf8
 	my $uri = URI::Escape::uri_escape_utf8($path, "^!\$&'()*+,\-.0-9:=\@A-Za-z_~/");
 
 	# SQL string literal: double any embedded single quote
@@ -1194,7 +1167,6 @@ sub fileURLFromPathUri {
 
 	return $uri;
 }
-
 
 
 ### caches for lists of artists, genres, composers etc.
@@ -1232,76 +1204,10 @@ sub getVirtualLibraries {
 	return \@items;
 }
 
-sub refreshSQLCache {
-	main::DEBUGLOG && $log->is_debug && $log->debug('Deleting old caches and creating new ones');
-	$cache->remove('dplc_pluginversion');
-	$cache->remove('dplc_contributorlist_all');
-	$cache->remove('dplc_contributorlist_albumartists');
-	$cache->remove('dplc_contributorlist_composers');
-	$cache->remove('dplc_genrelist');
-	$cache->remove('dplc_contenttypes');
-	$cache->remove('dplc_releasetypes');
-	$cache->remove('dplc_worklist');
-
-	my $contributorSQL_all = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5,6) group by contributors.id order by contributors.namesort asc";
-	my $contributorSQL_albumartists = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc";
-	my $contributorSQL_composers = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role = 2 group by contributors.id order by contributors.namesort asc";
-	my $genreSQL = "select genres.id,genres.name,genres.namesearch from genres order by namesort asc";
-	my $contentTypesSQL = "select distinct tracks.content_type,tracks.content_type,tracks.content_type from tracks where tracks.content_type is not null and tracks.content_type != 'cpl' and tracks.content_type != 'src' and tracks.content_type != 'ssp' and tracks.content_type != 'dir' order by tracks.content_type asc";
-	my $releaseTypesSQL = "select distinct albums.release_type,albums.release_type,albums.release_type from albums order by albums.release_type asc";
-	my $workSQL = "select works.id,works.title,works.titlesearch from works join tracks on works.id = tracks.work where tracks.work is not null group by works.id order by works.titlesort asc";
-
-	my $contributorList_all = getSQLTemplateData($contributorSQL_all);
-	$cache->set('dplc_contributorlist_all', $contributorList_all, 'never');
-	main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_all count = '.scalar(@{$contributorList_all}));
-
-	my $contributorList_albumartists = getSQLTemplateData($contributorSQL_albumartists);
-	$cache->set('dplc_contributorlist_albumartists', $contributorList_albumartists, 'never');
-	main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_albumartists count = '.scalar(@{$contributorList_albumartists}));
-
-	my $contributorList_composers = getSQLTemplateData($contributorSQL_composers);
-	$cache->set('dplc_contributorlist_composers', $contributorList_composers, 'never');
-	main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_composers count = '.scalar(@{$contributorList_composers}));
-
-	my $genreList = getSQLTemplateData($genreSQL);
-	$cache->set('dplc_genrelist', $genreList, 'never');
-	main::DEBUGLOG && $log->is_debug && $log->debug('genreList count = '.scalar(@{$genreList}));
-
-	my $contentTypesList = getSQLTemplateData($contentTypesSQL);
-	$cache->set('dplc_contenttypes', $contentTypesList, 'never');
-	main::DEBUGLOG && $log->is_debug && $log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
-
-	my $releaseTypesList = getSQLTemplateData($releaseTypesSQL);
-	foreach my $releaseType (@{$releaseTypesList}) {
-		$releaseType->{'name'} = _releaseTypeName($releaseType->{'name'});
-	}
-	$cache->set('dplc_releasetypes', $releaseTypesList, 'never');
-	main::DEBUGLOG && $log->is_debug && $log->debug('releaseTypesList count = '.scalar(@{$releaseTypesList}));
-
-	if (Slim::Utils::Versions->compareVersions($::VERSION, '9.0') >= 0) {
-		my $workList = getSQLTemplateData($workSQL);
-		$cache->set('dplc_worklist', $workList, 'never');
-		main::DEBUGLOG && $log->is_debug && $log->debug('workList count = '.scalar(@{$workList}));
-	}
-
-	$cache->set('dplc_pluginversion', $pluginVersion, 'never');
-}
-
-sub _setRefreshCBTimer {
-	main::DEBUGLOG && $log->is_debug && $log->debug('Killing existing timers for post-scan refresh to prevent multiple calls');
-	Slim::Utils::Timers::killOneTimer(undef, \&delayedPostScanRefresh);
-	main::DEBUGLOG && $log->is_debug && $log->debug('Scheduling a delayed post-scan refresh');
-	Slim::Utils::Timers::setTimer(undef, time() + 5, \&delayedPostScanRefresh);
-}
-
-sub delayedPostScanRefresh {
-	if (Slim::Music::Import->stillScanning) {
-		main::DEBUGLOG && $log->is_debug && $log->debug('Scan in progress. Waiting for current scan to finish.');
-		_setRefreshCBTimer();
-	} else {
-		main::DEBUGLOG && $log->is_debug && $log->debug('Starting post-scan SQL cache refresh.');
-		refreshSQLCache();
-	}
+sub getReleaseTypeList {
+	my $list = getSQLTemplateData("select distinct albums.release_type,albums.release_type,albums.release_type from albums order by albums.release_type asc");
+	$_->{'name'} = _releaseTypeName($_->{'name'}) for @{$list};
+	return $list;
 }
 
 sub _releaseTypeName {

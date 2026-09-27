@@ -51,12 +51,12 @@
 		<parameter type="number" id="minbpm" name="Min. &lt;b&gt;BPM&lt;/b&gt;" value=""/>
 		<parameter type="number" id="maxbpm" name="Max. &lt;b&gt;BPM&lt;/b&gt;" value=""/>
 		<parameter type="checkbox" id="lyrics" name="Only tracks with &lt;b&gt;lyrics&lt;/b&gt;" value="0"/>
-		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
-		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
-		<parameter type="contributorlistcachedall" id="includedartists" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>
-		<parameter type="contributorlistcachedall" id="excludedartists" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>
-		<parameter type="contributorlistcachedcomposers" id="includedcomposers" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;composers&lt;/b&gt;" value="" quotevalue="1"/>
-		<parameter type="contributorlistcachedcomposers" id="excludedcomposers" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;composers&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="sqlcheckboxes" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" data="select genres.id,genres.name,genres.namesearch from genres order by namesort asc" quotevalue="1"/>
+		<parameter type="sqlcheckboxes" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" data="select genres.id,genres.name,genres.namesearch from genres order by namesort asc" quotevalue="1"/>
+		<parameter type="sqlmultiplelist" id="includedartists" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;artists&lt;/b&gt;" value="" data="select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5,6) group by contributors.id order by contributors.namesort asc" quotevalue="1"/>
+		<parameter type="sqlmultiplelist" id="excludedartists" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;artists&lt;/b&gt;" value="" data="select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5,6) group by contributors.id order by contributors.namesort asc" quotevalue="1"/>
+		<parameter type="sqlmultiplelist" id="includedcomposers" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;composers&lt;/b&gt;" value="" data="select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role = 2 group by contributors.id order by contributors.namesort asc" quotevalue="1"/>
+		<parameter type="sqlmultiplelist" id="excludedcomposers" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;composers&lt;/b&gt;" value="" data="select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role = 2 group by contributors.id order by contributors.namesort asc" quotevalue="1"/>
 		<parameter type="searchtype" id="albumsearchtitle1_searchtype" name="albumsearchtitle1 search type" value=""/>
 		<parameter type="searchtext" id="albumsearchtitle1" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="logop" id="albumsearchtitle1_logop" name="" value=""/>
@@ -66,7 +66,7 @@
 		<parameter type="searchtype" id="albumsearchtitle3_searchtype" name="albumsearchtitle3 search type" value=""/>
 		<parameter type="searchtext" id="albumsearchtitle3" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="optionalsinglelist" id="compis" name="Limit to or exclude tracks from &lt;b&gt;compilations&lt;/b&gt;" value="" data="1=Only compilation tracks,2=No compilation tracks"/>
-		<parameter type="releasetypelistcached" id="includedreleasetypes" minlmsversion="8.4.0" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;release types&lt;/b&gt;" value="0" quotevalue="1"/>
+		<parameter type="functioncheckboxes" id="includedreleasetypes" minlmsversion="8.4.0" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;release types&lt;/b&gt;" value="0" data="Plugins::DynamicPlaylistCreator::Plugin,getReleaseTypeList" quotevalue="1"/>
 		<parameter type="searchtype" id="tracksearchtitle1_searchtype" name="tracksearchtitle1 search type" value=""/>
 		<parameter type="searchtext" id="tracksearchtitle1" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="logop" id="tracksearchtitle1_logop" name="" value=""/>
@@ -88,7 +88,7 @@
 		<parameter type="sqlmultiplelist" id="includedstaticplaylists" name="Only &lt;b&gt;include&lt;/b&gt; tracks from these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="sqlmultiplelist" id="excludedstaticplaylists" name="&lt;b&gt;Ignore&lt;/b&gt; tracks in these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
 		<parameter type="checkbox" id="lossless" name="Only lossless formats" value="0"/>
-		<parameter type="contenttypelistcached" id="includedcontenttypes" name="Only include tracks with this &lt;b&gt;file format&lt;/b&gt;" value="0" quotevalue="1"/>
+		<parameter type="sqlcheckboxes" id="includedcontenttypes" name="Only include tracks with this &lt;b&gt;file format&lt;/b&gt;" value="0" data="select distinct tracks.content_type,tracks.content_type,tracks.content_type from tracks where tracks.content_type is not null and tracks.content_type != 'cpl' and tracks.content_type != 'src' and tracks.content_type != 'ssp' and tracks.content_type != 'dir' order by tracks.content_type asc" quotevalue="1"/>
 		<parameter type="optionalsinglelist" id="sortorder" name="Track &lt;b&gt;sort order&lt;/b&gt;&lt;br&gt;(default = random order)" value="" data="1=Most played first,2=Least played first"/>
 		<parameter type="optionalsinglelist" id="remote" name="Limit to &lt;b&gt;remote / local&lt;/b&gt; tracks" value="" data="1=Only local library tracks,2=Only remote library tracks"/>
 		<parameter type="styling" requireplugins="CustomTagImporter::Plugin" id="styling" name="&lt;br&gt;&lt;br&gt;&lt;br&gt;-- &lt;b&gt;Custom Tag Importer&lt;/b&gt; --" value=""/>
