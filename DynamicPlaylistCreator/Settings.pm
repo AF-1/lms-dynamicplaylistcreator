@@ -11,8 +11,6 @@ use warnings;
 use utf8;
 
 use base qw(Slim::Web::Settings);
-
-use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 sub name {
@@ -25,14 +23,6 @@ sub page {
 
 sub prefs {
 	return (preferences('plugin.dynamicplaylistcreator'), qw(customdirparentfolderpath displayplaybtn displayexportbtn hidedplrefreshmsg exacttitlesearch));
-}
-
-sub handler {
-	my ($class, $client, $paramRef) = @_;
-
-	my $result = $class->SUPER::handler($client, $paramRef);
-	Plugins::DynamicPlaylistCreator::Plugin::refreshSQLCache() if $paramRef->{'refreshcachesnow'};
-	return $result;
 }
 
 1;

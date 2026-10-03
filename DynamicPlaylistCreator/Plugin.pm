@@ -240,15 +240,6 @@ sub handleWebEditPlaylist {
 				for my $p (@{$templateData->{'parameter'}}) {
 					my $values = $p->{'value'};
 
-					# unescape file paths here for web page
-					if ($p->{'id'} =~ /filepath(\d+)$/ && defined($values)) {
-						my $uri = $values->[0];
-						$uri =~ s/_/%/g;
-						$uri = Encode::decode('utf8', unescape($uri));
-						main::DEBUGLOG && $log->is_debug && $log->debug('unescaped uri = '.$uri);
-						$values = [$uri];
-					}
-
 					if (!defined($values)) {
 						my $tmp = $p->{'content'};
 						$values = [$tmp] if defined($tmp);
@@ -860,6 +851,14 @@ sub getValueOfTemplateParameter {
 			my $thisvalue = Slim::Utils::Unicode::utf8decode_locale($params->{'itemparameter_'.$parameter->{'id'}});
 			main::INFOLOG && $log->is_info && $log->info('thisvalue = '.Data::Dump::dump($thisvalue));
 
+			# customtagvalues 'contains' is a LIKE substring match: it needs LIKE escaping instead of the value quoting used for oneof/equals below
+			(my $searchTypeId = $parameter->{'id'}) =~ s/values/searchtype/;
+			if ($parameter->{'id'} =~ /customtagvalues/ && ($params->{'itemparameter_'.$searchTypeId} || '') eq 'contains') {
+				$thisvalue = quoteValue($thisvalue) if !$parameter->{'rawvalue'};
+				$result = encode_entities(handleSearchText($thisvalue, 1), $unsafeChars);
+				return $result;
+			}
+
 			my $quotedTextVal;
 			foreach my $thisParamVal (split(/;/, $thisvalue)) {
 				$thisParamVal = quoteValue($thisParamVal) if !$parameter->{'rawvalue'};
@@ -875,7 +874,7 @@ sub getValueOfTemplateParameter {
 	} else {
 		if ($params->{'itemparameter_'.$parameter->{'id'}}) {
 			my $thisvalue = Slim::Utils::Unicode::utf8decode_locale($params->{'itemparameter_'.$parameter->{'id'}});
-			$thisvalue = quoteValue($thisvalue) if !$parameter->{'rawvalue'};
+			$thisvalue = quoteValue($thisvalue) if !$parameter->{'rawvalue'} && $parameter->{'type'} ne 'searchurl';
 
 			$thisvalue = handleSearchText($thisvalue, $parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0) if $parameter->{'type'} eq 'searchtext';
 			$thisvalue = handleSearchURL($thisvalue) if $parameter->{'type'} eq 'searchurl';
@@ -920,7 +919,6 @@ sub getXMLValueOfTemplateParameter {
 	} else {
 		if (defined($params->{'itemparameter_'.$parameter->{'id'}}) && $params->{'itemparameter_'.$parameter->{'id'}} ne '') {
 			my $value = Slim::Utils::Unicode::utf8decode_locale($params->{'itemparameter_'.$parameter->{'id'}});
-			$value = handleSearchText($value, $parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0) if $parameter->{'type'} eq 'searchtext';
 			$value = handleSearchURL($value) if $parameter->{'type'} eq 'searchurl';
 			$result = '<value>'.encode_entities($value, "%_&<>'\"").'</value>';
 			main::DEBUGLOG && $log->is_debug && $log->debug('Got '.$parameter->{'id'}." = $value");
@@ -1049,27 +1047,14 @@ sub handleSearchURL {
 	my $url = shift;
 	$url =~ s/^\s*//;
 	$url =~ s/\s+$//;
-
-	my $uri = URI::Escape::uri_escape_utf8($url);
-
-	# don't escape backslashes
-	$uri =~ s$%(?:2F|5C)$/$ig;
-
-	# don't escape colons (important for file: and Windows)
-	$uri =~ s$%(?:3A|_3A)$:$ig;
-
-	# replace the % in the URI escaped string with a single character placeholder
-	$uri =~ s/%/_/g;
-
-	return $uri;
+	return $url;
 }
 
 sub handleSearchText {
 	my ($searchString, $skipExact) = @_;
 	$searchString =~ s/^\s*//;
 	$searchString =~ s/\s+$//;
-	$searchString =~ s/%/\\%/g;
-	$searchString =~ s/_/\\_/g;
+	$searchString =~ s/([\\%_])/\\$1/g;
 	$searchString = Slim::Utils::Unicode::utf8decode_locale($searchString);
 
 	if (!$prefs->get('exacttitlesearch') && !$skipExact) {
@@ -1153,19 +1138,15 @@ sub fillTemplate {
 }
 
 sub fileURLFromPathUri {
-	my $path = shift;
-
-	# percent-encode using the same character set tracks.url itself uses
-	# matches URI::file, not the much more aggressive default of uri_escape_utf8
-	my $uri = URI::Escape::uri_escape_utf8($path, "^!\$&'()*+,\-.0-9:=\@A-Za-z_~/");
-
-	# SQL string literal: double any embedded single quote
-	$uri =~ s/'/''/g;
-
-	# SQL LIKE: escape wildcard-significant characters for ESCAPE '\'
-	$uri =~ s/([%_])/\\$1/g;
-
-	return $uri;
+	# value arrives entity-encoded and DPL's parseContent decodes the saved .sql again: decode first, encode last
+	my $path = decode_entities(shift);
+	# re-encode the decoded (wide-character) string to raw UTF-8 bytes so ord() below sees single bytes, like tracks.url
+	utf8::encode($path);
+	# percent-encode byte by byte ourselves: URI::Escape's custom-pattern mode is eval-based and misreads '@A-Za-z' as an array on older bundled versions
+	$path =~ s/([^A-Za-z0-9!\$&()*+,\-.:=\@_~\/\[\]])/sprintf('%%%02X', ord($1))/ge;
+	# escape the LIKE wildcards for ESCAPE '\'
+	$path =~ s/([%_])/\\$1/g;
+	return encode_entities($path, $unsafeChars);
 }
 
 

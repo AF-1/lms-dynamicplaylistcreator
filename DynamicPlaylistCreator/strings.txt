@@ -47,28 +47,12 @@ SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_HIDEDPLREFRESHMSG_DESC
 	HU	Ha létrehozol, szerkesztesz, mentesz, törölsz vagy exportálsz egy dinamikus lejátszási listát a DPLC-ben, a DPLC weboldal, amely felsorolja a dinamikus lejátszási listáidat, megjelenít egy üzenetet, amely emlékeztet, hogy a <b>Dynamic Playlists</b> bővítménynek néhány másodpercre szüksége lehet az elérhető dinamikus lejátszási listák frissítéséhez. Ezt az üzenetet letilthatod ezzel a beállítással.
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH
-	EN	Use exact album title search
-	HU	Pontos albumcím-keresés használata
+	EN	Use exact title search
+	HU	Pontos keresés használata
 
 SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_EXACTTITLESEARCH_DESC
 	EN	By default, certain unicode and pattern matching characters are stripped from album title search terms to avoid problems with SQLite and XML (= recommended). However, in rare cases it may lead to false positives.<br><i>Example:</i> if you're searching for album titles that contain <i>[ENG]</i>, the square brackets are removed and the result set will include all albums containing <i>ENG</i> or <i>eng</i>, e.g. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>You can disable this here if you're absolutely certain that your search terms do not contain any problematic characters (esp. sqlite control characters like single or double quotes) and you want the search to adhere more strictly to the search terms.<br><br><b>This setting only applies to <i>album and track title</i> searches in a few selected templates</b>.<br>For names of <b>artists, composers and genres</b>, the plugin will <b>always</b> use the less strict but <b>safer search option</b>.
 	HU	Alapértelmezés szerint bizonyos unicode és mintaillesztési karakterek eltávolításra kerülnek az albumcím-keresési feltételekből, hogy elkerüljük az SQLite és XML problémáit (= ajánlott). Ritka esetekben azonban ez hamis pozitív eredményekhez vezethet.<br><i>Példa:</i> ha olyan albumcímeket keresel, amelyek tartalmazzák az <i>[ENG]</i> kifejezést, a szögletes zárójelek eltávolításra kerülnek, és az eredményhalmaz minden olyan albumot tartalmazni fog, amely tartalmazza az <i>ENG</i> vagy <i>eng</i> kifejezést, pl. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>Letilthatod ezt itt, ha teljesen biztos vagy benne, hogy a keresési feltételek nem tartalmaznak problémás karaktereket (különösen SQLite vezérlőkaraktereket, mint az egyszeres vagy dupla idézőjelek), és szeretnéd, hogy a keresés szigorúbban kövesse a keresési feltételeket.<br><br><b>Ez a beállítás csak néhány kiválasztott sablon <i>album- és számcím</i> kereséseire vonatkozik</b>.<br>A <b>előadók, szerzők és műfajok</b> neveire a bővítmény <b>mindig</b> a kevésbé szigorú, de <b>biztonságosabb keresési opciót</b> használja.
-
-SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES
-	EN	Refresh plugin caches
-	HU	Bővítmény gyorsítótárának frissítése
-
-SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_DESC
-	EN	The <i>Dynamic Playlist Creator</i> plugin caches lists of artists, genres, composers and audio file types. They are automatically refreshed after an LMS rescan or a plugin update.<br><br>If you think there's a problem with the DPLC plugin caches (e.g. missing artists or genre lists in templates), this button allows you to force a refresh of all plugin caches.
-	HU	A <i>Dynamic Playlist Creator</i> bővítmény gyorsítótárazza az előadók, műfajok, szerzők és hangfájltípusok listáit. Ezek automatikusan frissülnek egy LMS újraellenőrzés vagy bővítményfrissítés után.<br><br>Ha úgy gondolod, hogy probléma van a DPLC bővítmény gyorsítótárával (pl. hiányzó előadók vagy műfajok listák a sablonokban), ez a gomb lehetővé teszi az összes bővítmény gyorsítótárának kényszerített frissítését.
-
-SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_BUTTON
-	EN	Refresh now
-	HU	Frissítés most
-
-SETTINGS_PLUGIN_DYNAMICPLAYLISTCREATOR_REFRESHCACHES_INPROGRESS
-	EN	Refreshing caches...
-	HU	Gyorsítótár frissítése folyamatban...
 
 PLUGIN_DYNAMICPLAYLISTCREATOR_LISTHEADER
 	EN	<b>Custom dynamic playlists created with this plugin:</b>
