@@ -197,7 +197,7 @@ create temporary table tmp_random_albums as
 			and albums.release_type in ([% includedreleasetypes %])
 		[%- END %]
 		[%- IF request1fromuser == 'albumtitlecontains' %]
-			and albums.titlesearch like '%%'PlaylistParameter1'%%'
+			and albums.titlesearch like '%%'PlaylistParameter1'%%' ESCAPE '\'
 		[%- END %]
 		[%- IF includedcomposers %]
 			and exists (select 1 from tracks t2,contributor_track,contributors
