@@ -42,6 +42,7 @@ create temporary table randomweightedratingslow as select distinct tracks.id, tr
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and ifnull(tracks.content_type, '') != 'ssp'
 		and dynamicplaylist_history.id is null
 		and ifnull(tracks_persistent.rating, 0) > 0 and ifnull(tracks_persistent.rating, 0) < [% minratingfortoprated %]
 	[%- IF excludedgenres %]
@@ -73,6 +74,7 @@ create temporary table randomweightedratingshigh as [% END %]select distinct tra
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and ifnull(tracks.content_type, '') != 'ssp'
 		and dynamicplaylist_history.id is null
 		and ifnull(tracks_persistent.rating, 0) >= [% minratingfortoprated %]
 	[%- IF excludedgenres %]

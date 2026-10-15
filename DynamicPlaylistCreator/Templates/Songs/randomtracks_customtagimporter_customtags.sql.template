@@ -31,6 +31,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and ifnull(tracks.content_type, '') != 'ssp'
 		and dynamicplaylist_history.id is null
 	[%- IF recentlyplayed %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])

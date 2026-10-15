@@ -89,6 +89,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and ifnull(tracks.content_type, '') != 'ssp'
 		and dynamicplaylist_history.id is null
 	[%- IF request1fromuser == 'album' %]
 		and tracks.album = 'PlaylistParameter1'

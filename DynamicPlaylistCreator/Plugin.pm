@@ -81,7 +81,9 @@ sub refreshDPLplaylists {
 
 	Slim::Utils::Timers::killTimers($client, \&refreshDPLplaylists);
 	main::DEBUGLOG && $log->is_debug && $log->debug('Tell DPL to refresh list of dynamic playlists');
-	$client->execute(['dynamicplaylist', 'refreshplaylists'])->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
+	my $request = Slim::Control::Request->new($client->id(), ['dynamicplaylist', 'refreshplaylists']);
+	$request->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
+	$request->execute() if $request->isStatusDispatchable();
 }
 
 
@@ -343,7 +345,9 @@ sub handleWebStartPlaylist {
 	my $dpl = $params->{'item'};
 	return unless $client && $dpl;
 	main::DEBUGLOG && $log->is_debug && $log->debug('Tell DPL to play dynamic playlist "'.$dpl.'"');
-	$client->execute(['dynamicplaylist', 'playlist', 'play', 'dplccustom_'.$dpl])->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
+	my $request = Slim::Control::Request->new($client->id(), ['dynamicplaylist', 'playlist', 'play', 'dplccustom_'.$dpl]);
+	$request->source('PLUGIN_DYNAMICPLAYLISTCREATOR');
+	$request->execute() if $request->isStatusDispatchable();
 	return handleWebList($client, $params);
 }
 
