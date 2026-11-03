@@ -233,10 +233,10 @@ select distinct tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request2fromuser == 'maxRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
 	[%- IF (includedratings or includedratings == 0) && !minrating && !maxrating && request2fromuser != 'exactRating' && request3fromuser != 'exactRating' %]
-		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
+		and ((ifnull(tracks_persistent.rating, 0) + 5) / 10) * 10 in ([% includedratings %])
 	[%- END %]
 	[%- IF request2fromuser == 'exactRating' or request3fromuser == 'exactRating' %]
-		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request2fromuser == 'exactRating' %]2[% ELSE %]3[% END %]'
+		and ((ifnull(tracks_persistent.rating, 0) + 5) / 10) * 10 = 'PlaylistParameter[% IF request2fromuser == 'exactRating' %]2[% ELSE %]3[% END %]'
 	[%- END %]
 	[%- IF playedbefore == 1 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0

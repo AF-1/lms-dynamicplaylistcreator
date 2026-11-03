@@ -24,6 +24,7 @@ use Time::Local qw(timelocal);
 use XML::Simple qw(XMLin);
 
 my $prefs = preferences('plugin.dynamicplaylistcreator');
+my $serverPrefs = preferences('server');
 my $log = Slim::Utils::Log->addLogCategory({
 	'category' => 'plugin.dynamicplaylistcreator',
 	'defaultLevel' => 'ERROR',
@@ -35,7 +36,7 @@ my $playLists; # cached dynamic playlists created with DPLC
 my $templateHandler; # Template Toolkit object, created on first use
 my $unsafeChars = "&<>'\"";
 
-my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 filepath1 filepath2 filepath3 clistartcmd1 clistartcmd2 clistartcmd3 clistartcmd4 clistopcmd1 clistopcmd2 clistopcmd3 clistopcmd4);
+my %largeFields = map {$_ => 50} qw(playlistname playlistgroups albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 worktitle1 worktitle2 worktitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 filepath1 filepath2 filepath3 clistartcmd1 clistartcmd2 clistartcmd3 clistartcmd4 clistopcmd1 clistopcmd2 clistopcmd3 clistopcmd4);
 my %mediumFields = map {$_ => 35} qw(commentssearchstring1 commentssearchstring2 commentssearchstring3);
 my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofplaylists noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minsamplesize maxsamplesize minbpm maxbpm skipcount maxskipcount minplaycount maxplaycount);
 
@@ -558,6 +559,10 @@ sub _getUsableParameters {
 	for my $p (@{$parameters}) {
 		next unless defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'});
 		next if defined($p->{'requireplugins'}) && !Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
+		if (defined($p->{'requireplugins'}) && defined($p->{'requirepluginversion'})) {
+			my $requiredPluginData = Slim::Utils::PluginManager->dataForPlugin('Plugins::'.$p->{'requireplugins'});
+			next if !$requiredPluginData || !defined($requiredPluginData->{'version'}) || Slim::Utils::Versions->compareVersions($requiredPluginData->{'version'}, $p->{'requirepluginversion'}) == -1;
+		}
 		if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 			main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 			next;
@@ -977,8 +982,9 @@ sub getCheckBoxesQueryParameter {
 }
 
 sub getSQLTemplateData {
-	my $sqlstatements = shift;
-	return [ map { { %$_ } } @{$parameterListCache{$sqlstatements}} ] if $parameterListCache{$sqlstatements};
+	my ($sqlstatements, @bindValues) = @_;
+	my $cacheKey = join("\x1f", $sqlstatements, @bindValues);
+	return [ map { { %$_ } } @{$parameterListCache{$cacheKey}} ] if $parameterListCache{$cacheKey};
 
 	my @result = ();
 	my $dbh = Slim::Schema->dbh;
@@ -991,7 +997,7 @@ sub getSQLTemplateData {
 		eval {
 			my $sth = $dbh->prepare($sql);
 			main::DEBUGLOG && $log->is_debug && $log->debug('Executing: '.Data::Dump::dump($sql));
-			$sth->execute() or do {
+			$sth->execute(@bindValues) or do {
 				$log->error('Error executing: '.Data::Dump::dump($sql));
 				$sql = undef;
 			};
@@ -1018,7 +1024,7 @@ sub getSQLTemplateData {
 			$log->warn('Database error running '.(defined($sql) ? $sql : 'sql statement').": $@");
 		}
 	}
-	$parameterListCache{$sqlstatements} = \@result;
+	$parameterListCache{$cacheKey} = \@result;
 	return [ map { { %$_ } } @result ];
 }
 
@@ -1187,6 +1193,18 @@ sub getVirtualLibraries {
 		@items = sort {lc($a->{sortName}) cmp lc($b->{sortName})} @items;
 	}
 	return \@items;
+}
+
+sub getArtistList {
+	# artists with the roles that LMS treats as artist roles. Composers have their own list
+	my @roleNames = Slim::Schema::Contributor->can('activeContributorRoles')
+		? Slim::Schema::Contributor->activeContributorRoles(1)
+		: ('ARTIST', 'ALBUMARTIST', 'TRACKARTIST', grep {$serverPrefs->get(lc($_).'InArtists')} Slim::Schema::Contributor->contributorRoles());
+	my %roleIDs = map {Slim::Schema::Contributor->typeToRole($_) => 1} @roleNames;
+	delete $roleIDs{2};
+	my @roleIDs = sort {$a <=> $b} grep {/^\d+$/} keys %roleIDs;
+	return [] unless @roleIDs;
+	return getSQLTemplateData('select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in ('.join(',', ('?') x @roleIDs).') group by contributors.id order by contributors.namesort asc', @roleIDs);
 }
 
 sub getReleaseTypeList {

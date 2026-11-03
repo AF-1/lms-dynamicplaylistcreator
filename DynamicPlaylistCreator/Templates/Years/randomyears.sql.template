@@ -91,7 +91,7 @@ create temporary table tmp_random_years as
 								t2.id = tracks.id and
 								tracks.id = contributor_track.track and
 								contributors.id = contributor_track.contributor and
-								contributor_track.role in (1,5,6) and
+								contributor_track.role <> 2 and
 								contributors.namesearch in ([% excludedartists %]))
 		[%- END %]
 		group by tracks.year
@@ -162,7 +162,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
 							contributors.id = contributor_track.contributor and
-							contributor_track.role in (1,5,6) and
+							contributor_track.role <> 2 and
 							contributors.namesearch in ([% excludedartists %]))
 	[%- END %]
 	[%- IF excludedgenres %]

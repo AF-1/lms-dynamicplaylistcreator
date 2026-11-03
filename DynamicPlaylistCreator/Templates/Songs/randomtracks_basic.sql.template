@@ -112,6 +112,12 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- IF maxrating %]
 		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
 	[%- END %]
+	[%- IF maxyear %]
+		and tracks.year <= [% maxyear %]
+	[%- END %]
+	[%- IF minyear %]
+		and tracks.year >= [% minyear %]
+	[%- END %]
 	[%- IF maxdpsv %]
 		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
 	[%- END %]
@@ -126,4 +132,14 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF recentlyplayed and playedbefore != 1 %]
 		and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0) < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF lossless %]
+		and tracks.lossless = 1
+	[%- END %]
+	[%- IF remote %]
+		[%- IF remote == 1 %]
+		and tracks.remote != 1
+		[%- ELSIF remote == 2 %]
+		and tracks.remote = 1 and tracks.extid is not null and tracks.secs is not null
+		[%- END %]
 	[%- END %]

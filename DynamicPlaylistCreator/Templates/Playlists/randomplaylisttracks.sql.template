@@ -185,7 +185,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request1fromuser == 'maxRating' %]1[% ELSE %]2[% END %]'
 	[%- END %]
 	[%- IF request1fromuser == 'exactRating' or request2fromuser == 'exactRating' %]
-		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request1fromuser == 'exactRating' %]1[% ELSE %]2[% END %]'
+		and ((ifnull(tracks_persistent.rating, 0) + 5) / 10) * 10 = 'PlaylistParameter[% IF request1fromuser == 'exactRating' %]1[% ELSE %]2[% END %]'
 	[%- END %]
 	[%- IF maxskipcount %]
 		and ifnull(alternativeplaycount.skipCount,0) < [% maxskipcount %]

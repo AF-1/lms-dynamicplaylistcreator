@@ -226,9 +226,13 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- IF albumsearchtitle1 or compis or includedreleasetypes or request1fromuser == 'albumtitlecontains' %]
 	join albums on albums.id = tracks.album
 	[%- END %]
+	[%- # ------- WORKS ------- %]
+	[%- IF worktitle1 %]
+	join works on works.id = tracks.work
+	[%- END %]
 	[%- # ------- ARTISTS ------- %]
 	[%- IF includedartists or request1fromuser == 'artist' or request2fromuser == 'artist' %]
-	join contributor_track on contributor_track.track = tracks.id and contributor_track.role in (1,5,6)
+	join contributor_track on contributor_track.track = tracks.id and contributor_track.role <> 2
 		[%- IF request1fromuser == 'artist' or request2fromuser == 'artist' %]
 		and contributor_track.contributor = 'PlaylistParameter[% IF request1fromuser == 'artist' %]1[% ELSE %]2[% END %]'
 		[%- END %]
@@ -253,7 +257,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	left join comments on comments.track = tracks.id
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or (!useapcvalues and (sortorder or recentlyplayed or playedbefore or minplaycount or maxplaycount)) or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
+	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or lastratedwithin or ratingchange or (!useapcvalues and (sortorder or recentlyplayed or playedbefore or minplaycount or maxplaycount)) or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' or request1fromuser == 'notrecentlyplayed' or request2fromuser == 'notrecentlyplayed' or request1fromuser == 'minRating' or request2fromuser == 'minRating' or request1fromuser == 'exactRating' or request2fromuser == 'exactRating' or request1fromuser == 'maxRating' or request2fromuser == 'maxRating' %]
 	left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
 	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
@@ -432,6 +436,15 @@ select distinct tracks.id, tracks.primary_artist from tracks
 		[%- END %]
 		[%- END %][% IF albumsearchtitle2 or albumsearchtitle3 %])[% END %]
 	[%- END %]
+	[%- IF worktitle1 %]
+		and [% IF worktitle2 or worktitle3 %]([% END %][% IF worktitle2 && worktitle3 && worktitle1_logop == 'or' && worktitle2_logop == 'and' %]([% END %]works.title[% UNLESS exacttitlesearch %]search[% END %] [% IF worktitle1_searchtype.match('NOT') %]not [% END %]like '[% IF worktitle1_searchtype.match('LIKE') %]%%[% END %][% worktitle1 %]%%' ESCAPE '\'
+		[%- IF worktitle2 %]
+		[% IF worktitle2_searchtype.match('NOT') %]and [% ELSE %][% worktitle1_logop %] [% END %][% IF worktitle2 && worktitle3 && worktitle1_logop == 'and' && worktitle2_logop == 'or' %]([% END %]works.title[% UNLESS exacttitlesearch %]search[% END %] [% IF worktitle2_searchtype.match('NOT') %]not [% END %]like '[% IF worktitle2_searchtype.match('LIKE') %]%%[% END %][% worktitle2 %]%%' ESCAPE '\'[% IF worktitle2 && worktitle3 && worktitle1_logop == 'or' && worktitle2_logop == 'and' %])[% END %]
+		[%- IF worktitle3 %]
+		[% IF worktitle3_searchtype.match('NOT') %]and [% ELSE %][% worktitle2_logop %] [% END %]works.title[% UNLESS exacttitlesearch %]search[% END %] [% IF worktitle3_searchtype.match('NOT') %]not [% END %]like '[% IF worktitle3_searchtype.match('LIKE') %]%%[% END %][% worktitle3 %]%%' ESCAPE '\'[% IF worktitle2 && worktitle3 && worktitle1_logop == 'and' && worktitle2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF worktitle2 or worktitle3 %])[% END %]
+	[%- END %]
 	[%- IF request1fromuser == 'album' or request2fromuser == 'album' %]
 		and tracks.album = 'PlaylistParameter[% IF request1fromuser == 'album' %]1[% ELSE %]2[% END %]'
 	[%- ELSIF request1fromuser == 'year' or request2fromuser == 'year' %]
@@ -494,10 +507,20 @@ select distinct tracks.id, tracks.primary_artist from tracks
 		and ifnull(tracks_persistent.rating, 0) <= 'PlaylistParameter[% IF request1fromuser == 'maxRating' %]1[% ELSE %]2[% END %]'
 	[%- END %]
 	[%- IF (includedratings or includedratings == 0) && !minrating && !maxrating && request1fromuser != 'exactRating' && request2fromuser != 'exactRating' %]
-		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
+		and ((ifnull(tracks_persistent.rating, 0) + 5) / 10) * 10 in ([% includedratings %])
 	[%- END %]
 	[%- IF request1fromuser == 'exactRating' or request2fromuser == 'exactRating' %]
-		and ifnull(tracks_persistent.rating, 0) = 'PlaylistParameter[% IF request1fromuser == 'exactRating' %]1[% ELSE %]2[% END %]'
+		and ((ifnull(tracks_persistent.rating, 0) + 5) / 10) * 10 = 'PlaylistParameter[% IF request1fromuser == 'exactRating' %]1[% ELSE %]2[% END %]'
+	[%- END %]
+	[%- IF lastratedwithin %]
+		and tracks_persistent.lastRated > (strftime('%s', 'now') - [% lastratedwithin %])
+	[%- END %]
+	[%- IF ratingchange == 1 %]
+		and ifnull(tracks_persistent.rating, 0) > ifnull(tracks_persistent.prevRating, 0)
+	[%- ELSIF ratingchange == 2 %]
+		and tracks_persistent.prevRating is not null and tracks_persistent.rating is not null and tracks_persistent.rating < tracks_persistent.prevRating
+	[%- ELSIF ratingchange == 3 %]
+		and ifnull(tracks_persistent.rating, 0) = 0 and ifnull(tracks_persistent.prevRating, 0) > 0
 	[%- END %]
 	[%- IF minbpm %]
 		and ifnull(tracks.bpm, 0) >= [% minbpm %]
@@ -553,7 +576,7 @@ select distinct tracks.id, tracks.primary_artist from tracks
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
 							contributors.id = contributor_track.contributor and
-							contributor_track.role in (1,5,6) and
+							contributor_track.role <> 2 and
 							contributors.namesearch in ([% excludedartists %]))
 	[%- END %]
 	[%- IF excludedcomposers %]
