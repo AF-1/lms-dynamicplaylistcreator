@@ -2,7 +2,7 @@
 <dynamicplaylistcreator>
 	<template>
 		<name>Random Albums</name>
-		<templateversion>15</templateversion>
+		<templateversion>16</templateversion>
 		<description>Album template with options</description>
 		<playlistcategory>albums</playlistcategory>
 		<listweight>1</listweight>
@@ -23,15 +23,20 @@
 		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="recentlyskipped" name="Ignore &lt;b&gt;recently skipped&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,1814400=3 weeks,2419200=4 weeks,4838400=2 months,7257600=3 months,15768000=6 months,31536000=1 year"/>
 		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="mindpsv" name="Min. &lt;b&gt;dynamic played/skipped value&lt;/b&gt;" value="" data="-100=-100,-90=-90,-80=-80,-70=-70,-60=-60,-50=-50,-40=-40,-30=-30,-20=-20,-10=-10,zero=0,10=10,20=20,30=30,40=40,50=50,60=60,70=70,80=80,90=90"/>
 		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="maxdpsv" name="Max. &lt;b&gt;dynamic played/skipped value&lt;/b&gt;" value="" data="100=100,90=90,80=80,70=70,60=60,50=50,40=40,30=30,20=20,10=10,zero=0,-10=-10,-20=-20,-30=-30,-40=-40,-50=-50,-60=-60,-70=-70,-80=-80,-90=-90"/>
-		<parameter type="optionalsinglelist" id="minavgrating" name="Minimum &lt;b&gt;avergage&lt;/b&gt; album rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
+		<parameter type="optionalsinglelist" id="minavgrating" name="Minimum &lt;b&gt;average&lt;/b&gt; album rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="number" id="minalbumtracks" name="Ignore albums with &lt;b&gt;less&lt;/b&gt; tracks than" value="3"/>
 		<parameter type="number" id="noofalbums" name="Number of albums from which to get new tracks &lt;b&gt;per batch&lt;/b&gt;" value="1"/>
 		<parameter type="number" id="nooftracks" name="Number of tracks added &lt;b&gt;per batch&lt;/b&gt;" value=""/>
 		<parameter type="optionalsinglelist" id="addedtime" name="Limit to &lt;b&gt;last added&lt;/b&gt; albums?" value="" data="604800=Added in the week before the last library import,1209600=Added in the 2 weeks before the last library import,2419200=Added in the 4 weeks before the last library import,7257600=Added in the 3 months before the last library import,14515200=Added in the 6 months before the last library import,29030399=Added in the 12 months before the last library import"/>
 		<parameter type="optionalsinglelist" id="sortorder" name="Album &lt;b&gt;sort order&lt;/b&gt;" value="" data="1=Most played first (avg. count),2=Least played first (avg. count),3=Most played first (total count),4=Least played first (total count)"/>
+		<parameter type="optionalsinglelist" id="sortlastplayed" name="Album order by &lt;b&gt;last played date&lt;/b&gt;" value="" tooltipvalue="Sorts albums by play date, oldest first. Never played counts as oldest. First option: an album is ranked by its least recently played track, so partly played albums come early. Second option: an album is ranked by its most recently played track, so it comes early only if all its tracks were played long ago. Uses the APC date last played if Use APC values is checked, otherwise the standard LMS date. One album is picked at random from the first 30 albums in this order." data="1=Albums with the least recently played track first,2=Albums least recently played overall first (by latest track play)"/>
 		<parameter type="optionalsinglelist" id="toprated" name="Give preference to &lt;b&gt;top rated&lt;/b&gt; albums" value="" data="1=Average rating,2=Total rating"/>
 		<parameter type="optionalsinglelist" id="compis" name="Limit to or exclude &lt;b&gt;compilations&lt;/b&gt;" value="" data="1=Only compilations,2=No compilations"/>
 		<parameter type="checkbox" id="multidisc" name="Only &lt;b&gt;multi-disc&lt;/b&gt; albums" value="0"/>
+		<parameter type="number" id="minbitrate" name="Min. &lt;b&gt;bitrate&lt;/b&gt;" value="" placeholdervalue=" kbps"/>
+		<parameter type="number" id="maxbitrate" name="Max. &lt;b&gt;bitrate&lt;/b&gt;" value="" placeholdervalue=" kbps"/>
+		<parameter type="number" id="minsamplerate" name="Min. sample &lt;b&gt;rate&lt;/b&gt;" value="" placeholdervalue=" Hz"/>
+		<parameter type="number" id="maxsamplerate" name="Max. sample &lt;b&gt;rate&lt;/b&gt;" value="" placeholdervalue=" Hz"/>
 		<parameter type="sqlcheckboxes" id="includedgenres" name="&lt;b&gt;In&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" data="select genres.id,genres.name,genres.namesearch from genres order by namesort asc" quotevalue="1"/>
 		<parameter type="sqlcheckboxes" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" data="select genres.id,genres.name,genres.namesearch from genres order by namesort asc" quotevalue="1"/>
 		<parameter type="sqlmultiplelist" id="includedartists" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;album artists&lt;/b&gt;" value="" data="select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc" quotevalue="1"/>

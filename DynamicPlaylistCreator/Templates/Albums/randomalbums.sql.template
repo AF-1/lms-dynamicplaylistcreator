@@ -134,8 +134,8 @@
 [% # --------------------------------------------------------------------------------------------------------------- %]
 drop table if exists tmp_random_albums;
 create temporary table tmp_random_albums as
-	[%- IF sortorder or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %] select subselection.album as album from ([% END %]
-	select tracks.album as album[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF (sortorder == 3 || sortorder == 4) and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_album.role)[% END %] as procplaycount[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_album.role)[% END %] as procrating[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %][% IF minavgrating %], avg(ifnull(tracks_persistent.rating,0)) as procminavgrating[% END %] from tracks
+	[%- IF sortorder or sortlastplayed or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %] select subselection.album as album from ([% END %]
+	select tracks.album as album[% IF sortorder %], [% IF sortorder == 3 || sortorder == 4 %]sum[% ELSE %]avg[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0))[% IF (sortorder == 3 || sortorder == 4) and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_album.role)[% END %] as procplaycount[% END %][% IF sortlastplayed %], [% IF sortlastplayed == 1 %]min[% ELSE %]max[% END %](ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].lastPlayed,0)) as proclastplayed[% END %][% IF toprated %], [% IF toprated == 2 %]sum[% ELSE %]avg[% END %](ifnull(tracks_persistent.rating,0))[% IF toprated == 2 and (includedartists or request1fromuser == 'artist' or request2fromuser == 'artist') %]/count(distinct contributor_album.role)[% END %] as procrating[% END %][% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %], max(tracks_persistent.added) as maxadded[% END %][% IF minavgrating %], avg(ifnull(tracks_persistent.rating,0)) as procminavgrating[% END %] from tracks
 		[%- # ------- VIRTUAL LIBRARY ------- %]
 		[%- IF useVirtualLibrary or request1fromuser == 'virtuallibrary' %]
 		join library_track on library_track.track = tracks.id and library_track.library = [% IF activevirtuallibrary %]'PlaylistCurrentVirtualLibraryForClient'[% ELSIF request1fromuser == 'virtuallibrary' %]'PlaylistParameter1'[% ELSE %]'PlaylistVirtualLibraryID1'[% END %]
@@ -174,7 +174,7 @@ create temporary table tmp_random_albums as
 		[%- IF compis or multidisc or albumsearchtitle1 or includedreleasetypes or request1fromuser == 'albumtitlecontains' %]
 		join albums on albums.id = tracks.album
 		[%- END %]
-		[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or partlyplayed)) or toprated or minavgrating or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
+		[%- IF (!useapcvalues and (recentlyplayed or playedbefore or sortorder or sortlastplayed or partlyplayed)) or toprated or minavgrating or addedtime or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' or request1fromuser == 'lastplayed' or request2fromuser == 'lastplayed' %]
 		left join tracks_persistent on tracks_persistent.urlmd5 = tracks.urlmd5
 		[%- END %]
 		[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
@@ -245,6 +245,18 @@ create temporary table tmp_random_albums as
 		[%- IF maxyear %]
 			and ifnull(tracks.year, 0) <= [% maxyear %]
 		[%- END %]
+		[%- IF minbitrate %]
+			and ifnull(tracks.bitrate, 0) >= ([% minbitrate %] * 1000)
+		[%- END %]
+		[%- IF maxbitrate %]
+			and ifnull(tracks.bitrate, 0) <= ([% maxbitrate %] * 1000)
+		[%- END %]
+		[%- IF minsamplerate %]
+			and ifnull(tracks.samplerate, 0) >= [% minsamplerate %]
+		[%- END %]
+		[%- IF maxsamplerate %]
+			and ifnull(tracks.samplerate, 0) <= [% maxsamplerate %]
+		[%- END %]
 		[%- IF playedbefore == 1 %]
 			and ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0) = 0
 		[%- END %]
@@ -305,8 +317,8 @@ create temporary table tmp_random_albums as
 		[%- IF partlyplayed and playedbefore != 1 %]
 		and min(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) = 0 and avg(ifnull([% IF useapcvalues %]alternativeplaycount[% ELSE %]tracks_persistent[% END %].playCount,0)) > 0
 		[%- END %]
-		order by [% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %][% IF toprated %]procrating desc, [% END %]random()
-		[%- IF sortorder or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]
+		order by [% IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]maxadded desc, [% END %][% IF sortlastplayed %]proclastplayed asc, [% END %][% IF sortorder == 1 || sortorder == 3 %]procplaycount desc, [% ELSIF sortorder == 2 || sortorder == 4 %]procplaycount asc, [% END %][% IF toprated %]procrating desc, [% END %]random()
+		[%- IF sortorder or sortlastplayed or toprated or request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]
 		limit 30) as subselection
 	order by random()
 	[%- END %]
@@ -395,6 +407,18 @@ select distinct tracks.id, tracks.primary_artist from tracks
 	[%- END %]
 	[%- IF maxyear %]
 		and ifnull(tracks.year, 0) <= [% maxyear %]
+	[%- END %]
+	[%- IF minbitrate %]
+		and ifnull(tracks.bitrate, 0) >= ([% minbitrate %] * 1000)
+	[%- END %]
+	[%- IF maxbitrate %]
+		and ifnull(tracks.bitrate, 0) <= ([% maxbitrate %] * 1000)
+	[%- END %]
+	[%- IF minsamplerate %]
+		and ifnull(tracks.samplerate, 0) >= [% minsamplerate %]
+	[%- END %]
+	[%- IF maxsamplerate %]
+		and ifnull(tracks.samplerate, 0) <= [% maxsamplerate %]
 	[%- END %]
 	[%- IF request1fromuser == 'addedtime' or request2fromuser == 'addedtime' %]
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% IF request1fromuser == 'addedtime' %]'PlaylistParameter1'[% ELSE %]'PlaylistParameter2'[% END %])
